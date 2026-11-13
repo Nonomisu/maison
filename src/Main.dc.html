@@ -3058,7 +3058,7 @@ var CANARDS = [["Canard jaune", "/_blob/c4c2fea4edc092dff6dd001cc3d94a13", 5], [
 BFURN.scanard = {kind:"Canard en plastique", box:[34,79,11,9], v:CANARDS};
 var SOURIS = "/_blob/bfd53e62639e3d43f18cb78b29554a09";
 var MOUSE_SPOTS = {salon:[[60,760],[250,740],[330,700]], bureau:[[20,720],[300,730]], cuisine:[[100,770],[320,690]], chambre:[[250,730],[110,780]], sdb:[[60,700],[300,760]], veranda:[[30,640],[330,700]]};
-var DEFIS = [{n:"5 tâches chacun", c:REEL ? 0 : 3, e:REEL ? 0 : 4, goal:5, two:true, rw:"+150 XP · Coussin étoilé (exclusif)"}, {n:"Une soirée sans écran", v:0, goal:1, rw:"+100 XP · Bougie « soirée cosy »"}, {n:"Vider la liste en mode magasin", v:0, goal:1, rw:"+80 XP · Cabas brodé pour le frigo"}];
+var DEFIS = [{n:"5 tâches chacun", c:REEL ? 0 : 3, e:REEL ? 0 : 4, goal:5, two:true, rw:"+150 XP · Coussin étoilé (exclusif)"}, {n:"Vider la liste en mode magasin", v:0, goal:1, rw:"+80 XP · Cabas brodé pour le frigo"}];
 var HF_PROG0 = [{id:"cent", n:"Cent tâches", d:"Faire 100 tâches à deux", v:37, goal:100}, {id:"japonais", n:"Trente jours d'affilée", d:"Tenir une série de 30 jours sur un grand projet", v:12, goal:30}, {id:"soirees", n:"Un mois de soirées", d:"Valider une soirée chaque semaine pendant 4 semaines", v:2, goal:4}, {id:"souris", n:"Chasseurs de souris", d:"Trouver 5 souris en peluche cachées dans la maison", v:-1, goal:5}];
 var HF_PROG = HF_PROG0.map(function (h) { return REEL ? Object.assign({}, h, {v: 0}) : h; });
 var WEATHER = [{id:"auto", l:"Auto"}, {id:"soleil", l:"Soleil"}, {id:"pluie", l:"Pluie"}, {id:"neige", l:"Neige"}];
@@ -4272,8 +4272,8 @@ class Component extends DCLogic {
     out.addGarde = function () { var t = (self.state.gardeDraft || "").trim(); if (!t) return; self.setState({garde: self.state.garde.concat([{id: "g" + self.state.nextGarde, t: cap(t)}]), nextGarde: self.state.nextGarde + 1, gardeDraft: ""}); };
     out.gardeMail = gmailUrl("", "Garde des chats", gl.join("\n")); out.gardeMailTarget = isIOS() ? "_self" : "_blank";
     // défis
-    var DEFI_RW = [{xp: 150, item: "coussin"}, {xp: 100, item: "bougie"}, {xp: 80, item: "cabas"}];
-    var defiV = function (d, i) { if (!REEL) return d.two ? {c: d.c, e: d.e, v: Math.min(d.c, d.e)} : {v: d.v}; if (i === 0) return {c: S0.tasks.C || 0, e: S0.tasks.E || 0, v: Math.min(S0.tasks.C || 0, S0.tasks.E || 0)}; return {v: i === 1 ? (S0.sansEcran ? 1 : 0) : (S0.magasin ? 1 : 0)}; };
+    var DEFI_RW = [{xp: 150, item: "coussin"}, {xp: 80, item: "cabas"}];
+    var defiV = function (d, i) { if (!REEL) return d.two ? {c: d.c, e: d.e, v: Math.min(d.c, d.e)} : {v: d.v}; if (i === 0) return {c: S0.tasks.C || 0, e: S0.tasks.E || 0, v: Math.min(S0.tasks.C || 0, S0.tasks.E || 0)}; return {v: S0.magasin ? 1 : 0}; };
     if (REEL && !self._defiBusy) DEFIS.forEach(function (d, i) { if (defiV(d, i).v >= d.goal && !S0.defisDone[i]) {
       self._defiBusy = true;
       setTimeout(function () { var S = STATS0(); if (S.defisDone[i]) { self._defiBusy = false; return; } S.defisDone[i] = true; S.owned[DEFI_RW[i].item] = true; self.setState({stats: S}); spreadXp(DEFI_RW[i].xp, 1); self._log("hf", "Défi réussi : " + d.n, d.rw); self._toast("Défi réussi : " + d.n + " · " + d.rw); self._defiBusy = false; }, 0);

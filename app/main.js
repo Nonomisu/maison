@@ -2,9 +2,9 @@
 //   ./                    → vraie appli (connexion Google, Firestore)
 //   ./?essai              → maquette de démo, sans connexion
 //   ./?essai=reel&moi=C   → vraie appli avec un faux serveur local (tests)
-import { run } from "./scene.js?v=70ee928d";
+import { run } from "./scene.js?v=9c682602";
 
 const q = new URLSearchParams(location.search);
-if (q.get("essai") === "reel") import("./fake.js?v=70ee928d").then((f) => f.boot(q.get("moi") === "E" ? "E" : "C"));
-else if (q.has("essai")) import("./logic.js?v=70ee928d").then((L) => run(new L.Component({})));
-else import("./sync.js?v=70ee928d").then((s) => s.boot());
+if (q.get("essai") === "reel") import("./fake.js?v=9c682602").then((f) => f.boot(q.get("moi") === "E" ? "E" : "C"));
+else if (q.has("essai")) import("./logic.js?v=9c682602").then((L) => run(new L.Component({})));
+else import("./sync.js?v=9c682602").then((s) => s.boot());
