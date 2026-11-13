@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=75ccfab6";
+import { DCLogic, blobUrl } from "./runtime.js?v=e0564c0b";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -1748,7 +1748,7 @@ class Component extends DCLogic {
       else if (st.play && st.play.cat === k && st.tick < st.play.until) { o.src = "/_blob/" + IMG[k][["chaseA", "chaseB", "chaseC"][Math.floor(st.tick / 3) % 3]]; o.css = st.tick % 8 < 4 ? "hop" : "calm"; }
       return o; }); };
     out.bureauCats = interact(out.bureauCats); out.kitchenCats = interact(out.kitchenCats); out.chambreCats = interact(out.chambreCats); out.sdbCats = interact(out.sdbCats); out.verandaCats = interact(out.verandaCats);
-    out.demoAnims = st.demoUnlock; out.demoAnimsTest = st.demoUnlock && !REEL;
+    out.demoAnims = st.demoUnlock && !REEL; out.demoAnimsTest = st.demoUnlock && !REEL;
     self._log = function (kind, text, sub, extra) { var n = self.state.nextJ; self.setState({journal: [Object.assign({id: "j" + n, ts: Date.now(), kind: kind, text: text, sub: sub || ""}, extra || {})].concat(self.state.journal).slice(0, 200), nextJ: n + 1}); };
     if (self._jSeenPending && st.sheet && st.sheet.type === "journal") { self._jSeenPending = false; var seenAt = st.journalSeen; setTimeout(function () { self.setState({journalSeen: Date.now(), journalSeenShown: seenAt}); }, 0); }
     var seenRef = (st.sheet && st.sheet.type === "journal" && st.journalSeenShown != null) ? st.journalSeenShown : st.journalSeen;
