@@ -447,7 +447,7 @@ var WARD0 = [
 var WCATS = ["Hauts", "Bas", "Chaussures", "Manteaux", "Dessous", "Accessoires"];
 var WPRIO = {urgent: {l:"Urgent", c:"#B23A48"}, bientot: {l:"Bientôt", c:"#D9762B"}, unjour: {l:"Un jour", c:"#4A7034"}};
 var SIZES0 = {C: {haut:"", bas:"", pointure:""}, E: {haut:"", bas:"", pointure:""}};
-var NIGHT_PANES = {cuisine: [[108,276,48,80],[168,276,48,80]], chambre: [[156,126,60,108],[228,126,60,108]], sdb: [[210,192,36,54],[258,192,36,54]], salon: [[24,132,42,48],[78,132,42,48],[24,192,42,54,"bas"],[78,192,42,54,"bas"]]};
+var NIGHT_PANES = {cuisine: [[108,276,48,80],[168,276,48,80],[108,356,48,64,"bas"],[168,356,48,64,"bas"]], chambre: [[162,126,54,90],[228,126,54,90],[162,222,54,90,"bas"],[228,222,54,90,"bas"]], sdb: [[210,192,36,54],[258,192,36,54],[210,246,36,54,"bas"],[258,246,36,54,"bas"]], salon: [[24,132,42,48],[78,132,42,48],[24,192,42,54,"bas"],[78,192,42,54,"bas"]]};
 var FF0 = {
   C: [{id:"f1", sec:"jour", t:"Roulette de donjons (expert)", d:false}, {id:"f2", sec:"jour", t:"Mini Cactpot ×3 au Gold Saucer", d:true}, {id:"f3", sec:"semaine", t:"Contrats de chasse élite", d:false}, {id:"f4", sec:"semaine", t:"Carnet d'aventurier (Wondrous Tails)", d:false}, {id:"f5", sec:"projet", t:"Préparer la prochaine soirée RP", d:false, link:"https://fr.finalfantasyxiv.com/lodestone/"}, {id:"f10", sec:"jour", t:"Renvoyer les sous-marins", d:false}],
   E: [{id:"f6", sec:"jour", t:"Roulette de donjons (niveau)", d:false}, {id:"f11", sec:"jour", t:"Mini Cactpot ×3 au Gold Saucer", d:false}, {id:"f7", sec:"jour", t:"Quêtes de tribu (×3)", d:false}, {id:"f8", sec:"semaine", t:"Butin hebdo du raid", d:false}, {id:"f9", sec:"projet", t:"Finir le craft du mobilier de maison", d:false, link:"https://ffxivteamcraft.com/"}]
@@ -852,6 +852,8 @@ class Component extends DCLogic {
     });
     if (REEL) FOYER_LVL = foyerLvlOf(st);
     // météo effective : en mode réel, « Auto » suit la météo de Bron (Open-Meteo)
+    // paysage de nuit (fenêtres, véranda) : dès la tombée du jour en mode réel ; chats endormis : seulement « night »
+    var DARK = REEL ? !!(st.dark || st.night) : st.night;
     var MTO = (REEL && st.meteo === "auto" && st.meteoReel) ? st.meteoReel.kind : st.meteo;
     (function () { var x = foyerXpOf(st), n = 1; while (n < 99 && x >= FOYER_COST(n + 1)) { x -= FOYER_COST(n + 1); n++; }
       if (!REEL) { n = 7; x = 340; } var need = FOYER_COST(n + 1);
@@ -1372,11 +1374,11 @@ class Component extends DCLogic {
     if (out.eyesOn) hfSeen("cachecache");
     if (out.verandaAll) hfSeen("sieste3");
     // night & noel sky
-    var vNight = out.inVeranda && (st.night || seasonKey === "noel");
-    out.vNightOn = vNight; out.vTint = out.inVeranda && st.night && seasonKey !== "noel";
+    var vNight = out.inVeranda && (DARK || seasonKey === "noel");
+    out.vNightOn = vNight; out.vTint = out.inVeranda && DARK && seasonKey !== "noel";
     out.vStars = vNight ? STARS.map(function (p, i) { return {x: p[0] + "px", y: p[1] + "px", d: (-(i * 0.37) % 1.8).toFixed(2) + "s", sz: (i % 3 === 0 ? 4 : 2) + "px"}; }) : [];
-    out.vFire = out.inVeranda && st.night && (seasonKey === "ete" || seasonKey === "classique") ? [[80,380],[150,360],[230,392],[300,370],[350,400]].map(function (p, i) { return {x: p[0] + "px", y: p[1] + "px", d: (-i * 0.5).toFixed(1) + "s"}; }) : [];
-    if (st.night && !(seasonKey === "noel")) { out.vBirds = []; }
+    out.vFire = out.inVeranda && DARK && (seasonKey === "ete" || seasonKey === "classique") ? [[80,380],[150,360],[230,392],[300,370],[350,400]].map(function (p, i) { return {x: p[0] + "px", y: p[1] + "px", d: (-i * 0.5).toFixed(1) + "s"}; }) : [];
+    if (DARK && !(seasonKey === "noel")) { out.vBirds = []; }
     // santa & reindeer
     var noelV = out.inVeranda && seasonKey === "noel";
     var sp = ((st.tick - st.santaT0) % 300 + 300) % 300;
@@ -1587,9 +1589,9 @@ class Component extends DCLogic {
     out.wardWhoName = NAME[st.wardWho];
     var wkind = MTO === "pluie" ? "rain" : (MTO === "neige" ? "snow" : (MTO === "soleil" ? null : (MTO === "nuageux" ? ({automne: "leaf", printemps: "petal"})[seasonKey] || null : ({hiver: "snow", noel: "snow", automne: "leaf", printemps: "petal"})[seasonKey] || null)));
     var paneList = (st.screen === "salon" && !out.roomLocked && NIGHT_PANES[st.room]) ? NIGHT_PANES[st.room] : [];
-    if (st.room === "salon" && !st.night) paneList = [];
+    if (st.room === "salon" && !DARK) paneList = [];
     out.nightPanes = paneList.map(function (q, i) {
-      var low = q[4] === "bas", st2 = []; if (st.night && !low) for (var j = 0; j < 4; j++) st2.push({x: Math.round(4 + rnd(i * 10 + j + (st.room.length * 7)) * (q[2] - 10)) + "px", y: Math.round(4 + rnd(i * 10 + j + 40 + st.room.length) * (q[3] - 12)) + "px", d: (-(j * 0.45 + i * 0.3)).toFixed(2) + "s", sz: (j % 2 ? 2 : 3) + "px"});
+      var low = q[4] === "bas", st2 = []; if (DARK && !low) for (var j = 0; j < 4; j++) st2.push({x: Math.round(4 + rnd(i * 10 + j + (st.room.length * 7)) * (q[2] - 10)) + "px", y: Math.round(4 + rnd(i * 10 + j + 40 + st.room.length) * (q[3] - 12)) + "px", d: (-(j * 0.45 + i * 0.3)).toFixed(2) + "s", sz: (j % 2 ? 2 : 3) + "px"});
       var parts = [];
       if (wkind && st.room !== "salon") {
         var n = Math.max(3, Math.round(q[2] / (wkind === "rain" ? 5 : 9)));
@@ -1602,8 +1604,8 @@ class Component extends DCLogic {
           parts.push({cls: cfg.cls, x: Math.round(r1 * (q[2] - 4)) + "px", w: cfg.w, h: cfg.h, c: cfg.c, dur: cfg.dur + "s", delay: (-r3 * 6).toFixed(2) + "s"});
         }
       }
-      return {x: q[0] + "px", y: q[1] + "px", w: q[2] + "px", h: q[3] + "px", bg: st.night ? (low ? "rgba(20, 28, 64, 0.72)" : "linear-gradient(#141C40, #24305C)") : "transparent", stars: st2, moon: st.night && !low && i === paneList.filter(function (z) { return z[4] !== "bas"; }).length - 1, parts: parts};
-    }).filter(function (q) { return st.night || q.parts.length; });
+      return {x: q[0] + "px", y: q[1] + "px", w: q[2] + "px", h: q[3] + "px", bg: DARK ? (low ? "rgba(20, 28, 64, 0.72)" : "linear-gradient(#141C40, #24305C)") : "transparent", stars: st2, moon: DARK && !low && i === paneList.filter(function (z) { return z[4] !== "bas"; }).length - 1, parts: parts};
+    }).filter(function (q) { return DARK || q.parts.length; });
     out.openFfC = function () { self.setState({sheet: {type: "ffxiv"}, ffWho: "C"}); };
     out.openFfE = function () { self.setState({sheet: {type: "ffxiv"}, ffWho: "E"}); };
     out.isFf = !!(sh && sh.type === "ffxiv"); if (out.isFf) { out.sheetTitle = "To-do FFXIV"; out.sheetColor = "#2E4A7A"; }

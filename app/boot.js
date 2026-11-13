@@ -54,15 +54,21 @@ const WMO = (c) => c <= 1 ? ["soleil", "ensoleillé"] : c <= 3 ? ["nuageux", c =
   : (c >= 71 && c <= 77) || c === 85 || c === 86 ? ["neige", "neige"] : ["pluie", c >= 95 ? "orage" : c <= 57 ? "bruine" : "pluie"];
 async function meteo(logic) {
   try {
-    const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.7386&longitude=4.9118&current=weather_code,temperature_2m&timezone=Europe%2FParis");
-    const c = (await r.json()).current;
+    const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.7386&longitude=4.9118&current=weather_code,temperature_2m&daily=sunrise,sunset&forecast_days=1&timezone=Europe%2FParis");
+    const js = await r.json(), c = js.current;
+    if (js.daily && js.daily.sunrise) SUN = { rise: hm(js.daily.sunrise[0]), set: hm(js.daily.sunset[0]) };
     const [kind, txt] = WMO(c.weather_code), d = new Date();
+    if (logic.state.dark !== isDark(d)) logic.setState({ dark: isDark(d) });
     logic.setState({ meteoReel: { kind, txt, t: Math.round(c.temperature_2m), h: d.getHours() + "h" + String(d.getMinutes()).padStart(2, "0") } });
   } catch (e) { console.warn("météo indisponible", e); }
 }
 
-// La maison passe en mode nuit de 1 h 30 à 7 h 30.
+// Les chats dorment de 1 h 30 à 7 h 30 ; le paysage passe à la nuit du coucher au lever du soleil à Bron
+// (20 minutes de crépuscule après le coucher), d'après Open-Meteo, sinon de 18 h à 7 h 30.
 export const isNight = (d) => { const m = d.getHours() * 60 + d.getMinutes(); return m >= 90 && m < 450; };
+let SUN = null;
+const hm = (t) => { const x = String(t).slice(11, 16).split(":"); return +x[0] * 60 + +x[1]; };
+export const isDark = (d) => { const m = d.getHours() * 60 + d.getMinutes(), rise = SUN ? SUN.rise : 450, set = SUN ? SUN.set + 20 : 1080; return m < rise || m >= set; };
 
 export function ctxFor(me, L) {
   const now = new Date();
@@ -78,7 +84,7 @@ export async function boot({ me, backend, createSync }) {
   const logic = new L.Component({});
   const initial = JSON.parse(JSON.stringify(logic.state));
   const now = ctx.now;
-  logic.setState({ saison: seasonOf(now), event: null, eventShown: false, night: isNight(now), zoomedOnce: true });
+  logic.setState({ saison: seasonOf(now), event: null, eventShown: false, night: isNight(now), dark: isDark(now), zoomedOnce: true });
   const sync = createSync({ logic, backend, ctx, onStatus: (s, e) => { if (s === "error") console.error("enregistrement", e); window.__syncStatus = s; } });
   await sync.start(remote, perso, initial);
   document.getElementById("porte").style.display = "none";
@@ -94,7 +100,8 @@ export async function boot({ me, backend, createSync }) {
   // Son : les navigateurs (Firefox, Safari) n'autorisent l'audio qu'après un geste ; on le réveille à chaque toucher.
   ["pointerdown", "touchend", "keydown"].forEach((t) => document.addEventListener(t, () => { try { L.SFX.ac(); } catch (e) { /* pas d'audio */ } }, { capture: true, passive: true }));
   meteo(logic); setInterval(() => meteo(logic), 30 * 60e3);
-  setInterval(() => { const n = isNight(new Date()); if (logic.state.night !== n) logic.setState({ night: n }); }, 60000);
+  const ciel = () => { const d = new Date(), n = isNight(d), k = isDark(d); if (logic.state.night !== n || logic.state.dark !== k) logic.setState({ night: n, dark: k }); };
+  setInterval(ciel, 60000);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") sync.flush();
     else if (iso(new Date()) !== ctx.today) location.reload();
