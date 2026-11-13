@@ -543,7 +543,7 @@ class Component extends DCLogic {
       if (self._lvPrev) ORDER.forEach(function (k) { if (st.lvl[k] > self._lvPrev[k]) self._log("chat", CATS[k].name + " passe au niveau " + st.lvl[k], CATS[k].domain || ""); });
       self._lvSum = lvSum; self._lvPrev = Object.assign({}, st.lvl);
       if (st.purr && st.purr !== self._purrSeen) { self._purrSeen = st.purr; SFX.play("ronron", Math.min(4, Math.max(1.5, (st.purr.until - st.tick) / 10))); }
-      if (self._hfq && !st.hf[self._hfq]) { SFX.play("hautfait"); (function (h) { if (h) self._log("hf", h.n, REEL ? NAME[ME] + " · " + h.d : h.d); })(HF.filter(function (h) { return h.id === self._hfq; })[0]); var hfn = HF.filter(function (h) { return h.id === self._hfq; })[0]; var o = Object.assign({}, st.hf); o[self._hfq] = true; upd.hf = o; upd.toast = "Haut fait débloqué : " + hfn.n + " · +20 XP pour le foyer"; upd.toastHead = "Animation rare"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 3800); }
+      if (self._hfq && !st.hf[self._hfq]) { SFX.play("hautfait"); (function (h) { if (h) self._log("hf", h.n, REEL ? NAME[ME] + " · " + h.d : h.d, REEL ? {hfId: h.id, who: ME} : null); })(HF.filter(function (h) { return h.id === self._hfq; })[0]); var hfn = HF.filter(function (h) { return h.id === self._hfq; })[0]; var o = Object.assign({}, st.hf); o[self._hfq] = true; upd.hf = o; upd.toast = "Haut fait débloqué : " + hfn.n + " · +20 XP pour le foyer"; upd.toastHead = "Animation rare"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 3800); }
       self._hfq = null;
       if ((st.event === "annivE" || st.event === "annivC") && st.eventShown && st.tick === st.personStart) { upd.toast = "Joyeux anniversaire " + (st.event === "annivE" ? "Emie" : "Co") + " ! Les chats t'attendent au salon, et un petit mot est sur le pense-bête. XP ×2 aujourd'hui."; upd.toastHead = "Notification du matin"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 4500); }
       if (st.event === "couple" && st.eventShown && st.tick === st.coupleStart) { upd.toast = "Joyeux anniversaire à nous deux ! Toute l'XP du jour compte double."; upd.toastHead = "22 avril · notification du matin"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 4200); }
@@ -854,7 +854,7 @@ class Component extends DCLogic {
     if (REEL) FOYER_LVL = foyerLvlOf(st);
     (function () { var x = foyerXpOf(st), n = 1; while (n < 99 && x >= FOYER_COST(n + 1)) { x -= FOYER_COST(n + 1); n++; }
       if (!REEL) { n = 7; x = 340; } var need = FOYER_COST(n + 1);
-      out.fLvl = n; out.fPct = Math.round(x * 100 / need) + "%"; out.fXpTxt = x + " / " + need + " XP avant le niveau " + (n + 1) + "."; })();
+      out.fLvl = n; out.fPct = Math.round(x * 100 / need) + "%"; out.fXpTxt = x + " / " + need + " XP avant le niveau " + (n + 1) + "."; out.fXpShort = x + " / " + need + " XP avant le niveau " + (n + 1); })();
     out.demoUi = !REEL; out.deOther = OTHER === "E" ? "d'Emie" : "de Co"; out.otherE = OTHER === "E" ? "e" : ""; out.otherName = NAME[OTHER]; out.meName = NAME[ME];
     // éditeur générique : chaque fiche passe par lui pour modifier un élément
     var ED = function (key, label, init, spec, onSave, onDel, delText) {
@@ -1634,7 +1634,7 @@ class Component extends DCLogic {
       return o; }); };
     out.bureauCats = interact(out.bureauCats); out.kitchenCats = interact(out.kitchenCats); out.chambreCats = interact(out.chambreCats); out.sdbCats = interact(out.sdbCats); out.verandaCats = interact(out.verandaCats);
     out.demoAnims = st.demoUnlock;
-    self._log = function (kind, text, sub) { var n = self.state.nextJ; self.setState({journal: [{id: "j" + n, ts: Date.now(), kind: kind, text: text, sub: sub || ""}].concat(self.state.journal).slice(0, 200), nextJ: n + 1}); };
+    self._log = function (kind, text, sub, extra) { var n = self.state.nextJ; self.setState({journal: [Object.assign({id: "j" + n, ts: Date.now(), kind: kind, text: text, sub: sub || ""}, extra || {})].concat(self.state.journal).slice(0, 200), nextJ: n + 1}); };
     if (self._jSeenPending && st.sheet && st.sheet.type === "journal") { self._jSeenPending = false; var seenAt = st.journalSeen; setTimeout(function () { self.setState({journalSeen: Date.now(), journalSeenShown: seenAt}); }, 0); }
     var seenRef = (st.sheet && st.sheet.type === "journal" && st.journalSeenShown != null) ? st.journalSeenShown : st.journalSeen;
     var newCount = st.journal.filter(function (e) { return e.ts > st.journalSeen; }).length;
@@ -1645,7 +1645,9 @@ class Component extends DCLogic {
     var dayOf = function (ts) { var d = new Date(ts), t0 = new Date(); var a = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()), b = Date.UTC(t0.getFullYear(), t0.getMonth(), t0.getDate()); var n = Math.round((b - a) / 864e5); return n === 0 ? "Aujourd'hui" : n === 1 ? "Hier" : d.getDate() + " " + MOIS_L[d.getMonth()]; };
     var groups = [];
     jl.forEach(function (e) { var k = dayOf(e.ts), g = groups[groups.length - 1]; var K = JKINDS[e.kind], d = new Date(e.ts);
-      var item = {kind: K.l, icon: K.icon, bg: K.bg, iconBg: K.ibg, kindFg: K.fg, text: e.text, sub: e.sub, isNew: e.ts > seenRef, time: ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2)};
+      var locked = REEL && e.kind === "hf" && e.hfId && e.who && e.who !== ME && !st.hf[e.hfId];
+      if (locked) K = {l: "Haut fait verrouillé", icon: "🔒", bg: "#ECE6DD", ibg: "#C9C2B5", fg: "#5E5864"};
+      var item = {kind: K.l, icon: K.icon, bg: K.bg, iconBg: K.ibg, kindFg: K.fg, text: locked ? "Haut fait secret" : e.text, sub: locked ? NAME[e.who] + " l'a débloqué · à toi de le trouver !" : e.sub, isNew: e.ts > seenRef, time: ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2)};
       if (!g || g.day !== k) groups.push({day: k, items: [item]}); else g.items.push(item); });
     out.journalDays = groups; out.journalEmpty = !jl.length;
     self._bumpTitle = function (id, w) {
