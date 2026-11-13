@@ -2925,7 +2925,7 @@ var WARD0 = [
 var WCATS = ["Hauts", "Bas", "Chaussures", "Manteaux", "Dessous", "Accessoires"];
 var WPRIO = {urgent: {l:"Urgent", c:"#B23A48"}, bientot: {l:"Bientôt", c:"#D9762B"}, unjour: {l:"Un jour", c:"#4A7034"}};
 var SIZES0 = {C: {haut:"", bas:"", pointure:""}, E: {haut:"", bas:"", pointure:""}};
-var NIGHT_PANES = {cuisine: [[108,276,48,80],[168,276,48,80]], chambre: [[156,126,60,108],[228,126,60,108]], sdb: [[210,192,36,54],[258,192,36,54]], salon: [[24,132,96,64]]};
+var NIGHT_PANES = {cuisine: [[108,276,48,80],[168,276,48,80]], chambre: [[156,126,60,108],[228,126,60,108]], sdb: [[210,192,36,54],[258,192,36,54]], salon: [[24,132,42,48],[78,132,42,48],[24,192,42,54,"bas"],[78,192,42,54,"bas"]]};
 var FF0 = {
   C: [{id:"f1", sec:"jour", t:"Roulette de donjons (expert)", d:false}, {id:"f2", sec:"jour", t:"Mini Cactpot ×3 au Gold Saucer", d:true}, {id:"f3", sec:"semaine", t:"Contrats de chasse élite", d:false}, {id:"f4", sec:"semaine", t:"Carnet d'aventurier (Wondrous Tails)", d:false}, {id:"f5", sec:"projet", t:"Préparer la prochaine soirée RP", d:false, link:"https://fr.finalfantasyxiv.com/lodestone/"}, {id:"f10", sec:"jour", t:"Renvoyer les sous-marins", d:false}],
   E: [{id:"f6", sec:"jour", t:"Roulette de donjons (niveau)", d:false}, {id:"f11", sec:"jour", t:"Mini Cactpot ×3 au Gold Saucer", d:false}, {id:"f7", sec:"jour", t:"Quêtes de tribu (×3)", d:false}, {id:"f8", sec:"semaine", t:"Butin hebdo du raid", d:false}, {id:"f9", sec:"projet", t:"Finir le craft du mobilier de maison", d:false, link:"https://ffxivteamcraft.com/"}]
@@ -4067,7 +4067,7 @@ class Component extends DCLogic {
     var paneList = (st.screen === "salon" && !out.roomLocked && NIGHT_PANES[st.room]) ? NIGHT_PANES[st.room] : [];
     if (st.room === "salon" && !st.night) paneList = [];
     out.nightPanes = paneList.map(function (q, i) {
-      var st2 = []; if (st.night) for (var j = 0; j < 4; j++) st2.push({x: Math.round(4 + rnd(i * 10 + j + (st.room.length * 7)) * (q[2] - 10)) + "px", y: Math.round(4 + rnd(i * 10 + j + 40 + st.room.length) * (q[3] - 12)) + "px", d: (-(j * 0.45 + i * 0.3)).toFixed(2) + "s", sz: (j % 2 ? 2 : 3) + "px"});
+      var low = q[4] === "bas", st2 = []; if (st.night && !low) for (var j = 0; j < 4; j++) st2.push({x: Math.round(4 + rnd(i * 10 + j + (st.room.length * 7)) * (q[2] - 10)) + "px", y: Math.round(4 + rnd(i * 10 + j + 40 + st.room.length) * (q[3] - 12)) + "px", d: (-(j * 0.45 + i * 0.3)).toFixed(2) + "s", sz: (j % 2 ? 2 : 3) + "px"});
       var parts = [];
       if (wkind && st.room !== "salon") {
         var n = Math.max(3, Math.round(q[2] / (wkind === "rain" ? 5 : 9)));
@@ -4080,7 +4080,7 @@ class Component extends DCLogic {
           parts.push({cls: cfg.cls, x: Math.round(r1 * (q[2] - 4)) + "px", w: cfg.w, h: cfg.h, c: cfg.c, dur: cfg.dur + "s", delay: (-r3 * 6).toFixed(2) + "s"});
         }
       }
-      return {x: q[0] + "px", y: q[1] + "px", w: q[2] + "px", h: q[3] + "px", bg: st.night ? "linear-gradient(#141C40, #24305C)" : "transparent", stars: st2, moon: st.night && i === paneList.length - 1, parts: parts};
+      return {x: q[0] + "px", y: q[1] + "px", w: q[2] + "px", h: q[3] + "px", bg: st.night ? (low ? "rgba(20, 28, 64, 0.72)" : "linear-gradient(#141C40, #24305C)") : "transparent", stars: st2, moon: st.night && !low && i === paneList.filter(function (z) { return z[4] !== "bas"; }).length - 1, parts: parts};
     }).filter(function (q) { return st.night || q.parts.length; });
     out.openFfC = function () { self.setState({sheet: {type: "ffxiv"}, ffWho: "C"}); };
     out.openFfE = function () { self.setState({sheet: {type: "ffxiv"}, ffWho: "E"}); };
