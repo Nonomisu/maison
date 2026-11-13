@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js";
+import { DCLogic, blobUrl } from "./runtime.js?v=741ca1bd";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -122,7 +122,6 @@ var NOTES0 = [
 var TASKS0 = [
   {id:"a", t:"Passer l'aspirateur", who:"C", when:"today", rec:"chaque semaine", pts:5},
   {id:"b", t:"Faire les litières", who:"2", when:"today", rec:"tous les 2 jours", pts:2},
-  {id:"c", t:"Arroser la plante", who:"C", when:"today", rec:"chaque semaine", pts:5, done:true},
   {id:"d", t:"Sortir les poubelles", who:"C", when:"week", rec:"mardi et vendredi", pts:5},
   {id:"e", t:"Changer les draps", who:"2", when:"week", rec:"toutes les 2 semaines", pts:5},
   {id:"f", t:"Nettoyer la salle de bain", who:"E", when:"week", rec:"chaque semaine", pts:5},
@@ -132,7 +131,7 @@ var TASKS0 = [
 ];
 var QUICK = [
   {t:"Faire les litières", rec:"tous les 2 jours", pts:2}, {t:"Vaisselle", rec:"chaque jour", pts:2}, {t:"Lessive", rec:"2 fois par semaine", pts:5},
-  {t:"Aspirateur", rec:"chaque semaine", pts:5}, {t:"Poubelles", rec:"mardi et vendredi", pts:5}, {t:"Serpillière", rec:"chaque semaine", pts:5}, {t:"Plantes", rec:"chaque semaine", pts:5}
+  {t:"Aspirateur", rec:"chaque semaine", pts:5}, {t:"Poubelles", rec:"mardi et vendredi", pts:5}, {t:"Serpillière", rec:"chaque semaine", pts:5}
 ];
 var WHEN = [{id:"today", name:"Aujourd'hui"}, {id:"week", name:"Cette semaine"}, {id:"later", name:"Plus tard"}];
 var SEASONAL = [
@@ -956,22 +955,30 @@ class Component extends DCLogic {
         heartFill: n.liked ? "currentColor" : "none", likeLabel: n.liked ? "Retirer le cœur" : "Mettre un cœur",
         like: function () { self.setState({notes: self.state.notes.map(function (x) { return x.id === n.id ? Object.assign({}, x, {liked: !x.liked}) : x; })}); if (!n.liked && n.by !== NAME[ME] && self.state.notifOn.coeur && self._toast) self._toast(NAME[ME] + " a mis un cœur à ton petit mot"); }});
     });
+    // qui a coché la tâche (ce jour-là) : C, E ou C&E
+    var byOf = function (t) { return t.doneBy ? t.doneBy : (t.done && (t.who === "C" || t.who === "E") ? [t.who] : []); };
+    var byLabel = function (b) { return b.length > 1 ? "C&E" : b.length ? b[0] : ""; };
+    var byBg = function (b) { return b.length > 1 ? WHO["2"].bg : b.length ? WHO[b[0]].bg : "transparent"; };
+    var tapTask = function (t) {
+      var by = byOf(t).slice(), mine = by.indexOf(ME) >= 0, gain = !mine;
+      if (mine) by.splice(by.indexOf(ME), 1); else by.push(ME);
+      by = ["C", "E"].filter(function (k) { return by.indexOf(k) >= 0; });
+      var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl), anim = Object.assign({}, self.state.anim), pts = t.pts || 5;
+      if (gain) { xp.nahla += pts; while (xp.nahla >= 100) { xp.nahla -= 100; lvl.nahla += 1; } anim.nahla = "ronron"; self._textTitles("task", t.t, ME); SFX.play("ding"); }
+      self.setState({xp: xp, lvl: lvl, anim: anim, sessionDone: self.state.sessionDone + (gain ? 1 : 0),
+        tasks: self.state.tasks.map(function (x) { if (x.id !== t.id) return x; var y = Object.assign({}, x, {done: by.length > 0, doneBy: by}); delete y.who; if (!by.length) delete y.doneBy; return y; })});
+    };
     out.tasks = st.tasks.map(function (t) {
-      return {t: t.t, done: !!t.done, pressed: t.done ? "true" : "false", seasonal: !!t.seasonal,
+      return {t: t.t, done: !!t.done, hasWho: byOf(t).length > 0, pressed: t.done ? "true" : "false", seasonal: !!t.seasonal,
         bg: t.done ? "#F1ECE4" : "#FFFFFF", box: t.done ? "#3E6FB0" : "#FFFFFF", deco: t.done ? "line-through" : "none", fg: t.done ? "#6B6470" : "#2B2A30",
-        who: t.who, whoBg: WHO[t.who].bg,
-        toggle: function () {
-          var wasDone = t.done;
-          var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl), anim = Object.assign({}, self.state.anim);
-          var pts = t.pts || 5; if (!wasDone) { xp.nahla += pts; if (xp.nahla >= 100) { xp.nahla -= 100; lvl.nahla += 1; } anim.nahla = "ronron"; }
-          if (!t.done) { self._taskTitles(t); SFX.play("ding"); } self.setState({xp: xp, lvl: lvl, anim: anim, tasks: self.state.tasks.map(function (x) { return x.id === t.id ? Object.assign({}, x, {done: !x.done}) : x; })});
-        }};
+        who: byLabel(byOf(t)), whoBg: byBg(byOf(t)),
+        toggle: function () { tapTask(t); }};
     });
     out.seasonal = SEASONAL.map(function (se) {
       var added = st.tasks.some(function (t) { return t.id === se.id; });
       return {t: se.t, why: se.why, label: added ? "Ajoutée" : "+ Ajouter", bg: added ? "#E4EEDC" : "#D9A441", fg: added ? "#36532A" : "#2B2A30",
         add: function () { if (self.state.tasks.some(function (t) { return t.id === se.id; })) return;
-          self.setState({tasks: self.state.tasks.concat([{id: se.id, t: se.t, who: ME, done: false, seasonal: true, when: "week", rec: "une fois cette saison", pts: 10}])}); }};
+          self.setState({tasks: self.state.tasks.concat([{id: se.id, t: se.t, done: false, seasonal: true, when: "week", rec: "une fois cette saison", pts: 10}])}); }};
     });
     out.storeMode = st.storeMode; out.notStore = !st.storeMode; out.pStore = st.storeMode ? "true" : "false";
     out.storeBtnBg = st.storeMode ? "#F2D35B" : "#F7F3EE";
@@ -1856,7 +1863,7 @@ class Component extends DCLogic {
     out.onTaskDraft = function (e) { self.setState({taskDraft: e.target.value}); };
     var addTask = function () {
       var t = (self.state.taskDraft || "").trim(); if (!t) return;
-      var nt = {id: "n" + self.state.nextTask, t: t.charAt(0).toUpperCase() + t.slice(1), who: self.state.draftWho, when: "today", rec: "", pts: 2};
+      var nt = {id: "n" + self.state.nextTask, t: t.charAt(0).toUpperCase() + t.slice(1), when: "today", rec: "", pts: 2};
       self.setState({tasks: self.state.tasks.concat([nt]), nextTask: self.state.nextTask + 1, taskDraft: ""});
     };
     out.addTask = addTask;
@@ -1871,7 +1878,7 @@ class Component extends DCLogic {
         bg: on ? "#DCE6F4" : "#FFFFFF", fg: on ? "#23324A" : "#2B2A30",
         add: function () {
           if (self.state.tasks.some(function (t) { return t.t === q.t && !t.done; })) return;
-          self.setState({tasks: self.state.tasks.concat([{id: "n" + self.state.nextTask, t: q.t, who: self.state.draftWho, when: "today", rec: q.rec, pts: q.pts}]), nextTask: self.state.nextTask + 1});
+          self.setState({tasks: self.state.tasks.concat([{id: "n" + self.state.nextTask, t: q.t, when: "today", rec: q.rec, pts: q.pts}]), nextTask: self.state.nextTask + 1});
         }};
     });
     out.whoFilters = [{id:"all", label:"Tout"}, {id:ME, label:"Moi (" + NAME[ME] + ")"}, {id:OTHER, label:NAME[OTHER]}].map(function (f) {
@@ -1883,32 +1890,25 @@ class Component extends DCLogic {
       var list = st.tasks.filter(function (t) {
         if (t.when !== w.id) return false;
         if (inSess && (t.done || w.id === "later")) return false;
-        if (st.whoFilter !== "all" && !(t.who === st.whoFilter || t.who === "2")) return false;
         return true;
       });
       list = list.filter(function (t) { return !t.done; }).concat(list.filter(function (t) { return t.done; }));
       var left = list.filter(function (t) { return !t.done; }).length;
       return {name: w.name, count: left ? left + " à faire" : "tout est fait",
         items: list.map(function (t) {
-          var w2 = WHO[t.who];
-          return {t: t.t, done: !!t.done, pressed: t.done ? "true" : "false", seasonal: !!t.seasonal,
+          var by = byOf(t);
+          return {t: t.t, done: !!t.done, hasWho: by.length > 0, pressed: t.done ? "true" : "false", seasonal: !!t.seasonal,
             editOn: st.editCtx === "taches", notEdit: st.editCtx !== "taches", delLabel: "Supprimer " + t.t,
             remove: function () { self.setState({tasks: self.state.tasks.filter(function (x) { return x.id !== t.id; })}); },
             meta: (t.done && t.rec ? "Fait · revient " + t.rec : (t.rec ? t.rec + " · " : "") + "+" + (t.pts || 5) + " XP"),
             bg: t.done ? "#F1ECE4" : "#FFFFFF", box: t.done ? "#3E6FB0" : "#FFFFFF", deco: t.done ? "line-through" : "none", fg: t.done ? "#6B6470" : "#2B2A30",
             h: inSess ? "66px" : "48px", fs: inSess ? "20px" : "15px", boxSize: inSess ? "30px" : "20px",
-            who: whoLabel(t.who), whoBg: w2.bg,
-            ed: ED("task:" + t.id, t.t, function () { return {t: t.t, who: t.who, when: t.when, rec: t.rec || "", pts: t.pts || 5}; },
+            who: byLabel(by), whoBg: byBg(by),
+            ed: ED("task:" + t.id, t.t, function () { return {t: t.t, when: t.when, rec: t.rec || "", pts: t.pts || 5}; },
               {f: [["t", "Tâche", "text"], ["rec", "Répétition", "text", "ex. chaque semaine, tous les 15 jours (vide = une fois)"], ["pts", "XP", "number"]],
-               g: [["who", "Pour qui", WHO_OPTS2], ["when", "Quand", WHEN.map(function (w3) { return [w3.id, w3.name]; })]]},
-              function (d) { if (!String(d.t || "").trim()) return false; self.setState({tasks: self.state.tasks.map(function (x) { return x.id === t.id ? Object.assign({}, x, {t: cap(d.t), who: d.who, when: d.when, rec: String(d.rec || "").trim(), pts: Math.max(1, Math.min(30, Math.round(num(d.pts, 5))))}) : x; })}); }),
-            toggle: function () {
-              var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl), anim = Object.assign({}, self.state.anim);
-              var pts = t.pts || 5;
-              if (!t.done) { xp.nahla += pts; if (xp.nahla >= 100) { xp.nahla -= 100; lvl.nahla += 1; } anim.nahla = "ronron"; }
-              if (!t.done) { self._taskTitles(t); SFX.play("ding"); } self.setState({xp: xp, lvl: lvl, anim: anim, sessionDone: self.state.sessionDone + (t.done ? 0 : 1),
-                tasks: self.state.tasks.map(function (x) { return x.id === t.id ? Object.assign({}, x, {done: !x.done}) : x; })});
-            }};
+               g: [["when", "Quand", WHEN.map(function (w3) { return [w3.id, w3.name]; })]]},
+              function (d) { if (!String(d.t || "").trim()) return false; self.setState({tasks: self.state.tasks.map(function (x) { return x.id === t.id ? Object.assign({}, x, {t: cap(d.t), when: d.when, rec: String(d.rec || "").trim(), pts: Math.max(1, Math.min(30, Math.round(num(d.pts, 5))))}) : x; })}); }),
+            toggle: function () { tapTask(t); }};
         })};
     }).filter(function (g) { return g.items.length > 0; });
     out.doneTaskCount = st.tasks.filter(function (t) { return t.done; }).length;

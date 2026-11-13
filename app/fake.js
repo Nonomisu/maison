@@ -1,6 +1,6 @@
 // Faux serveur pour les tests : les onglets d'un même navigateur partagent les données (localStorage + BroadcastChannel).
-import { boot as bootApp } from "./boot.js";
-import { createSync } from "./store.js";
+import { boot as bootApp } from "./boot.js?v=741ca1bd";
+import { createSync } from "./store.js?v=741ca1bd";
 
 export function boot(me) {
   const ch = new BroadcastChannel("maison-essai");

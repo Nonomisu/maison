@@ -102,7 +102,7 @@ export function roll(st, today, now = new Date()) {
       if (!x.done) return x;
       const doneOn = x.doneOn || today, due = nextDue(x.rec, doneOn);
       if (!x.doneOn) { ch = true; return { ...x, doneOn }; }
-      if (due && due <= today) { ch = true; const y = { ...x, done: false }; delete y.doneOn; return y; }
+      if (due && due <= today) { ch = true; const y = { ...x, done: false }; delete y.doneOn; delete y.doneBy; return y; }
       return x;
     });
     if (ch) out.tasks = t;
@@ -161,7 +161,7 @@ export function normalize(key, val, today) {
     let ch = false;
     const v = val.map((x) => {
       if (x.done && !x.doneOn) { ch = true; return { ...x, doneOn: today }; }
-      if (!x.done && x.doneOn) { ch = true; const y = { ...x }; delete y.doneOn; return y; }
+      if (!x.done && (x.doneOn || x.doneBy)) { ch = true; const y = { ...x }; delete y.doneOn; delete y.doneBy; return y; }
       return x;
     });
     return ch ? v : null;
@@ -251,6 +251,10 @@ export function createSync({ logic, backend, ctx, onStatus = () => {} }) {
     // activités des soirées : l'ancienne liste de la maquette est remplacée par la vôtre
     if (Array.isArray(patch.soirActs) && ["jdr", "resto", "balade", "lecture"].every((id) => patch.soirActs.some((a) => a.id === id))) {
       patch.soirActs = clone(initialState.soirActs); base.soirActs = null; missing.push("soirActs");
+    }
+    // « Arroser la plante » retirée du ménage
+    if (Array.isArray(patch.tasks) && patch.tasks.some((t) => t.id === "c" && t.t === "Arroser la plante")) {
+      patch.tasks = patch.tasks.filter((t) => !(t.id === "c" && t.t === "Arroser la plante")); missing.push("tasks");
     }
     // passage des jours
     const merged = { ...initialState, ...patch };

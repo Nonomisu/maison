@@ -149,3 +149,23 @@ for i in sorted(used):
         shutil.copy(os.path.join(srcdir, manifest[i]), dst)
 open(os.path.join(ROOT, 'app', 'blobs.js'), 'w').write('// Généré par outils/build.py\nexport const BLOBS = ' + json.dumps(blobs, indent=0) + ';\n')
 print('gabarit', len(body), 'car. ·', len(blobs), 'visuels')
+
+# --- numéro de version dans les imports : le navigateur recharge les fichiers modifiés
+#     (GitHub Pages les garde sinon 10 minutes en cache)
+import hashlib, glob
+APP = os.path.join(ROOT, 'app')
+IMP = re.compile(r'((?:from|import)\s*\(?\s*")(\./[\w.-]+\.js)(?:\?v=\w+)?(")')
+def strip(t): return IMP.sub(lambda m: m.group(1) + m.group(2) + m.group(3), t)
+files = sorted(glob.glob(os.path.join(APP, '*.js')))
+h = hashlib.sha1()
+for f in files: h.update(strip(open(f, encoding='utf-8').read()).encode())
+for f in [os.path.join(ROOT, 'index.html')]: h.update(re.sub(r'main\.js\?v=\w+', 'main.js', open(f, encoding='utf-8').read()).encode())
+V = h.hexdigest()[:8]
+for f in files:
+    t = open(f, encoding='utf-8').read()
+    n = IMP.sub(lambda m: m.group(1) + m.group(2) + '?v=' + V + m.group(3), t)
+    if n != t: open(f, 'w', encoding='utf-8').write(n)
+ix = os.path.join(ROOT, 'index.html')
+t = open(ix, encoding='utf-8').read()
+open(ix, 'w', encoding='utf-8').write(re.sub(r'app/main\.js(\?v=\w+)?', 'app/main.js?v=' + V, t))
+print('version', V)
