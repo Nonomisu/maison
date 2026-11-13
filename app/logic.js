@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=741ca1bd";
+import { DCLogic, blobUrl } from "./runtime.js?v=f49239ff";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -1601,9 +1601,11 @@ class Component extends DCLogic {
     var paneList = (st.screen === "salon" && !out.roomLocked && NIGHT_PANES[st.room]) ? NIGHT_PANES[st.room] : [];
     if (st.room === "salon" && !DARK) paneList = [];
     out.nightPanes = paneList.map(function (q, i) {
-      var low = q[4] === "bas", st2 = []; if (DARK && !low) for (var j = 0; j < 4; j++) st2.push({x: Math.round(4 + rnd(i * 10 + j + (st.room.length * 7)) * (q[2] - 10)) + "px", y: Math.round(4 + rnd(i * 10 + j + 40 + st.room.length) * (q[3] - 12)) + "px", d: (-(j * 0.45 + i * 0.3)).toFixed(2) + "s", sz: (j % 2 ? 2 : 3) + "px"});
+      var low = q[4] === "bas", st2 = []; if (DARK && !low) for (var j = 0; j < 4; j++) st2.push({x: Math.round(4 + rnd(i * 10 + j + (st.room.length * 7)) * (q[2] - 10)) + "px", y: Math.round(4 + rnd(i * 10 + j + 40 + st.room.length) * (q[3] - 12)) + "px", d: (-(j * 0.45 + i * 0.3)).toFixed(2) + "s", sz: (j % 2 ? 2 : 3) + "px", c: "#FFF3B0", cls: "twinkle"});
+      // bas des fenêtres la nuit : paysage sombre avec l'horizon et quelques fenêtres éclairées au loin
+      if (DARK && low) for (var j2 = 0; j2 < 2; j2++) st2.push({x: Math.round(3 + rnd(i * 17 + j2 + 500 + st.room.length) * (q[2] - 8)) + "px", y: Math.round(q[3] * 0.42 + rnd(i * 17 + j2 + 560) * q[3] * 0.4) + "px", d: "0s", sz: "3px", c: "#F2C14E", cls: ""});
       var parts = [];
-      if (wkind && st.room !== "salon") {
+      if (wkind && (st.room !== "salon" || DARK)) {
         var n = Math.max(3, Math.round(q[2] / (wkind === "rain" ? 5 : 9)));
         for (var k2 = 0; k2 < n; k2++) {
           var r1 = rnd(i * 31 + k2 + 300), r2 = rnd(i * 31 + k2 + 350), r3 = rnd(i * 31 + k2 + 390);
@@ -1614,7 +1616,7 @@ class Component extends DCLogic {
           parts.push({cls: cfg.cls, x: Math.round(r1 * (q[2] - 4)) + "px", w: cfg.w, h: cfg.h, c: cfg.c, dur: cfg.dur + "s", delay: (-r3 * 6).toFixed(2) + "s"});
         }
       }
-      return {x: q[0] + "px", y: q[1] + "px", w: q[2] + "px", h: q[3] + "px", bg: DARK ? (low ? "rgba(20, 28, 64, 0.72)" : "linear-gradient(#141C40, #24305C)") : "transparent", stars: st2, moon: DARK && !low && i === paneList.filter(function (z) { return z[4] !== "bas"; }).length - 1, parts: parts};
+      return {x: q[0] + "px", y: q[1] + "px", w: q[2] + "px", h: q[3] + "px", bg: DARK ? (low ? "linear-gradient(#24305C 0%, #2A3664 30%, #1B2242 30%, #121730 100%)" : "linear-gradient(#141C40, #24305C)") : "transparent", stars: st2, moon: DARK && !low && i === paneList.filter(function (z) { return z[4] !== "bas"; }).length - 1, parts: parts};
     }).filter(function (q) { return DARK || q.parts.length; });
     out.openFfC = function () { self.setState({sheet: {type: "ffxiv"}, ffWho: "C"}); };
     out.openFfE = function () { self.setState({sheet: {type: "ffxiv"}, ffWho: "E"}); };
