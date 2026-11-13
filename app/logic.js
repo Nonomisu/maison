@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=8bccdc40";
+import { DCLogic, blobUrl } from "./runtime.js?v=69d6e01e";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -1792,13 +1792,15 @@ class Component extends DCLogic {
       })};
     }).filter(function (g) { return g.items.length; });
     out.cName = st.cName; out.cPhone = st.cPhone; out.cMail = st.cMail;
+    var newCat = st.cNewCat || (st.contactCat === "all" ? "divers" : st.contactCat);
+    out.cNewCats = CCATS.map(function (c) { var on = newCat === c.id; return {label: c.l, pressed: on ? "true" : "false", bg: on ? c.c : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pick: function () { self.setState({cNewCat: c.id}); }}; });
     out.onCMail = function (e) { self.setState({cMail: e.target.value}); };
     out.onCName = function (e) { self.setState({cName: e.target.value}); };
     out.onCPhone = function (e) { self.setState({cPhone: e.target.value}); };
     out.addContact = function () {
       var n = (self.state.cName || "").trim(), p = (self.state.cPhone || "").trim(); if (!n) return;
-      var cat = self.state.contactCat === "all" ? "divers" : self.state.contactCat;
-      self.setState({contacts: self.state.contacts.concat([{id: "k" + self.state.nextContact, cat: cat, n: n, r: "Ajouté par Co", p: p, e: (self.state.cMail || "").trim()}]), nextContact: self.state.nextContact + 1, cName: "", cPhone: "", cMail: ""});
+      var cat = self.state.cNewCat || (self.state.contactCat === "all" ? "divers" : self.state.contactCat);
+      self.setState({contacts: self.state.contacts.concat([{id: "k" + self.state.nextContact, cat: cat, n: n, r: "Ajouté par " + NAME[ME], p: p, e: (self.state.cMail || "").trim()}]), nextContact: self.state.nextContact + 1, cName: "", cPhone: "", cMail: "", contactCat: self.state.contactCat === "all" || self.state.contactCat === cat ? self.state.contactCat : cat});
     };
     out.showRadio = st.radioOn;
     out.optFurn = [

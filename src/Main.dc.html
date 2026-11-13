@@ -2596,7 +2596,10 @@ Prendre une recette en photo
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
 </button>
 </div>
-<span style="font-size: 11px; color: #5E5864">Les contacts des chats sont les vrais ; les autres sont fictifs pour la maquette. Le nouveau contact va dans la catégorie choisie (ou « Divers »).</span>
+<div role="group" aria-label="Catégorie du nouveau contact" style="display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px">
+<sc-for list="{{ cNewCats }}" as="ncc" hint-placeholder-count="6"><button type="button" onClick="{{ ncc.pick }}" aria-pressed="{{ ncc.pressed }}" style="flex-shrink: 0; min-height: 34px; padding: 0 10px; background: {{ ncc.bg }}; color: {{ ncc.fg }}; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 12px; font-weight: 600">{{ ncc.label }}</button></sc-for>
+</div>
+<sc-if value="{{ demoUi }}" hint-placeholder-val="{{ true }}"><span style="font-size: 11px; color: #5E5864">Les contacts des chats sont les vrais ; les autres sont fictifs pour la maquette.</span></sc-if>
 </div>
 
 </div>
@@ -4395,13 +4398,15 @@ class Component extends DCLogic {
       })};
     }).filter(function (g) { return g.items.length; });
     out.cName = st.cName; out.cPhone = st.cPhone; out.cMail = st.cMail;
+    var newCat = st.cNewCat || (st.contactCat === "all" ? "divers" : st.contactCat);
+    out.cNewCats = CCATS.map(function (c) { var on = newCat === c.id; return {label: c.l, pressed: on ? "true" : "false", bg: on ? c.c : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pick: function () { self.setState({cNewCat: c.id}); }}; });
     out.onCMail = function (e) { self.setState({cMail: e.target.value}); };
     out.onCName = function (e) { self.setState({cName: e.target.value}); };
     out.onCPhone = function (e) { self.setState({cPhone: e.target.value}); };
     out.addContact = function () {
       var n = (self.state.cName || "").trim(), p = (self.state.cPhone || "").trim(); if (!n) return;
-      var cat = self.state.contactCat === "all" ? "divers" : self.state.contactCat;
-      self.setState({contacts: self.state.contacts.concat([{id: "k" + self.state.nextContact, cat: cat, n: n, r: "Ajouté par Co", p: p, e: (self.state.cMail || "").trim()}]), nextContact: self.state.nextContact + 1, cName: "", cPhone: "", cMail: ""});
+      var cat = self.state.cNewCat || (self.state.contactCat === "all" ? "divers" : self.state.contactCat);
+      self.setState({contacts: self.state.contacts.concat([{id: "k" + self.state.nextContact, cat: cat, n: n, r: "Ajouté par " + NAME[ME], p: p, e: (self.state.cMail || "").trim()}]), nextContact: self.state.nextContact + 1, cName: "", cPhone: "", cMail: "", contactCat: self.state.contactCat === "all" || self.state.contactCat === cat ? self.state.contactCat : cat});
     };
     out.showRadio = st.radioOn;
     out.optFurn = [

@@ -1,6 +1,6 @@
 // Démarrage commun (vrai serveur ou faux serveur de test) : identité, chargement, fêtes du jour.
-import { run } from "./scene.js?v=8bccdc40";
-import { iso } from "./store.js?v=8bccdc40";
+import { run } from "./scene.js?v=69d6e01e";
+import { iso } from "./store.js?v=69d6e01e";
 
 export function porte(msg, { button = true, err = false, logout = null } = {}) {
   const el = document.getElementById("porte");
@@ -84,7 +84,7 @@ export function ctxFor(me, L) {
 export async function boot({ me, backend, createSync }) {
   window.MAISON_REEL = true;
   window.MAISON_MOI = me;
-  const L = await import("./logic.js?v=8bccdc40");
+  const L = await import("./logic.js?v=69d6e01e");
   const ctx = ctxFor(me, L);
   const [remote, perso] = await Promise.all([backend.loadAll(), backend.loadPerso()]);
   const logic = new L.Component({});
