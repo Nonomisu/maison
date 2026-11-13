@@ -1516,6 +1516,21 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </button>
 <sc-if value="{{ acc.saison.isOpen }}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 10px; padding: 2px 2px 8px">
+<sc-if value="{{ demoReel }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 10px; background: #FFFFFF; border: 2px solid #2B2A30">
+<span style="font-size: 14px; font-weight: 600">{{ saisonNow }}</span>
+<span style="font-size: 12px; color: #5E5864">La saison et les fêtes suivent le calendrier, pour vous deux.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; font-size: 13px">
+<span><b>Printemps</b> à partir du 20 mars · <b>Été</b> le 21 juin · <b>Automne</b> le 22 septembre · <b>Hiver</b> le 7 janvier</span>
+<span><b>Noël</b> du 15 décembre au 6 janvier</span>
+<span><b>Halloween</b> du 20 au 31 octobre</span>
+<span><b>Saint-Valentin</b> du 10 au 14 février</span>
+<span><b>Pâques</b> du vendredi au lundi de Pâques</span>
+<span><b>Anniversaires</b> (chats, Emie, Co) et <b>22 avril</b> : le jour même</span>
+</div>
+</sc-if>
+<sc-if value="{{ demoUi }}" hint-placeholder-val="{{ true }}">
 <h3 style="margin: 0; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700">Saison</h3>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
 <sc-for list="{{ seasonBtns }}" as="sb" hint-placeholder-count="4">
@@ -1535,6 +1550,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </sc-for>
 </div>
 </sc-if>
+</sc-if>
 <sc-if value="{{ hasEvent }}" hint-placeholder-val="{{ true }}">
 <button type="button" role="switch" aria-checked="{{ eventShownP }}" onClick="{{ toggleEvent }}" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 52px; padding: 6px 10px; background: #FFFFFF; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; color: #2B2A30; text-align: left">
 <span style="font-size: 14px; font-weight: 600">Décor de l'événement</span>
@@ -1543,7 +1559,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </span>
 </button>
 </sc-if>
-<span style="font-size: 12px; color: #5E5864">Dans l'appli, saisons et événements suivent la date. Ici, tu peux tester.</span>
+<sc-if value="{{ demoUi }}" hint-placeholder-val="{{ true }}"><span style="font-size: 12px; color: #5E5864">Dans l'appli, saisons et événements suivent la date. Ici, tu peux tester.</span></sc-if>
 
 </div>
 </sc-if>
@@ -1638,7 +1654,11 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </div>
 </div>
 </sc-for>
-<h3 style="margin: 0; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700">Grandes dates</h3>
+<button type="button" onClick="{{ toggleGrandes }}" aria-expanded="{{ grExp }}" style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 10px; background: #EDE2D3; border: 2px solid #2B2A30; cursor: pointer; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700; color: #2B2A30">
+<span>Grandes dates</span>
+<span aria-hidden="true" style="font-size: 16px">{{ grChev }}</span>
+</button>
+<sc-if value="{{ grOpen }}" hint-placeholder-val="{{ false }}">
 <sc-for list="{{ grandes }}" as="gd" hint-placeholder-count="6">
 <div style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #FFFFFF; border: 2px solid #2B2A30">
 <span style="width: 8px; height: 28px; flex-shrink: 0; background: {{ gd.c }}"></span>
@@ -1646,7 +1666,8 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <span style="font-size: 13px">{{ gd.n }}</span>
 </div>
 </sc-for>
-<div style="padding: 10px; background: #FFFFFF; border: 2px solid #2B2A30; font-size: 13px"><span style="font-weight: 600">À venir :</span> vaccins des trois chats le ven. 20 nov., puis coiffeur fin novembre.</div>
+</sc-if>
+<sc-if value="{{ demoUi }}" hint-placeholder-val="{{ true }}"><div style="padding: 10px; background: #FFFFFF; border: 2px solid #2B2A30; font-size: 13px"><span style="font-weight: 600">À venir :</span> vaccins des trois chats le ven. 20 nov., puis coiffeur fin novembre.</div></sc-if>
 </div>
 </sc-if>
 
@@ -3004,7 +3025,7 @@ var HF_PROG = HF_PROG0.map(function (h) { return REEL ? Object.assign({}, h, {v:
 var WEATHER = [{id:"auto", l:"Auto"}, {id:"soleil", l:"Soleil"}, {id:"pluie", l:"Pluie"}, {id:"neige", l:"Neige"}];
 var EVO = {"couple": {"bureau": "/_blob/d9b9a5157ed68c6b5e0834d401d0f680", "chambre": "/_blob/b077bdf9426653c7fda91d809196e652", "cuisine": "/_blob/95d198f1f79811a041830970adbfc8c1", "salon": "/_blob/63df38e934c9d29c4d8ae7fdbab9f464", "sdb": "/_blob/efa5c815045e69e7da44d9dd02798537", "veranda": "/_blob/9a2cf8b2943fe850c7adafaf2bd1eeff"}, "halloween": {"bureau": "/_blob/475405d8642969266fd49e87443ff564", "chambre": "/_blob/0d7d4ca7e578be9a60efae44f4e5c487", "cuisine": "/_blob/7e3f07df426919d5998d49f975bdb842", "salon": "/_blob/69363d955931f44a939dbea062ee93ad", "sdb": "/_blob/79f34e118c3fd458575638d71157f0f4", "veranda": "/_blob/ceed5a336cbfbf2bc0e13e68d3fbd984"}, "paques": {"bureau": "/_blob/0bc8fba4c85904830d5f41061e14ee8d", "chambre": "/_blob/986b6070c371d9509bea8ca1a51d23d7", "cuisine": "/_blob/f995dab0bb702a107bea4f1615e3e148", "salon": "/_blob/711526bd4b7f64e469f0322dd319fd37", "sdb": "/_blob/8d67d1ec199aa8ed0a310d26cfd8dd44", "veranda": "/_blob/8841211abe3e8dadfaea5980ed2e6e54"}, "valentin": {"bureau": "/_blob/c985ee672e75a1d48f2ae2e1a10cb190", "chambre": "/_blob/236dbd02c7d3365b19f1dad7a4f95f68", "cuisine": "/_blob/0b37e5897647caa49ce813f47a2ff697", "salon": "/_blob/6d53f8712ffe148980362d453eba3081", "sdb": "/_blob/40e4c2921ec9f39af7bb545f011b41f1", "veranda": "/_blob/cc0c00493ddcaeb415c46821f55b0a77"}};
 var EV_SEASON = {halloween: "automne", valentin: "hiver", paques: "printemps", couple: "printemps"};
-var GRANDES = [["10 janvier", "Anniversaire d'Emie · rappel à Co à J-7 et la veille", "#8A4F9E"], ["14 février", "Saint-Valentin", "#C0392B"], ["Pâques", "date variable (5 avril en 2026)", "#9DC9EA"], ["22 avril", "Notre anniversaire de couple", "#D9A441"], ["29 septembre", "Anniversaire de Co · rappel à Emie à J-7 et la veille", "#2F7F86"], ["31 octobre", "Halloween", "#E8762B"], ["25 décembre", "Noël", "#2F5E4A"]];
+var GRANDES = [["10 janvier", "Anniversaire d'Emie · rappel à Co à J-7 et la veille", "#8A4F9E"], ["14 février", "Saint-Valentin (décor dès le 10)", "#C0392B"], ["Pâques", "date variable, du vendredi au lundi", "#9DC9EA"], ["22 avril", "Notre anniversaire de couple", "#D9A441"], ["29 septembre", "Anniversaire de Co · rappel à Emie à J-7 et la veille", "#2F7F86"], ["31 octobre", "Halloween (décor dès le 20)", "#E8762B"], ["25 décembre", "Noël (décor du 15 décembre au 6 janvier)", "#2F5E4A"]];
 var WARD0 = [
   {id:"w1", who:"C", n:"Chemise blanche pour le travail", cat:"Hauts", prio:"bientot", done:false},
   {id:"w2", who:"C", n:"Chaussures de ville", cat:"Chaussures", prio:"urgent", done:false},
@@ -3436,6 +3457,8 @@ class Component extends DCLogic {
     (function () { var x = foyerXpOf(st), n = 1; while (n < 99 && x >= FOYER_COST(n + 1)) { x -= FOYER_COST(n + 1); n++; }
       if (!REEL) { n = 7; x = 340; } var need = FOYER_COST(n + 1);
       out.fLvl = n; out.fPct = Math.round(x * 100 / need) + "%"; out.fXpTxt = x + " / " + need + " XP avant le niveau " + (n + 1) + "."; out.fXpShort = x + " / " + need + " XP avant le niveau " + (n + 1); })();
+    out.demoReel = REEL;
+    out.saisonNow = "Maintenant : " + ({printemps: "printemps", ete: "été", automne: "automne", hiver: "hiver", noel: "période de Noël", classique: "classique"})[st.saison] + ((st.event && st.eventShown) ? " · " + ({noel: "Noël", anniv: "anniversaire de " + CATS[st.bdayCat].name, annivE: "anniversaire d'Emie", annivC: "anniversaire de Co", couple: "notre jour", valentin: "Saint-Valentin", paques: "Pâques", halloween: "Halloween"})[st.event] : "");
     out.demoUi = !REEL; out.deOther = OTHER === "E" ? "d'Emie" : "de Co"; out.otherE = OTHER === "E" ? "e" : ""; out.otherName = NAME[OTHER]; out.meName = NAME[ME];
     // éditeur générique : chaque fiche passe par lui pour modifier un élément
     var ED = function (key, label, init, spec, onSave, onDel, delText) {
@@ -3953,8 +3976,10 @@ class Component extends DCLogic {
     var evKey = st.eventShown && EVO[st.event] ? st.event : null;
     out.evOn = !!(evKey && st.screen === "salon" && !out.roomLocked && EVO[evKey][st.room]); out.evSrc = evKey ? EVO[evKey][st.room] : "";
     var gl = GRANDES.map(function (g) { return {d: g[0], n: g[1], c: g[2]}; });
-    ORDER.forEach(function (k) { var a = st.catInfo[k].anniv; if (parseJM(a)) gl.push({d: a, n: "Anniversaire de " + CATS[k].name + " · XP ×2 et fête au salon", c: CATS[k].color}); });
+    ORDER.forEach(function (k) { var a = st.catInfo[k].anniv; if (parseJM(a)) gl.push({d: a, n: "Anniversaire de " + CATS[k].name + " · fête au salon", c: CATS[k].color}); });
     var gkey = function (g) { var j = parseJM(g.d === "Pâques" ? "5 avril" : g.d); return j ? j.m * 40 + j.d : 999; };
+    out.grOpen = !!st.grOpen; out.grExp = st.grOpen ? "true" : "false"; out.grChev = st.grOpen ? "▾" : "▸";
+    out.toggleGrandes = function () { self.setState({grOpen: !self.state.grOpen}); };
     out.grandes = gl.sort(function (a, b) { return gkey(a) - gkey(b); });
     var hfSeen = function (id) { if (!st.hf[id]) self._hfq = id; };
     if (st.zoom && st.tick - st.zoom.start === 12) hfSeen("zoomies");

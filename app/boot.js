@@ -1,6 +1,6 @@
 // Démarrage commun (vrai serveur ou faux serveur de test) : identité, chargement, fêtes du jour.
-import { run } from "./scene.js?v=c70596d9";
-import { iso } from "./store.js?v=c70596d9";
+import { run } from "./scene.js?v=ac7503d3";
+import { iso } from "./store.js?v=ac7503d3";
 
 export function porte(msg, { button = true, err = false, logout = null } = {}) {
   const el = document.getElementById("porte");
@@ -27,6 +27,7 @@ function catBday(catInfo, d) {
   }
   return null;
 }
+// Fêtes : le jour même pour les anniversaires, une période pour les grandes fêtes.
 export function todayEvent(d, catInfo) {
   const md = (d.getMonth() + 1) * 100 + d.getDate();
   const cat = catBday(catInfo, d);
@@ -34,19 +35,22 @@ export function todayEvent(d, catInfo) {
   if (md === 110) return { id: "annivE" };
   if (md === 929) return { id: "annivC" };
   if (md === 422) return { id: "couple" };
-  if (md === 214) return { id: "valentin" };
-  if (md === 1031) return { id: "halloween" };
-  if (md === 1224 || md === 1225) return { id: "noel" };
-  if (iso(easter(d.getFullYear())) === iso(d)) return { id: "paques" };
+  if (md >= 1215 || md <= 106) return { id: "noel" };
+  if (md >= 1020 && md <= 1031) return { id: "halloween" };
+  if (md >= 210 && md <= 214) return { id: "valentin" };
+  const e = easter(d.getFullYear()), day = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - e) / 864e5);
+  if (day >= -2 && day <= 1) return { id: "paques" };
   return null;
 }
+// Saisons réelles ; « Noël » du 15 décembre au 6 janvier.
 export function seasonOf(d) {
-  const m = d.getMonth(), md = (m + 1) * 100 + d.getDate();
-  if (md >= 1201 || md <= 106) return "noel";
-  if (m <= 1) return "hiver";
-  if (m <= 4) return "printemps";
-  if (m <= 7) return "ete";
-  return "automne";
+  const md = (d.getMonth() + 1) * 100 + d.getDate();
+  if (md >= 1215 || md <= 106) return "noel";
+  if (md < 320) return "hiver";
+  if (md < 621) return "printemps";
+  if (md < 922) return "ete";
+  if (md < 1221) return "automne";
+  return "hiver";
 }
 
 // Météo réelle de Bron (Open-Meteo, gratuit et sans clé) : les fenêtres et la véranda la suivent en « Auto ».
@@ -78,7 +82,7 @@ export function ctxFor(me, L) {
 export async function boot({ me, backend, createSync }) {
   window.MAISON_REEL = true;
   window.MAISON_MOI = me;
-  const L = await import("./logic.js?v=c70596d9");
+  const L = await import("./logic.js?v=ac7503d3");
   const ctx = ctxFor(me, L);
   const [remote, perso] = await Promise.all([backend.loadAll(), backend.loadPerso()]);
   const logic = new L.Component({});
