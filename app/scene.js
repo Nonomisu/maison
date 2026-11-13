@@ -1,6 +1,6 @@
 // La scène de 390 × 844 mise à l'échelle de l'écran, et le montage de l'appli dedans.
-import { mount } from "./runtime.js?v=e0564c0b";
-import { template } from "./template.js?v=e0564c0b";
+import { mount } from "./runtime.js?v=989e0cd1";
+import { template } from "./template.js?v=989e0cd1";
 
 const W = 390, H = 844;
 const app = document.getElementById("app");

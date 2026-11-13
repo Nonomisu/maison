@@ -2096,6 +2096,9 @@ Prendre une recette en photo
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
 </button>
 </div>
+<div role="group" aria-label="Fréquence de la nouvelle tâche" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px">
+<sc-for list="{{ taskFreqs }}" as="tf" hint-placeholder-count="3"><button type="button" onClick="{{ tf.pick }}" aria-pressed="{{ tf.pressed }}" style="min-height: 36px; background: {{ tf.bg }}; color: {{ tf.fg }}; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 12px; font-weight: 600">{{ tf.label }}</button></sc-for>
+</div>
 <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px">
 <sc-for list="{{ quickTasks }}" as="qt" hint-placeholder-count="6">
 <button type="button" onClick="{{ qt.add }}" aria-label="{{ qt.aria }}" style="flex-shrink: 0; min-height: 36px; padding: 0 10px; display: inline-flex; align-items: center; background: {{ qt.bg }}; color: {{ qt.fg }}; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600; white-space: nowrap">{{ qt.label }}</button>
@@ -2108,7 +2111,7 @@ Prendre une recette en photo
 <sc-for list="{{ taskGroups }}" as="tg" hint-placeholder-count="3">
 <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 10px">
 <div style="display: flex; align-items: baseline; justify-content: space-between">
-<h2 style="margin: 0; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700; color: #2B2A30">{{ tg.name }}</h2>
+<h2 style="margin: 0; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700; color: #2B2A30">{{ tg.name }} <span style="font-family: Inter, sans-serif; font-size: 11px; font-weight: 500; color: #5E5864">{{ tg.sub }}</span></h2>
 <span style="font-size: 12px; color: #5E5864">{{ tg.count }}</span>
 </div>
 <sc-for list="{{ tg.items }}" as="tk">
@@ -2178,7 +2181,7 @@ Prendre une recette en photo
 </div>
 
 <div style="flex-shrink: 0; display: flex; gap: 8px; padding: 10px 12px 14px; background: #FFFFFF; border-top: 3px solid #2B2A30">
-<button type="button" onClick="{{ clearDoneTasks }}" style="flex: 1; min-height: 48px; background: #FFFFFF; color: #2B2A30; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">Ranger les faites ({{ doneTaskCount }})</button>
+<button type="button" onClick="{{ clearDoneTasks }}" style="flex: 1; min-height: 48px; background: #FFFFFF; color: #2B2A30; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">Ranger les ponctuelles faites ({{ doneTaskCount }})</button>
 <button type="button" onClick="{{ sessionBtn }}" style="flex: 1; min-height: 48px; background: #D9A441; color: #2B2A30; border: 2px solid #2B2A30; cursor: pointer; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700">{{ sessionBtnLabel }}</button>
 </div>
 
@@ -2737,18 +2740,18 @@ var NOTES0 = [
   {id:2, by:"Co", text:"Merci pour le gratin d'hier soir !", color:"#F6C1C7", read:true, liked:true}
 ];
 var TASKS0 = [
-  {id:"a", t:"Passer l'aspirateur", who:"C", when:"today", rec:"chaque semaine", pts:5},
-  {id:"b", t:"Faire les litières", who:"2", when:"today", rec:"tous les 2 jours", pts:2},
-  {id:"d", t:"Sortir les poubelles", who:"C", when:"week", rec:"mardi et vendredi", pts:5},
-  {id:"e", t:"Changer les draps", who:"2", when:"week", rec:"toutes les 2 semaines", pts:5},
-  {id:"f", t:"Nettoyer la salle de bain", who:"E", when:"week", rec:"chaque semaine", pts:5},
-  {id:"g", t:"Détartrer la bouilloire", who:"C", when:"later", rec:"chaque mois", pts:10},
-  {id:"h", t:"Faire la vaisselle", who:"C", when:"today", rec:"chaque jour", pts:2},
-  {id:"i", t:"Faire la cuisine", who:"E", when:"today", rec:"chaque jour", pts:2}
+  {id:"a", t:"Passer l'aspirateur", who:"C", when:"today", rec:"chaque semaine", pts:5, freq:"semaine"},
+  {id:"b", t:"Faire les litières", who:"2", when:"today", rec:"tous les 2 jours", pts:2, freq:"jour"},
+  {id:"d", t:"Sortir les poubelles", who:"C", when:"week", rec:"mardi et vendredi", pts:5, freq:"semaine"},
+  {id:"e", t:"Changer les draps", who:"2", when:"week", rec:"toutes les 2 semaines", pts:5, freq:"semaine"},
+  {id:"f", t:"Nettoyer la salle de bain", who:"E", when:"week", rec:"chaque semaine", pts:5, freq:"semaine"},
+  {id:"g", t:"Détartrer la bouilloire", who:"C", when:"later", rec:"chaque mois", pts:10, freq:"mois"},
+  {id:"h", t:"Faire la vaisselle", who:"C", when:"today", rec:"chaque jour", pts:2, freq:"jour"},
+  {id:"i", t:"Faire la cuisine", who:"E", when:"today", rec:"chaque jour", pts:2, freq:"jour"}
 ];
 var QUICK = [
-  {t:"Faire les litières", rec:"tous les 2 jours", pts:2}, {t:"Vaisselle", rec:"chaque jour", pts:2}, {t:"Lessive", rec:"2 fois par semaine", pts:5},
-  {t:"Aspirateur", rec:"chaque semaine", pts:5}, {t:"Poubelles", rec:"mardi et vendredi", pts:5}, {t:"Serpillière", rec:"chaque semaine", pts:5}
+  {t:"Faire les litières", rec:"chaque jour", freq:"jour", pts:2}, {t:"Vaisselle", rec:"chaque jour", freq:"jour", pts:2}, {t:"Lessive", rec:"chaque semaine", freq:"semaine", pts:5},
+  {t:"Aspirateur", rec:"chaque semaine", freq:"semaine", pts:5}, {t:"Poubelles", rec:"chaque semaine", freq:"semaine", pts:5}, {t:"Serpillière", rec:"chaque semaine", freq:"semaine", pts:5}
 ];
 var WHEN = [{id:"today", name:"Aujourd'hui"}, {id:"week", name:"Cette semaine"}, {id:"later", name:"Plus tard"}];
 var SEASONAL = [
@@ -2852,6 +2855,11 @@ var MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", 
 function parseD(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
 function fmtD(d) { return JOURS[d.getDay()] + " " + d.getDate() + " " + MOIS[d.getMonth()]; }
 function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+var FREQS = [{id: "jour", n: "Quotidienne", g: "Chaque jour", sub: "deux passages possibles par jour · remises à zéro à minuit", pts: 2},
+  {id: "semaine", n: "Hebdomadaire", g: "Chaque semaine", sub: "renouvelées le lundi à 0 h", pts: 5},
+  {id: "mois", n: "Mensuelle", g: "Chaque mois", sub: "renouvelées le 1er à 0 h", pts: 10},
+  {id: "une", n: "Ponctuelle", g: "Ponctuelles", sub: "une seule fois", pts: 10}];
+function freqOf(t) { if (t.freq) return t.freq; var r = String(t.rec || "").toLowerCase(); if (t.seasonal || /une fois|saison/.test(r)) return "une"; if (/mois/.test(r)) return "mois"; if (/semaine|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche/.test(r)) return "semaine"; if (/jour/.test(r)) return "jour"; return "semaine"; }
 function catSleeping(st, k) { var l = ((st.stats || {}).catLast || {})[k]; return !!l && Math.round((parseD(TODAY_ISO) - parseD(l)) / 864e5) >= 3; }
 var BASKETS = {
   rond: {full:"/_blob/51ec7f85673fd728da76b1864e3fa618", half:"/_blob/0793c3445a0abb81a7c2cc06fe631014", empty:"/_blob/627c14459ad470c8728c06183fc7194e"},
@@ -3190,7 +3198,7 @@ class Component extends DCLogic {
     return [0, 1, 2, 3, 4, 5, 6].map(function (n) {
       var d = new Date(TODAY_Y, TODAY_M, TODAY_D + n), iso = isoD(d), jl = JOURS_L[d.getDay()], its = [];
       st.missions.forEach(function (m) { if (!m.done && m.date === iso) its.push({t: m.t + (m.time ? " · " + m.time.replace(":", "h") : ""), c: col[m.type] || "#4A7034"}); });
-      if (n === 0) st.tasks.forEach(function (t) { if (!t.done && t.when === "today") its.push({t: t.t, c: "#3E6FB0"}); });
+      if (n === 0) st.tasks.forEach(function (t) { if (!t.done && freqOf(t) === "jour") its.push({t: t.t, c: "#3E6FB0"}); });
       (st.agenda || []).forEach(function (a) { if (a.d === iso) its.push({t: a.t + (a.h ? " · " + a.h.replace(":", "h") : ""), c: "#2E4A7A"}); });
       var mi = MEAL_ISO.indexOf(iso); if (mi >= 0 && st.meals[mi] && st.recipes[st.meals[mi]]) its.push({t: "Repas : " + st.recipes[st.meals[mi]].n, c: "#9A5B12"});
       return {short: jl.slice(0, 3), long: jl.charAt(0).toUpperCase() + jl.slice(1, 3) + ". " + d.getDate(), num: d.getDate(), idx: n, today: n === 0, items: its};
@@ -3464,8 +3472,8 @@ class Component extends DCLogic {
     out.confOn = (bday || personBday || out.nyOn) && ce >= 0 && ce < 45;
     var cc2 = out.nyOn ? ["#F2C14E", "#C9CED6", "#FFFFFF", "#E8B84A", "#8A8F99", "#F7E27A"] : [CAT_COL[bk], "#F2C14E", "#F6C1C7", "#E04848", "#FFFFFF", "#6FBF5A"];
     out.confetti = []; for (var ci = 0; ci < 40; ci++) out.confetti.push({cls: "wconf" + (st.confGen % 2), x: Math.round(rnd(ci + 50) * 380) + "px", w: (rnd(ci + 51) > 0.5 ? 6 : 4) + "px", h: (rnd(ci + 52) > 0.5 ? 8 : 5) + "px", c: cc2[ci % 6], dur: (2.4 + rnd(ci + 53) * 1.6).toFixed(1) + "s", delay: (rnd(ci + 54) * 0.6).toFixed(2) + "s"});
-    out.bareme = [{t:"Tâche quotidienne (vaisselle, litière, machine)", v:"2 XP"}, {t:"Tâche hebdomadaire (poubelles, aspirateur, Bain)", v:"5 XP"}, {t:"Tâche mensuelle ou saisonnière", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"10 XP au chat le moins avancé"}, {t:"Grand projet : étape franchie", v:"10 XP par chat"}, {t:"Haut fait débloqué", v:"20 XP"}, {t:"Défi de la semaine", v:"80 à 150 XP"}];
-    out.gardeFous = ["Une même tâche répétable ne rapporte que 2 fois par jour", "Tâches répétables plafonnées à 25 XP par jour et par personne", "Une mission rapporte une fois cochée ; un rendez-vous à partir du jour J", "Papiers faits avant l'échéance (date à mettre dans la mission) : +50 %", "Décocher retire l'XP", "Un chat sans XP depuis 3 jours dort : sa prochaine tâche compte ×1,5"];
+    out.bareme = [{t:"Tâche quotidienne, par passage (2 par jour)", v:"2 XP"}, {t:"Tâche hebdomadaire (renouvelée le lundi)", v:"5 XP"}, {t:"Tâche mensuelle (renouvelée le 1er) ou ponctuelle", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"10 XP au chat le moins avancé"}, {t:"Grand projet : étape franchie", v:"10 XP par chat"}, {t:"Haut fait débloqué", v:"20 XP"}, {t:"Défi de la semaine", v:"80 à 150 XP"}];
+    out.gardeFous = ["Une tâche quotidienne rapporte au plus 2 passages par jour", "Tâches quotidiennes plafonnées à 25 XP par jour et par personne", "Une mission rapporte une fois cochée ; un rendez-vous à partir du jour J", "Papiers faits avant l'échéance (date à mettre dans la mission) : +50 %", "Décocher retire l'XP", "Un chat sans XP depuis 3 jours dort : sa prochaine tâche compte ×1,5"];
     out.paliers = []; for (var pn = 2; pn <= 35; pn++) { var pc = FOYER_COST(pn), rm = ROOMS.filter(function (r) { return r.lvl === pn; })[0]; out.paliers.push({t: "Niv. " + pn + " · " + pc + (rm ? " ★" : ""), c: pn <= FOYER_LVL ? "#36532A" : "#2B2A30", w: rm ? "700" : "400"}); }
     out.isAnnivEvent = st.event === "anniv";
     out.bdayBtns = ORDER.map(function (k) {
@@ -3592,7 +3600,7 @@ class Component extends DCLogic {
     out.isBoard = !!(sh && sh.type === "board");
     out.showBoardTabs = false;
     if (out.isBoard) { out.sheetTitle = st.board === "taches" ? "Ménage & tâches" : "Pense-bête"; out.sheetColor = st.board === "taches" ? "#3E6FB0" : "#2B2A30"; }
-    var todo = st.tasks.filter(function (t) { return !t.done && t.when === "today"; }).length;
+    var todo = st.tasks.filter(function (t) { return !t.done && freqOf(t) === "jour"; }).length;
     out.basketSrc = BASKETS[FURN.panier.v[st.furnSel.panier].key][todo >= 3 ? "full" : (todo > 0 ? "half" : "empty")];
     out.basketLabel = "Panier à linge : ménage et tâches, " + (todo ? todo + " à faire" : "tout est fait");
     out.boardMots = st.board === "mots"; out.boardTaches = st.board === "taches";
@@ -3625,31 +3633,37 @@ class Component extends DCLogic {
     });
     // qui a coché la tâche (ce jour-là) : C, E ou C&E
     var byOf = function (t) { return t.doneBy ? t.doneBy : (t.done && (t.who === "C" || t.who === "E") ? [t.who] : []); };
+    var byLabel2 = function (b) { return b.length === 2 && b[0] === b[1] ? b[0] + "×2" : b.length > 1 ? "C&E" : b.length ? b[0] : ""; };
+    var byBg2 = function (b) { return b.length === 2 && b[0] === b[1] ? WHO[b[0]].bg : b.length > 1 ? WHO["2"].bg : b.length ? WHO[b[0]].bg : "transparent"; };
     var byLabel = function (b) { return b.length > 1 ? "C&E" : b.length ? b[0] : ""; };
     var byBg = function (b) { return b.length > 1 ? WHO["2"].bg : b.length ? WHO[b[0]].bg : "transparent"; };
     var tapTask = function (t) {
-      var by = byOf(t).slice(), mine = by.indexOf(ME) >= 0, xpBy = Object.assign({}, t.xpBy || {});
+      var daily = freqOf(t) === "jour", by = byOf(t).slice(), xpBy = Object.assign({}, t.xpBy || {}), xpL = (t.xpL || []).slice();
       var day = (self.state.xpDay && self.state.xpDay.d === TODAY_ISO) ? JSON.parse(JSON.stringify(self.state.xpDay)) : {d: TODAY_ISO, n: {}, sum: 0};
-      var rep = !!t.rec && !/une fois|saison/i.test(t.rec), gain = !mine, note = "";
-      if (mine) {
-        by.splice(by.indexOf(ME), 1);
-        var back = xpBy[ME] || 0; takeXp("nahla", back);
-        if (rep && back) { day.n[t.id] = Math.max(0, (day.n[t.id] || 0) - 1); day.sum = Math.max(0, day.sum - back); }
-        delete xpBy[ME];
-      } else {
-        by.push(ME);
+      var mineIdx = by.indexOf(ME), add, note = "";
+      // quotidienne : jusqu'à deux passages ; au-delà, toucher retire ses passages du jour. Sinon : toucher coche ou décoche.
+      add = daily ? by.length < 2 : mineIdx < 0;
+      if (add) {
         var pts = t.pts || 5;
-        if (rep) { if ((day.n[t.id] || 0) >= 2) { pts = 0; note = "déjà comptée 2 fois aujourd'hui"; } else if (day.sum >= 25) { pts = 0; note = "plafond de 25 XP atteint aujourd'hui"; } else pts = Math.min(pts, 25 - day.sum); }
+        if (daily) { if ((day.n[t.id] || 0) >= 2) { pts = 0; note = "déjà comptée 2 fois aujourd'hui"; } else if (day.sum >= 25) { pts = 0; note = "plafond de 25 XP atteint aujourd'hui"; } else pts = Math.min(pts, 25 - day.sum); }
         var got = giveXp("nahla", pts, {boost: true});
-        if (rep && got) { day.n[t.id] = (day.n[t.id] || 0) + 1; day.sum += got; }
-        xpBy[ME] = got;
+        if (daily && got) { day.n[t.id] = (day.n[t.id] || 0) + 1; day.sum += got; }
+        by.push(ME); xpL.push({w: ME, x: got}); xpBy[ME] = (xpBy[ME] || 0) + got;
         self._textTitles("task", t.t, ME); SFX.play("ding");
         if (note) self._toast("Tâche cochée, sans XP : " + note);
+        else if (daily && by.length === 1) self._toast(t.t + " : faite 1 fois sur 2 aujourd'hui");
+      } else {
+        if (mineIdx < 0) { self._toast(t.t + " : déjà faite 2 fois aujourd'hui"); return; }
+        var removed = 0;
+        xpL = xpL.filter(function (e) { if (e.w === ME) { takeXp("nahla", e.x || 0); if (daily && e.x) { day.n[t.id] = Math.max(0, (day.n[t.id] || 0) - 1); day.sum = Math.max(0, day.sum - e.x); } removed++; return false; } return true; });
+        if (!removed && xpBy[ME]) takeXp("nahla", xpBy[ME]);
+        removed = Math.max(removed, by.filter(function (w) { return w === ME; }).length);
+        by = by.filter(function (w) { return w !== ME; }); delete xpBy[ME];
       }
-      var S = STATS0(); S.tasks[ME] = Math.max(0, (S.tasks[ME] || 0) + (gain ? 1 : -1)); S.total = Math.max(0, S.total + (gain ? 1 : -1));
-      by = ["C", "E"].filter(function (k) { return by.indexOf(k) >= 0; });
-      self.setState({stats: S, xpDay: day, sessionDone: self.state.sessionDone + (gain ? 1 : 0),
-        tasks: self.state.tasks.map(function (x) { if (x.id !== t.id) return x; var y = Object.assign({}, x, {done: by.length > 0, doneBy: by, xpBy: xpBy}); delete y.who; if (!by.length) { delete y.doneBy; delete y.xpBy; } return y; })});
+      var S = STATS0(), dn = add ? 1 : -(removed || 1);
+      S.tasks[ME] = Math.max(0, (S.tasks[ME] || 0) + dn); S.total = Math.max(0, S.total + dn);
+      self.setState({stats: S, xpDay: day, sessionDone: self.state.sessionDone + (add ? 1 : 0),
+        tasks: self.state.tasks.map(function (x) { if (x.id !== t.id) return x; var y = Object.assign({}, x, {freq: freqOf(x), done: by.length > 0, doneBy: by, xpBy: xpBy, xpL: xpL}); delete y.who; if (!by.length) { delete y.doneBy; delete y.xpBy; delete y.xpL; } return y; })});
     };
     out.tasks = st.tasks.map(function (t) {
       return {t: t.t, done: !!t.done, hasWho: byOf(t).length > 0, pressed: t.done ? "true" : "false", seasonal: !!t.seasonal,
@@ -3666,7 +3680,7 @@ class Component extends DCLogic {
       var added = st.tasks.some(function (t) { return t.id === se.id; });
       return {t: se.t, why: se.why, label: added ? "Ajoutée" : "+ Ajouter", bg: added ? "#E4EEDC" : "#D9A441", fg: added ? "#36532A" : "#2B2A30",
         add: function () { if (self.state.tasks.some(function (t) { return t.id === se.id; })) return;
-          self.setState({tasks: self.state.tasks.concat([{id: se.id, t: se.t, done: false, seasonal: true, when: "week", rec: "une fois cette saison", pts: 10}])}); }};
+          self.setState({tasks: self.state.tasks.concat([{id: se.id, t: se.t, done: false, seasonal: true, freq: "une", rec: "une fois cette saison", pts: 10}])}); }};
     });
     out.storeMode = st.storeMode; out.notStore = !st.storeMode; out.pStore = st.storeMode ? "true" : "false";
     out.storeBtnBg = st.storeMode ? "#F2D35B" : "#F7F3EE";
@@ -4179,7 +4193,7 @@ class Component extends DCLogic {
       var ck = st.santeCat;
       return {ed: ED("soin:" + ck + ":" + so.id, so.n, function () { return {d: unk ? "" : last}; }, {f: [["d", "Date du dernier " + so.n.toLowerCase(), "date"]]},
           function (d) { if (!/^\d{4}-\d{2}-\d{2}$/.test(d.d || "")) return false; var sa = JSON.parse(JSON.stringify(self.state.sante)); sa[ck].soins[so.id] = d.d; self.setState({sante: sa}); }),
-        name: so.n, last: unk ? "Pas encore noté" : "Dernier : " + dfmt(last), next: unk ? "Date à noter (crayon)" : left > 0 ? "Prochain dans " + left + " j" : (left === 0 ? "À faire aujourd'hui" : "En retard de " + (-left) + " j"), col: unk ? "#8A8490" : col, pct: Math.max(4, Math.min(100, Math.round(left * 100 / so.every))) + "%",
+        name: so.n, last: unk ? "Pas encore noté" : "Dernier : " + dfmt(last), next: unk ? "Date à noter (crayon)" : left > 0 ? "Prochain dans " + left + " j" : (left === 0 ? "À faire aujourd'hui" : "En retard de " + (-left) + " j"), col: unk ? "#8A8490" : col, pct: unk ? "0%" : Math.max(4, Math.min(100, Math.round(left * 100 / so.every))) + "%",
         done: function () { var sa = JSON.parse(JSON.stringify(self.state.sante)); sa[self.state.santeCat].soins[so.id] = TODAY_ISO; self.setState({sante: sa}); giveXp("tsunky", 10); self._toast(so.n + " noté pour " + CATS[self.state.santeCat].name + " · +10 XP pour Tsunky"); }};
     });
     var pw = SC.poids.length ? SC.poids : [0], pmax = Math.max.apply(null, pw), pmin = Math.min.apply(null, pw) - 0.3;
@@ -4189,7 +4203,7 @@ class Component extends DCLogic {
       {f: [["p", "Pesées en kg, de la plus ancienne à la plus récente", "text", "ex. 4,0  4,1  4,1"]]},
       function (d) { var v = String(d.p || "").split(/[\s;\/]+/).map(function (x) { return num(x, NaN); }).filter(function (x) { return x > 0 && x < 20; }); if (!v.length) return false; var sa = JSON.parse(JSON.stringify(self.state.sante)); sa[ck].poids = v.slice(-8); self.setState({sante: sa}); }); })();
     out.poidsTrend = pw[pw.length - 1] > pw[pw.length - 2] ? "en hausse" : (pw[pw.length - 1] < pw[pw.length - 2] ? "en baisse" : "stable");
-    out.poidsBars = pw.map(function (v, i) { return {h: Math.round(10 + (v - pmin) / (pmax - pmin || 1) * 34) + "px", c: i === pw.length - 1 ? CATS[st.santeCat].color : "#C9C2B5"}; });
+    out.poidsBars = (SC.poids.length ? pw : []).map(function (v, i) { return {h: Math.round(10 + (v - pmin) / (pmax - pmin || 1) * 34) + "px", c: i === pw.length - 1 ? CATS[st.santeCat].color : "#C9C2B5"}; });
     var catRdvs = function (k) { return st.missions.filter(function (m) { return m.type === "rdv" && !m.done && m.cats && m.cats.indexOf(k) >= 0; }).sort(function (a, b) { return (a.date + a.time) < (b.date + b.time) ? -1 : 1; }); };
     var sr = catRdvs(st.santeCat)[0];
     out.santeRdv = sr ? fmtD(parseD(sr.date)) + (sr.time ? " à " + sr.time.replace(":", "h") : "") + " · " + sr.t : "aucun pour l'instant";
@@ -4582,17 +4596,19 @@ class Component extends DCLogic {
     out.inSession = inSess; out.notSession = !inSess;
     out.nahlaLevel = st.lvl.nahla; out.nahlaPct = st.xp.nahla + "%";
     out.nahlaSrc = self.frameSrc("nahla"); out.nahlaCss = ANIMS[st.anim.nahla].css;
-    var todayLeft = st.tasks.filter(function (t) { return t.when === "today" && !t.done; }).length;
-    var weekLeft = st.tasks.filter(function (t) { return t.when === "week" && !t.done; }).length;
-    out.tachesSummary = todayLeft + " aujourd'hui · " + weekLeft + " cette semaine";
+    var todayLeft = st.tasks.filter(function (t) { return freqOf(t) === "jour" && !t.done; }).length;
+    var weekLeft = st.tasks.filter(function (t) { return freqOf(t) === "semaine" && !t.done; }).length;
+    out.tachesSummary = todayLeft + " du jour · " + weekLeft + " de la semaine";
     out.taskDraft = st.taskDraft;
     out.onTaskDraft = function (e) { self.setState({taskDraft: e.target.value}); };
     var addTask = function () {
       var t = (self.state.taskDraft || "").trim(); if (!t) return;
-      var nt = {id: "n" + self.state.nextTask, t: t.charAt(0).toUpperCase() + t.slice(1), when: "today", rec: "", pts: 2};
+      var fq = self.state.taskFreq || "jour", F = FREQS.filter(function (f) { return f.id === fq; })[0];
+      var nt = {id: "n" + self.state.nextTask, t: t.charAt(0).toUpperCase() + t.slice(1), freq: fq, rec: "", pts: F.pts};
       self.setState({tasks: self.state.tasks.concat([nt]), nextTask: self.state.nextTask + 1, taskDraft: ""});
     };
     out.addTask = addTask;
+    out.taskFreqs = FREQS.filter(function (f) { return f.id !== "une"; }).map(function (f) { var on = (st.taskFreq || "jour") === f.id; return {label: f.n, pressed: on ? "true" : "false", bg: on ? "#3E6FB0" : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pick: function () { self.setState({taskFreq: f.id}); }}; });
     out.onTaskKey = function (e) { if (e.key === "Enter") addTask(); };
     var whoLabel = function (w) { return w === "2" ? "E&C" : w; };
     out.draftWho = whoLabel(st.draftWho); out.draftWhoBg = WHO[st.draftWho].bg;
@@ -4600,11 +4616,11 @@ class Component extends DCLogic {
     out.cycleWho = function () { var o = ["C", "E", "2"]; self.setState({draftWho: o[(o.indexOf(self.state.draftWho) + 1) % 3]}); };
     out.quickTasks = QUICK.map(function (q) {
       var on = st.tasks.some(function (t) { return t.t === q.t && !t.done; });
-      return {label: (on ? "✓ " : "+ ") + q.t, aria: on ? q.t + " : déjà prévue" : "Ajouter " + q.t + " (" + q.rec + ")",
+      return {label: (on ? "✓ " : "+ ") + q.t, aria: on ? q.t + " : déjà prévue" : "Ajouter " + q.t + " (" + FREQS.filter(function (f) { return f.id === (q.freq || freqOf(q)); })[0].n.toLowerCase() + ")",
         bg: on ? "#DCE6F4" : "#FFFFFF", fg: on ? "#23324A" : "#2B2A30",
         add: function () {
           if (self.state.tasks.some(function (t) { return t.t === q.t && !t.done; })) return;
-          self.setState({tasks: self.state.tasks.concat([{id: "n" + self.state.nextTask, t: q.t, when: "today", rec: q.rec, pts: q.pts}]), nextTask: self.state.nextTask + 1});
+          self.setState({tasks: self.state.tasks.concat([{id: "n" + self.state.nextTask, t: q.t, freq: q.freq || freqOf(q), rec: "", pts: q.pts}]), nextTask: self.state.nextTask + 1});
         }};
     });
     out.whoFilters = [{id:"all", label:"Tout"}, {id:ME, label:"Moi (" + NAME[ME] + ")"}, {id:OTHER, label:NAME[OTHER]}].map(function (f) {
@@ -4612,33 +4628,34 @@ class Component extends DCLogic {
       return {label: f.label, pressed: on ? "true" : "false", bg: on ? "#2B2A30" : "#FFFFFF", fg: on ? "#F7F3EE" : "#2B2A30",
         pick: function () { self.setState({whoFilter: f.id}); }};
     });
-    out.taskGroups = WHEN.map(function (w) {
+    out.taskGroups = FREQS.map(function (w) {
       var list = st.tasks.filter(function (t) {
-        if (t.when !== w.id) return false;
-        if (inSess && (t.done || w.id === "later")) return false;
+        if (freqOf(t) !== w.id) return false;
+        if (inSess && (t.done || w.id === "mois" || w.id === "une")) return false;
         return true;
       });
       list = list.filter(function (t) { return !t.done; }).concat(list.filter(function (t) { return t.done; }));
       var left = list.filter(function (t) { return !t.done; }).length;
-      return {name: w.name, count: left ? left + " à faire" : "tout est fait",
+      return {name: w.g, sub: w.sub, count: left ? left + " à faire" : "tout est fait",
         items: list.map(function (t) {
-          var by = byOf(t);
+          var by = byOf(t), fq = freqOf(t);
           return {t: t.t, done: !!t.done, hasWho: by.length > 0, pressed: t.done ? "true" : "false", seasonal: !!t.seasonal,
             editOn: st.editCtx === "taches", notEdit: st.editCtx !== "taches", delLabel: "Supprimer " + t.t,
             remove: function () { self.setState({tasks: self.state.tasks.filter(function (x) { return x.id !== t.id; })}); },
-            meta: (t.done && t.rec ? "Fait · revient " + t.rec : (t.rec ? t.rec + " · " : "") + "+" + (t.pts || 5) + " XP"),
-            bg: t.done ? "#F1ECE4" : "#FFFFFF", box: t.done ? "#3E6FB0" : "#FFFFFF", deco: t.done ? "line-through" : "none", fg: t.done ? "#6B6470" : "#2B2A30",
+            meta: fq === "jour" ? (by.length ? "Faite " + by.length + " fois sur 2 aujourd'hui · " : "") + "+" + (t.pts || 2) + " XP par passage" : (t.done ? "Faite · revient " + {semaine: "lundi", mois: "le 1er du mois", une: "jamais"}[fq] : "+" + (t.pts || 5) + " XP"),
+            bg: t.done ? "#F1ECE4" : "#FFFFFF", deco: t.done && !(fq === "jour" && by.length < 2) ? "line-through" : "none", fg: t.done ? "#6B6470" : "#2B2A30",
             h: inSess ? "66px" : "48px", fs: inSess ? "20px" : "15px", boxSize: inSess ? "30px" : "20px",
-            who: byLabel(by), whoBg: byBg(by),
-            ed: ED("task:" + t.id, t.t, function () { return {t: t.t, when: t.when, rec: t.rec || "", pts: t.pts || 5}; },
-              {f: [["t", "Tâche", "text"], ["rec", "Répétition", "text", "ex. chaque semaine, tous les 15 jours (vide = une fois)"], ["pts", "XP", "number"]],
-               g: [["when", "Quand", WHEN.map(function (w3) { return [w3.id, w3.name]; })]]},
-              function (d) { if (!String(d.t || "").trim()) return false; self.setState({tasks: self.state.tasks.map(function (x) { return x.id === t.id ? Object.assign({}, x, {t: cap(d.t), when: d.when, rec: String(d.rec || "").trim(), pts: Math.max(1, Math.min(30, Math.round(num(d.pts, 5))))}) : x; })}); }),
+            who: byLabel2(by), whoBg: byBg2(by), box: t.done ? (fq === "jour" && by.length < 2 ? "#9DB4D6" : "#3E6FB0") : "#FFFFFF",
+            ed: ED("task:" + t.id, t.t, function () { return {t: t.t, freq: fq, pts: t.pts || 5}; },
+              {f: [["t", "Tâche", "text"], ["pts", "XP par passage", "number"]],
+               g: [["freq", "Fréquence", FREQS.map(function (f) { return [f.id, f.n, "#3E6FB0"]; })]]},
+              function (d) { if (!String(d.t || "").trim()) return false; self.setState({tasks: self.state.tasks.map(function (x) { return x.id === t.id ? Object.assign({}, x, {t: cap(d.t), freq: d.freq, rec: "", pts: Math.max(1, Math.min(30, Math.round(num(d.pts, 5))))}) : x; })}); }),
             toggle: function () { tapTask(t); }};
         })};
     }).filter(function (g) { return g.items.length > 0; });
-    out.doneTaskCount = st.tasks.filter(function (t) { return t.done; }).length;
-    out.clearDoneTasks = function () { self.setState({tasks: self.state.tasks.filter(function (t) { return !t.done; })}); };
+    // seules les tâches ponctuelles faites sont rangées : les récurrentes reviennent toutes seules
+    out.doneTaskCount = st.tasks.filter(function (t) { return t.done && freqOf(t) === "une"; }).length;
+    out.clearDoneTasks = function () { self.setState({tasks: self.state.tasks.filter(function (t) { return !(t.done && freqOf(t) === "une"); })}); };
     var endSession = function () {
       var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl);
       if (self.state.sessionDone > 0) { xp.nahla += 10; if (xp.nahla >= 100) { xp.nahla -= 100; lvl.nahla += 1; } }

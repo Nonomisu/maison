@@ -61,7 +61,18 @@ const parseIso = (s) => new Date(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8,
 const dayDiff = (a, b) => Math.round((parseIso(b) - parseIso(a)) / 864e5);
 const addDays = (s, n) => { const d = parseIso(s); d.setDate(d.getDate() + n); return iso(d); };
 
-// Prochaine date à laquelle une tâche récurrente revient, d'après le texte de répétition.
+// Fréquence d'une tâche (les anciennes la déduisent de leur texte de répétition).
+export function freqOf(t) {
+  if (t.freq) return t.freq;
+  const r = String(t.rec || "").toLowerCase();
+  if (t.seasonal || /une fois|saison/.test(r)) return "une";
+  if (/mois/.test(r)) return "mois";
+  if (/semaine|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche/.test(r)) return "semaine";
+  if (/jour/.test(r)) return "jour";
+  return "semaine";
+}
+
+// Prochaine date à laquelle une tâche récurrente revient, d'après le texte de répétition (ancien fonctionnement).
 const WD = { dimanche: 0, lundi: 1, mardi: 2, mercredi: 3, jeudi: 4, vendredi: 5, samedi: 6 };
 export function nextDue(rec, doneOn) {
   const r = String(rec || "").toLowerCase();
@@ -95,15 +106,18 @@ function lastReset(now, weekly) {
 // Appliqué au chargement : tâches récurrentes qui reviennent, réserves qui baissent, quotidien FFXIV…
 export function roll(st, today, now = new Date()) {
   const out = {};
-  // tâches récurrentes
+  // tâches : quotidiennes remises à zéro à minuit, hebdomadaires le lundi, mensuelles le 1er
   if (Array.isArray(st.tasks)) {
     let ch = false;
+    const mon = (() => { const d = parseIso(today), wd = (d.getDay() + 6) % 7; return addDays(today, -wd); })();
+    const start = { jour: today, semaine: mon, mois: today.slice(0, 8) + "01" };
     const t = st.tasks.map((x) => {
-      if (!x.done) return x;
-      const doneOn = x.doneOn || today, due = nextDue(x.rec, doneOn);
-      if (!x.doneOn) { ch = true; return { ...x, doneOn }; }
-      if (due && due <= today) { ch = true; const y = { ...x, done: false }; delete y.doneOn; delete y.doneBy; return y; }
-      return x;
+      const f = freqOf(x);
+      let y = x.freq ? x : (ch = true, { ...x, freq: f });
+      if (!y.done) return y;
+      if (!y.doneOn) { ch = true; return { ...y, doneOn: today }; }
+      if (start[f] && y.doneOn < start[f]) { ch = true; y = { ...y, done: false }; delete y.doneOn; delete y.doneBy; delete y.xpBy; delete y.xpL; }
+      return y;
     });
     if (ch) out.tasks = t;
   }
@@ -170,7 +184,7 @@ export function normalize(key, val, today) {
     let ch = false;
     const v = val.map((x) => {
       if (x.done && !x.doneOn) { ch = true; return { ...x, doneOn: today }; }
-      if (!x.done && (x.doneOn || x.doneBy)) { ch = true; const y = { ...x }; delete y.doneOn; delete y.doneBy; return y; }
+      if (!x.done && (x.doneOn || x.doneBy)) { ch = true; const y = { ...x }; delete y.doneOn; delete y.doneBy; delete y.xpBy; delete y.xpL; return y; }
       return x;
     });
     return ch ? v : null;
