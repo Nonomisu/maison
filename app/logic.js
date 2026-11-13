@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=989e0cd1";
+import { DCLogic, blobUrl } from "./runtime.js?v=70ee928d";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -121,8 +121,8 @@ var NOTES0 = [
 ];
 var TASKS0 = [
   {id:"a", t:"Passer l'aspirateur", who:"C", when:"today", rec:"chaque semaine", pts:5, freq:"semaine"},
-  {id:"b", t:"Faire les litières", who:"2", when:"today", rec:"tous les 2 jours", pts:2, freq:"jour"},
-  {id:"d", t:"Sortir les poubelles", who:"C", when:"week", rec:"mardi et vendredi", pts:5, freq:"semaine"},
+  {id:"b", t:"Faire les litières", who:"2", when:"today", rec:"tous les 2 jours", pts:4, freq:"2sem"},
+  {id:"d", t:"Sortir les poubelles", who:"C", when:"week", rec:"mardi et vendredi", pts:4, freq:"2sem"},
   {id:"e", t:"Changer les draps", who:"2", when:"week", rec:"toutes les 2 semaines", pts:5, freq:"semaine"},
   {id:"f", t:"Nettoyer la salle de bain", who:"E", when:"week", rec:"chaque semaine", pts:5, freq:"semaine"},
   {id:"g", t:"Détartrer la bouilloire", who:"C", when:"later", rec:"chaque mois", pts:10, freq:"mois"},
@@ -130,8 +130,8 @@ var TASKS0 = [
   {id:"i", t:"Faire la cuisine", who:"E", when:"today", rec:"chaque jour", pts:2, freq:"jour"}
 ];
 var QUICK = [
-  {t:"Faire les litières", rec:"chaque jour", freq:"jour", pts:2}, {t:"Vaisselle", rec:"chaque jour", freq:"jour", pts:2}, {t:"Lessive", rec:"chaque semaine", freq:"semaine", pts:5},
-  {t:"Aspirateur", rec:"chaque semaine", freq:"semaine", pts:5}, {t:"Poubelles", rec:"chaque semaine", freq:"semaine", pts:5}, {t:"Serpillière", rec:"chaque semaine", freq:"semaine", pts:5}
+  {t:"Faire les litières", rec:"2 fois par semaine", freq:"2sem", pts:4}, {t:"Vaisselle", rec:"chaque jour", freq:"jour", pts:2}, {t:"Lessive", rec:"2 fois par semaine", freq:"2sem", pts:4},
+  {t:"Aspirateur", rec:"chaque semaine", freq:"semaine", pts:5}, {t:"Poubelles", rec:"2 fois par semaine", freq:"2sem", pts:4}, {t:"Serpillière", rec:"chaque semaine", freq:"semaine", pts:5}
 ];
 var WHEN = [{id:"today", name:"Aujourd'hui"}, {id:"week", name:"Cette semaine"}, {id:"later", name:"Plus tard"}];
 var SEASONAL = [
@@ -236,10 +236,11 @@ function parseD(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[
 function fmtD(d) { return JOURS[d.getDay()] + " " + d.getDate() + " " + MOIS[d.getMonth()]; }
 function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
 var FREQS = [{id: "jour", n: "Quotidienne", g: "Chaque jour", sub: "deux passages possibles par jour · remises à zéro à minuit", pts: 2},
+  {id: "2sem", n: "2×/semaine", g: "Deux fois par semaine", sub: "deux passages par semaine · renouvelées le lundi à 0 h", pts: 4},
   {id: "semaine", n: "Hebdomadaire", g: "Chaque semaine", sub: "renouvelées le lundi à 0 h", pts: 5},
   {id: "mois", n: "Mensuelle", g: "Chaque mois", sub: "renouvelées le 1er à 0 h", pts: 10},
   {id: "une", n: "Ponctuelle", g: "Ponctuelles", sub: "une seule fois", pts: 10}];
-function freqOf(t) { if (t.freq) return t.freq; var r = String(t.rec || "").toLowerCase(); if (t.seasonal || /une fois|saison/.test(r)) return "une"; if (/mois/.test(r)) return "mois"; if (/semaine|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche/.test(r)) return "semaine"; if (/jour/.test(r)) return "jour"; return "semaine"; }
+function freqOf(t) { if (t.freq) return t.freq; var r = String(t.rec || "").toLowerCase(); if (t.seasonal || /une fois|saison/.test(r)) return "une"; if (/mois/.test(r)) return "mois"; if (/2 fois par semaine|mardi et vendredi|tous les 2 jours/.test(r)) return "2sem"; if (/semaine|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche/.test(r)) return "semaine"; if (/jour/.test(r)) return "jour"; return "semaine"; }
 function catSleeping(st, k) { var l = ((st.stats || {}).catLast || {})[k]; return !!l && Math.round((parseD(TODAY_ISO) - parseD(l)) / 864e5) >= 3; }
 var BASKETS = {
   rond: {full:"/_blob/51ec7f85673fd728da76b1864e3fa618", half:"/_blob/0793c3445a0abb81a7c2cc06fe631014", empty:"/_blob/627c14459ad470c8728c06183fc7194e"},
@@ -852,7 +853,7 @@ class Component extends DCLogic {
     out.confOn = (bday || personBday || out.nyOn) && ce >= 0 && ce < 45;
     var cc2 = out.nyOn ? ["#F2C14E", "#C9CED6", "#FFFFFF", "#E8B84A", "#8A8F99", "#F7E27A"] : [CAT_COL[bk], "#F2C14E", "#F6C1C7", "#E04848", "#FFFFFF", "#6FBF5A"];
     out.confetti = []; for (var ci = 0; ci < 40; ci++) out.confetti.push({cls: "wconf" + (st.confGen % 2), x: Math.round(rnd(ci + 50) * 380) + "px", w: (rnd(ci + 51) > 0.5 ? 6 : 4) + "px", h: (rnd(ci + 52) > 0.5 ? 8 : 5) + "px", c: cc2[ci % 6], dur: (2.4 + rnd(ci + 53) * 1.6).toFixed(1) + "s", delay: (rnd(ci + 54) * 0.6).toFixed(2) + "s"});
-    out.bareme = [{t:"Tâche quotidienne, par passage (2 par jour)", v:"2 XP"}, {t:"Tâche hebdomadaire (renouvelée le lundi)", v:"5 XP"}, {t:"Tâche mensuelle (renouvelée le 1er) ou ponctuelle", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"10 XP au chat le moins avancé"}, {t:"Grand projet : étape franchie", v:"10 XP par chat"}, {t:"Haut fait débloqué", v:"20 XP"}, {t:"Défi de la semaine", v:"80 à 150 XP"}];
+    out.bareme = [{t:"Tâche quotidienne, par passage (2 par jour)", v:"2 XP"}, {t:"Tâche deux fois par semaine, par passage", v:"4 XP"}, {t:"Tâche hebdomadaire (renouvelée le lundi)", v:"5 XP"}, {t:"Tâche mensuelle (renouvelée le 1er) ou ponctuelle", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"10 XP au chat le moins avancé"}, {t:"Grand projet : étape franchie", v:"10 XP par chat"}, {t:"Haut fait débloqué", v:"20 XP"}, {t:"Défi de la semaine", v:"80 à 150 XP"}];
     out.gardeFous = ["Une tâche quotidienne rapporte au plus 2 passages par jour", "Tâches quotidiennes plafonnées à 25 XP par jour et par personne", "Une mission rapporte une fois cochée ; un rendez-vous à partir du jour J", "Papiers faits avant l'échéance (date à mettre dans la mission) : +50 %", "Décocher retire l'XP", "Un chat sans XP depuis 3 jours dort : sa prochaine tâche compte ×1,5"];
     out.paliers = []; for (var pn = 2; pn <= 35; pn++) { var pc = FOYER_COST(pn), rm = ROOMS.filter(function (r) { return r.lvl === pn; })[0]; out.paliers.push({t: "Niv. " + pn + " · " + pc + (rm ? " ★" : ""), c: pn <= FOYER_LVL ? "#36532A" : "#2B2A30", w: rm ? "700" : "400"}); }
     out.isAnnivEvent = st.event === "anniv";
@@ -1018,11 +1019,11 @@ class Component extends DCLogic {
     var byLabel = function (b) { return b.length > 1 ? "C&E" : b.length ? b[0] : ""; };
     var byBg = function (b) { return b.length > 1 ? WHO["2"].bg : b.length ? WHO[b[0]].bg : "transparent"; };
     var tapTask = function (t) {
-      var daily = freqOf(t) === "jour", by = byOf(t).slice(), xpBy = Object.assign({}, t.xpBy || {}), xpL = (t.xpL || []).slice();
+      var fqT = freqOf(t), daily = fqT === "jour", twice = daily || fqT === "2sem", by = byOf(t).slice(), xpBy = Object.assign({}, t.xpBy || {}), xpL = (t.xpL || []).slice();
       var day = (self.state.xpDay && self.state.xpDay.d === TODAY_ISO) ? JSON.parse(JSON.stringify(self.state.xpDay)) : {d: TODAY_ISO, n: {}, sum: 0};
       var mineIdx = by.indexOf(ME), add, note = "";
       // quotidienne : jusqu'à deux passages ; au-delà, toucher retire ses passages du jour. Sinon : toucher coche ou décoche.
-      add = daily ? by.length < 2 : mineIdx < 0;
+      add = twice ? by.length < 2 : mineIdx < 0;
       if (add) {
         var pts = t.pts || 5;
         if (daily) { if ((day.n[t.id] || 0) >= 2) { pts = 0; note = "déjà comptée 2 fois aujourd'hui"; } else if (day.sum >= 25) { pts = 0; note = "plafond de 25 XP atteint aujourd'hui"; } else pts = Math.min(pts, 25 - day.sum); }
@@ -1031,9 +1032,9 @@ class Component extends DCLogic {
         by.push(ME); xpL.push({w: ME, x: got}); xpBy[ME] = (xpBy[ME] || 0) + got;
         self._textTitles("task", t.t, ME); SFX.play("ding");
         if (note) self._toast("Tâche cochée, sans XP : " + note);
-        else if (daily && by.length === 1) self._toast(t.t + " : faite 1 fois sur 2 aujourd'hui");
+        else if (twice && by.length === 1) self._toast(t.t + " : faite 1 fois sur 2 " + (daily ? "aujourd'hui" : "cette semaine"));
       } else {
-        if (mineIdx < 0) { self._toast(t.t + " : déjà faite 2 fois aujourd'hui"); return; }
+        if (mineIdx < 0) { self._toast(t.t + " : déjà faite 2 fois " + (daily ? "aujourd'hui" : "cette semaine")); return; }
         var removed = 0;
         xpL = xpL.filter(function (e) { if (e.w === ME) { takeXp("nahla", e.x || 0); if (daily && e.x) { day.n[t.id] = Math.max(0, (day.n[t.id] || 0) - 1); day.sum = Math.max(0, day.sum - e.x); } removed++; return false; } return true; });
         if (!removed && xpBy[ME]) takeXp("nahla", xpBy[ME]);
@@ -2022,10 +2023,10 @@ class Component extends DCLogic {
           return {t: t.t, done: !!t.done, hasWho: by.length > 0, pressed: t.done ? "true" : "false", seasonal: !!t.seasonal,
             editOn: st.editCtx === "taches", notEdit: st.editCtx !== "taches", delLabel: "Supprimer " + t.t,
             remove: function () { self.setState({tasks: self.state.tasks.filter(function (x) { return x.id !== t.id; })}); },
-            meta: fq === "jour" ? (by.length ? "Faite " + by.length + " fois sur 2 aujourd'hui · " : "") + "+" + (t.pts || 2) + " XP par passage" : (t.done ? "Faite · revient " + {semaine: "lundi", mois: "le 1er du mois", une: "jamais"}[fq] : "+" + (t.pts || 5) + " XP"),
-            bg: t.done ? "#F1ECE4" : "#FFFFFF", deco: t.done && !(fq === "jour" && by.length < 2) ? "line-through" : "none", fg: t.done ? "#6B6470" : "#2B2A30",
+            meta: fq === "jour" || fq === "2sem" ? (by.length ? "Faite " + by.length + " fois sur 2 " + (fq === "jour" ? "aujourd'hui" : "cette semaine") + " · " : "") + "+" + (t.pts || 2) + " XP par passage" : (t.done ? "Faite · revient " + {semaine: "lundi", mois: "le 1er du mois", une: "jamais"}[fq] : "+" + (t.pts || 5) + " XP"),
+            bg: t.done ? "#F1ECE4" : "#FFFFFF", deco: t.done && !((fq === "jour" || fq === "2sem") && by.length < 2) ? "line-through" : "none", fg: t.done ? "#6B6470" : "#2B2A30",
             h: inSess ? "66px" : "48px", fs: inSess ? "20px" : "15px", boxSize: inSess ? "30px" : "20px",
-            who: byLabel2(by), whoBg: byBg2(by), box: t.done ? (fq === "jour" && by.length < 2 ? "#9DB4D6" : "#3E6FB0") : "#FFFFFF",
+            who: byLabel2(by), whoBg: byBg2(by), box: t.done ? ((fq === "jour" || fq === "2sem") && by.length < 2 ? "#9DB4D6" : "#3E6FB0") : "#FFFFFF",
             ed: ED("task:" + t.id, t.t, function () { return {t: t.t, freq: fq, pts: t.pts || 5}; },
               {f: [["t", "Tâche", "text"], ["pts", "XP par passage", "number"]],
                g: [["freq", "Fréquence", FREQS.map(function (f) { return [f.id, f.n, "#3E6FB0"]; })]]},
