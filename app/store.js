@@ -10,7 +10,7 @@ const clone = (v) => (v === undefined ? undefined : JSON.parse(J(v)));
 // Données partagées telles quelles entre Co et Emie.
 export const SHARED = ["items", "tasks", "missions", "soirActs", "recipes", "garde", "titles", "plaidOn", "logsOn", "ff",
   "ward", "sizes", "sante", "stocks", "bSel", "projets", "radioOn", "roomSel", "furnSel", "tableDecoOn",
-  "contacts", "journal", "litBags", "gmailAddr", "catInfo", "notes", "fireOn", "xp", "lvl", "treeOn", "vacances", "candleOff"];
+  "contacts", "journal", "litBags", "gmailAddr", "catInfo", "notes", "fireOn", "xp", "lvl", "treeOn", "vacances", "candleOff", "agenda"];
 // Données partagées rangées autrement que dans l'appli (par date, ou par personne).
 export const ADAPTED = ["soirees", "meals", "wishes"];
 // Données propres à chaque personne (dans Firestore) et à chaque appareil (dans le navigateur).
@@ -18,7 +18,7 @@ export const ADAPTED = ["soirees", "meals", "wishes"];
 export const PERSO = ["notifOn", "reserved", "journalSeen", "hf", "mice"];
 export const DEVICE = ["sfxOn", "sfxVol", "sfxNight", "zoomAuto"];
 const COUNTERS = ["nextId", "nextTask", "nextMiss", "nextNote", "nextContact", "nextFf", "nextWard", "nextProj", "nextAct",
-  "nextRec", "nextGarde", "nextWish", "nextJ"];
+  "nextRec", "nextGarde", "nextWish", "nextJ", "nextAg"];
 
 // ------------------------------------------------------------------ fusion à trois voies
 const hasIds = (a) => Array.isArray(a) && a.every((x) => x && typeof x === "object" && x.id != null);

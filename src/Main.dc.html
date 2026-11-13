@@ -377,6 +377,9 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <button type="button" onClick="{{ openFfE }}" aria-label="PC rose : to-do FFXIV d'Emie" style="position: absolute; left: {{ bz.setupR.x }}; top: {{ bz.setupR.y }}; width: {{ bz.setupR.w }}; height: {{ bz.setupR.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.setupR.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></button>
 <button type="button" onClick="{{ openFfC }}" aria-label="PC bleu : to-do FFXIV de Co" style="position: absolute; left: {{ bz.setupB.x }}; top: {{ bz.setupB.y }}; width: {{ bz.setupB.w }}; height: {{ bz.setupB.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.setupB.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></button>
 <div aria-hidden="true" style="pointer-events: none; position: absolute; left: {{ bz.cubes.x }}; top: {{ bz.cubes.y }}; width: {{ bz.cubes.w }}; height: {{ bz.cubes.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.cubes.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></div>
+<button type="button" onClick="{{ openAgenda }}" class="hot" aria-label="Boîte de l'étagère : agenda des jeux et du RP" style="position: absolute; left: 164px; top: 434px; width: 62px; height: 62px; padding: 0; background: none; border: 0; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 10 10" shape-rendering="crispEdges" aria-hidden="true" style="position: absolute; left: 21px; top: 6px"><rect x="0" y="1" width="10" height="9" fill="#2B2A30"></rect><rect x="1" y="2" width="8" height="7" fill="#FFFFFF"></rect><rect x="1" y="2" width="8" height="2" fill="#B23A48"></rect><rect x="2" y="0" width="1" height="2" fill="#2B2A30"></rect><rect x="7" y="0" width="1" height="2" fill="#2B2A30"></rect><rect x="2" y="5" width="1" height="1" fill="#2B2A30"></rect><rect x="4" y="5" width="1" height="1" fill="#2B2A30"></rect><rect x="6" y="5" width="1" height="1" fill="#2B2A30"></rect><rect x="2" y="7" width="1" height="1" fill="#2B2A30"></rect><rect x="4" y="7" width="1" height="1" fill="#B23A48"></rect></svg>
+</button>
 <img src="{{ bz.dodo.src }}" alt="" style="position: absolute; left: {{ bz.dodo.x }}; top: {{ bz.dodo.y }}; width: {{ bz.dodo.w }}; height: {{ bz.dodo.h }}; display: block; image-rendering: pixelated; pointer-events: none">
 <div aria-hidden="true" style="pointer-events: none; position: absolute; left: {{ bz.chaiseR.x }}; top: {{ bz.chaiseR.y }}; width: {{ bz.chaiseR.w }}; height: {{ bz.chaiseR.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.chaiseR.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></div>
 <div aria-hidden="true" style="pointer-events: none; position: absolute; left: {{ bz.chaiseB.x }}; top: {{ bz.chaiseB.y }}; width: {{ bz.chaiseB.w }}; height: {{ bz.chaiseB.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.chaiseB.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></div>
@@ -1047,6 +1050,98 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <span style="flex: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #36532A">Dans la liste ✓</span>
 </sc-if>
 </div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAgenda }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; color: #4A4450">Patchs, sorties de jeux, événements RP, soirées en groupe : à remplir vous-mêmes. Les événements de la semaine apparaissent aussi dans le calendrier.</span>
+<sc-if value="{{ agEmpty }}" hint-placeholder-val="{{ false }}"><span style="padding: 10px; background: #FFFFFF; border: 2px dashed #C9C2B5; font-size: 13px; color: #5E5864">Rien de prévu pour l'instant.</span></sc-if>
+<sc-for list="{{ agUp }}" as="ag" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 8px; background: #FFFFFF; border: 2px solid #2B2A30">
+<span style="width: 46px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 2px 0; background: #F7F3EE; border: 2px solid #2B2A30"><span style="font-size: 10px; font-weight: 600; color: #5E5864">{{ ag.wd }}</span><span style="font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 20px; font-weight: 700; line-height: 1">{{ ag.day }}</span><span style="font-size: 10px; font-weight: 600; color: #5E5864">{{ ag.mon }}</span></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="align-self: flex-start; padding: 1px 6px; background: {{ ag.catBg }}; color: #FFFFFF; font-size: 11px; font-weight: 700">{{ ag.cat }}</span>
+<span style="font-size: 14px; font-weight: 600">{{ ag.t }}</span>
+<span style="font-size: 12px; color: #4A4450">{{ ag.meta }}</span>
+<sc-if value="{{ ag.hasNote }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #5E5864">{{ ag.note }}</span></sc-if>
+</span>
+<sc-if value="{{ ag.hasLink }}" hint-placeholder-val="{{ false }}"><a href="{{ ag.link }}" target="_blank" rel="noopener" aria-label="{{ ag.linkLabel }}" style="width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #3E6FB0; border: 2px solid #2B2A30; color: #FFFFFF; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path><path d="M18 14v6H4V6h6"></path></svg></a></sc-if>
+<button type="button" onClick="{{ ag.edStart }}" aria-label="{{ ag.edLabel }}" style="width: 40px; height: 40px; flex-shrink: 0; background: #F7F3EE; border: 2px solid #2B2A30; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; color: #2B2A30"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="M14 6l4 4"></path></svg></button>
+</div>
+<sc-if value="{{ ag.edOpen }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; background: #FFFFFF; border: 2px dashed #2B2A30; transform: none; text-align: left">
+<sc-for list="{{ ag.edFields }}" as="ef">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<label for="{{ ef.id }}" style="font-size: 12px; font-weight: 600; color: #4A4450">{{ ef.l }}</label>
+<sc-if value="{{ ef.notArea }}" hint-placeholder-val="{{ true }}"><input id="{{ ef.id }}" type="{{ ef.type }}" inputmode="{{ ef.mode }}" value="{{ ef.v }}" onChange="{{ ef.on }}" placeholder="{{ ef.ph }}" style="height: 40px; box-sizing: border-box; padding: 0 8px; background: #F7F3EE; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; color: #2B2A30; border-radius: 0; width: 100%"></sc-if>
+<sc-if value="{{ ef.isArea }}" hint-placeholder-val="{{ false }}"><textarea id="{{ ef.id }}" rows="4" value="{{ ef.v }}" onChange="{{ ef.on }}" placeholder="{{ ef.ph }}" style="box-sizing: border-box; width: 100%; padding: 6px 8px; background: #F7F3EE; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; color: #2B2A30; border-radius: 0; resize: vertical"></textarea></sc-if>
+</div>
+</sc-for>
+<sc-for list="{{ ag.edGroups }}" as="eg">
+<span style="font-size: 12px; font-weight: 600; color: #4A4450">{{ eg.l }}</span>
+<div style="display: flex; flex-wrap: wrap; gap: 4px">
+<sc-for list="{{ eg.opts }}" as="eo"><button type="button" onClick="{{ eo.pick }}" aria-pressed="{{ eo.pressed }}" style="min-height: 36px; padding: 0 10px; background: {{ eo.bg }}; color: {{ eo.fg }}; border: {{ eo.bw }} solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 12px; font-weight: 600">{{ eo.label }}</button></sc-for>
+</div>
+</sc-for>
+<div style="display: grid; grid-template-columns: {{ ag.edCols }}; gap: 6px">
+<sc-if value="{{ ag.edHasDel }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ ag.edDel }}" style="min-height: 44px; background: #B23A48; color: #FFFFFF; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">{{ ag.edDelText }}</button></sc-if>
+<button type="button" onClick="{{ ag.edCancel }}" style="min-height: 44px; background: #FFFFFF; color: #2B2A30; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">Annuler</button>
+<button type="button" onClick="{{ ag.edSave }}" style="min-height: 44px; background: #4A7034; color: #FFFFFF; border: 2px solid #2B2A30; cursor: pointer; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700">Enregistrer</button>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-for>
+<sc-if value="{{ agHasOld }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ agTogglePast }}" style="min-height: 40px; background: #F7F3EE; color: #2B2A30; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">{{ agOldLabel }}</button></sc-if>
+<sc-for list="{{ agOld }}" as="ao">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 8px; background: #FFFFFF; border: 2px solid #2B2A30">
+<span style="width: 46px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 2px 0; background: #F7F3EE; border: 2px solid #2B2A30"><span style="font-size: 10px; font-weight: 600; color: #5E5864">{{ ao.wd }}</span><span style="font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 20px; font-weight: 700; line-height: 1">{{ ao.day }}</span><span style="font-size: 10px; font-weight: 600; color: #5E5864">{{ ao.mon }}</span></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="align-self: flex-start; padding: 1px 6px; background: {{ ao.catBg }}; color: #FFFFFF; font-size: 11px; font-weight: 700">{{ ao.cat }}</span>
+<span style="font-size: 14px; font-weight: 600">{{ ao.t }}</span>
+<span style="font-size: 12px; color: #4A4450">{{ ao.meta }}</span>
+<sc-if value="{{ ao.hasNote }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #5E5864">{{ ao.note }}</span></sc-if>
+</span>
+<sc-if value="{{ ao.hasLink }}" hint-placeholder-val="{{ false }}"><a href="{{ ao.link }}" target="_blank" rel="noopener" aria-label="{{ ao.linkLabel }}" style="width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #3E6FB0; border: 2px solid #2B2A30; color: #FFFFFF; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path><path d="M18 14v6H4V6h6"></path></svg></a></sc-if>
+<button type="button" onClick="{{ ao.edStart }}" aria-label="{{ ao.edLabel }}" style="width: 40px; height: 40px; flex-shrink: 0; background: #F7F3EE; border: 2px solid #2B2A30; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; color: #2B2A30"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="M14 6l4 4"></path></svg></button>
+</div>
+<sc-if value="{{ ao.edOpen }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; background: #FFFFFF; border: 2px dashed #2B2A30; transform: none; text-align: left">
+<sc-for list="{{ ao.edFields }}" as="ef">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<label for="{{ ef.id }}" style="font-size: 12px; font-weight: 600; color: #4A4450">{{ ef.l }}</label>
+<sc-if value="{{ ef.notArea }}" hint-placeholder-val="{{ true }}"><input id="{{ ef.id }}" type="{{ ef.type }}" inputmode="{{ ef.mode }}" value="{{ ef.v }}" onChange="{{ ef.on }}" placeholder="{{ ef.ph }}" style="height: 40px; box-sizing: border-box; padding: 0 8px; background: #F7F3EE; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; color: #2B2A30; border-radius: 0; width: 100%"></sc-if>
+<sc-if value="{{ ef.isArea }}" hint-placeholder-val="{{ false }}"><textarea id="{{ ef.id }}" rows="4" value="{{ ef.v }}" onChange="{{ ef.on }}" placeholder="{{ ef.ph }}" style="box-sizing: border-box; width: 100%; padding: 6px 8px; background: #F7F3EE; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; color: #2B2A30; border-radius: 0; resize: vertical"></textarea></sc-if>
+</div>
+</sc-for>
+<sc-for list="{{ ao.edGroups }}" as="eg">
+<span style="font-size: 12px; font-weight: 600; color: #4A4450">{{ eg.l }}</span>
+<div style="display: flex; flex-wrap: wrap; gap: 4px">
+<sc-for list="{{ eg.opts }}" as="eo"><button type="button" onClick="{{ eo.pick }}" aria-pressed="{{ eo.pressed }}" style="min-height: 36px; padding: 0 10px; background: {{ eo.bg }}; color: {{ eo.fg }}; border: {{ eo.bw }} solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 12px; font-weight: 600">{{ eo.label }}</button></sc-for>
+</div>
+</sc-for>
+<div style="display: grid; grid-template-columns: {{ ao.edCols }}; gap: 6px">
+<sc-if value="{{ ao.edHasDel }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ ao.edDel }}" style="min-height: 44px; background: #B23A48; color: #FFFFFF; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">{{ ao.edDelText }}</button></sc-if>
+<button type="button" onClick="{{ ao.edCancel }}" style="min-height: 44px; background: #FFFFFF; color: #2B2A30; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">Annuler</button>
+<button type="button" onClick="{{ ao.edSave }}" style="min-height: 44px; background: #4A7034; color: #FFFFFF; border: 2px solid #2B2A30; cursor: pointer; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700">Enregistrer</button>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-for>
+<h3 style="margin: 6px 0 0; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700">Ajouter un événement</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 4px">
+<sc-for list="{{ agCats }}" as="agc" hint-placeholder-count="5"><button type="button" onClick="{{ agc.pick }}" aria-pressed="{{ agc.pressed }}" style="min-height: 36px; padding: 0 10px; background: {{ agc.bg }}; color: {{ agc.fg }}; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 12px; font-weight: 600">{{ agc.label }}</button></sc-for>
+</div>
+<input type="text" value="{{ agDraft }}" onChange="{{ onAgDraft }}" placeholder="Ex. : patch Overwatch, soirée Baldur…" aria-label="Nom de l'événement" style="height: 44px; box-sizing: border-box; padding: 0 8px; background: #FFFFFF; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; border-radius: 0">
+<div style="display: flex; gap: 6px">
+<input type="date" value="{{ agDate }}" onChange="{{ onAgDate }}" aria-label="Date de l'événement" style="flex: 1; min-width: 0; height: 44px; box-sizing: border-box; padding: 0 8px; background: #FFFFFF; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; border-radius: 0">
+<input type="time" value="{{ agTime }}" onChange="{{ onAgTime }}" aria-label="Heure (facultatif)" style="width: 110px; height: 44px; box-sizing: border-box; padding: 0 8px; background: #FFFFFF; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; border-radius: 0">
+<button type="button" onClick="{{ addAg }}" style="min-height: 44px; padding: 0 12px; flex-shrink: 0; background: #2E4A7A; color: #FFFFFF; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 14px; font-weight: 600">Ajouter</button>
 </div>
 </div>
 </sc-if>
@@ -2742,6 +2837,8 @@ var PROJ0 = [
   {id:"p1", who:"C", t:"Apprendre le japonais", habit:"15 min par jour", streak:12, today:false, steps:[{t:"Hiragana", d:true}, {t:"Katakana", d:true}, {t:"100 premiers kanji · 37/100", d:false}, {t:"Lire un manga simple", d:false}, {t:"JLPT N5", d:false}, {t:"Tenir 15 min de conversation", d:false}]},
   {id:"p2", who:"N", t:"Aménager le balcon", habit:"", streak:0, today:false, steps:[{t:"Mesurer l'espace", d:true}, {t:"Choisir les plantes", d:true}, {t:"Acheter les jardinières", d:false}, {t:"Installer la guirlande", d:false}]}
 ];
+var AGCATS = [{id:"patch", l:"Patch", c:"#3E6FB0"}, {id:"sortie", l:"Sortie de jeu", c:"#8A4F9E"}, {id:"rp", l:"Événement RP", c:"#B4527A"}, {id:"groupe", l:"Soirée en groupe", c:"#4A7034"}, {id:"autre", l:"Autre", c:"#6B6470"}];
+var AGENDA0 = REEL ? [] : [{id:"g1", d:"2026-11-18", h:"", t:"Patch Overwatch : nouvelle saison", cat:"patch", note:""}, {id:"g2", d:"2026-11-21", h:"20:30", t:"Soirée Baldur en groupe", cat:"groupe", note:"Discord du groupe"}, {id:"g3", d:"2026-11-28", h:"21:00", t:"Bal masqué à Ul'dah", cat:"rp", note:""}, {id:"g4", d:"2026-12-04", h:"", t:"Mise à jour Minecraft", cat:"patch", note:""}];
 var WHO_P = {C:{l:"C", c:"#3E6FB0"}, E:{l:"E", c:"#B4527A"}, N:{l:"E&C", c:"#4A7034"}};
 var NAME = {C:"Co", E:"Emie"};
 var TITLE_CATS = [
@@ -3001,7 +3098,7 @@ function presence(slot, lvl) {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = {ed: null, edD: null, recipes: JSON.parse(JSON.stringify(RECIPES)), nextRec: 1, recDraft: "", garde: GARDE0, nextGarde: 7, gardeDraft: "", witchT0: 200, titles: TITLES0, plaidOn: true, logsOn: true, ffEdit: null, ffEditT: "", ffEditL: "", play: null, ff: FF0, ffWho: ME, ffDraft: "", ffSec: "jour", ffLink: "", nextFf: 12, ward: WARD0, wardWho: ME, wardDraft: "", wardCat: "Hauts", wardPrio: "bientot", nextWard: 6, sizes: SIZES0, candleOff: false, candleBlow: -99, personStart: -1, coupleStart: -1, purr: null, meteo: "auto", vacances: false, meals: MEALS0, mealPick: null, sante: SANTE0, santeCat: "nahla", poidsDraft: "", duckEv: null, mouse: null, mice: 0, zoomLock: null, hf: {}, birdEv: null, vHold: 0, night: false, santaT0: 0, bedEv: null, bedHold: null, stocks: STOCKS0, bSel: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, bView: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, projets: PROJ0, projOpen: "p1", projDraft: "", projWho: ME, stepDraft: "", nextProj: 3, editCtx: null, room: "salon", radioOn: true, demoUnlock: false, roomSel: {mur: 0, sol: 0, tapis: 0}, roomView: {mur: 0, sol: 0, tapis: 0}, accOpen: {piece: true, meubles: false, bureau: false, cuisine: false, chambre: false, sdb: false, veranda: false, affiches: false, saison: false, musique: false, notifs: false}, furnSel: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, furnView: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, tableDecoOn: true, contacts: CONTACTS0, contactQuery: "", contactCat: "all", cName: "", cPhone: "", cMail: "", nextContact: 17, bdayCat: "nahla", bdayStart: 15, candleLit: true, confStart: 15, confGen: 0, toastHead: null, zoom: null, zoomAuto: true, zoomedOnce: false, notifOn: {rdv:true, mot:true, coeur:true, magasin:true, soiree:true, taches:false}, toast: null, missions: MISS0, missDraft: "", missType: "rdv", journal: JOURNAL0, journalSeen: Date.UTC(2026, 10, 12, 20, 0), jFilter: "tout", nextJ: 6, sfxOn: true, sfxVol: 1, sfxNight: true, missDet: null, missDetDraft: "", litBags: 6, mealDemo: false, missBig: false, cEdit: null, cDraft: null, gmailAddr: "", missCats: [], catInfo: CATINFO0, catEdit: null, catDraft: null, missDate: (REEL ? addDaysIso(7) : "2026-11-24"), missTime: "09:00", nextMiss: 6, notif: null, musicOn: false, soirActs: ACTS0, soirSel: null, soirDay: 0, soirees: {2: {act:"jeu", name:"Jeu de société", item:"jeu", by:"E", status:"accepte"}}, soirDraft: "", nextAct: 1, taskDraft: "", draftWho: ME, whoFilter: "all", session: null, sessionDone: 0, nextTask: 1, fireOn: true, board: "mots", notes: NOTES0, noteDraft: "", noteColor: "#F7E27A", nextNote: 3, tasks: TASKS0, storeMode: false, screen: "salon", items: ITEMS0, nextId: 9, draft: "", photo: null, portions: 4, ingOff: {muscade: true}, xp: {nahla:60, bao:45, tsunky:10}, lvl: {nahla:5, bao:4, tsunky:2}, finished: false, treeOn: false, saison: "hiver", event: "anniv", eventShown: true, wishTab: "her", reserved: {}, myWishes: MY_WISHES, wishDraft: "", nextWish: 3, tick: 0, sheet: null, anim: {nahla:"repos", bao:"queue", tsunky:"sieste"}};
+    this.state = {agenda: AGENDA0, nextAg: 5, agDraft: "", agDate: "", agTime: "", agCat: "patch", agPast: false, ed: null, edD: null, recipes: JSON.parse(JSON.stringify(RECIPES)), nextRec: 1, recDraft: "", garde: GARDE0, nextGarde: 7, gardeDraft: "", witchT0: 200, titles: TITLES0, plaidOn: true, logsOn: true, ffEdit: null, ffEditT: "", ffEditL: "", play: null, ff: FF0, ffWho: ME, ffDraft: "", ffSec: "jour", ffLink: "", nextFf: 12, ward: WARD0, wardWho: ME, wardDraft: "", wardCat: "Hauts", wardPrio: "bientot", nextWard: 6, sizes: SIZES0, candleOff: false, candleBlow: -99, personStart: -1, coupleStart: -1, purr: null, meteo: "auto", vacances: false, meals: MEALS0, mealPick: null, sante: SANTE0, santeCat: "nahla", poidsDraft: "", duckEv: null, mouse: null, mice: 0, zoomLock: null, hf: {}, birdEv: null, vHold: 0, night: false, santaT0: 0, bedEv: null, bedHold: null, stocks: STOCKS0, bSel: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, bView: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, projets: PROJ0, projOpen: "p1", projDraft: "", projWho: ME, stepDraft: "", nextProj: 3, editCtx: null, room: "salon", radioOn: true, demoUnlock: false, roomSel: {mur: 0, sol: 0, tapis: 0}, roomView: {mur: 0, sol: 0, tapis: 0}, accOpen: {piece: true, meubles: false, bureau: false, cuisine: false, chambre: false, sdb: false, veranda: false, affiches: false, saison: false, musique: false, notifs: false}, furnSel: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, furnView: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, tableDecoOn: true, contacts: CONTACTS0, contactQuery: "", contactCat: "all", cName: "", cPhone: "", cMail: "", nextContact: 17, bdayCat: "nahla", bdayStart: 15, candleLit: true, confStart: 15, confGen: 0, toastHead: null, zoom: null, zoomAuto: true, zoomedOnce: false, notifOn: {rdv:true, mot:true, coeur:true, magasin:true, soiree:true, taches:false}, toast: null, missions: MISS0, missDraft: "", missType: "rdv", journal: JOURNAL0, journalSeen: Date.UTC(2026, 10, 12, 20, 0), jFilter: "tout", nextJ: 6, sfxOn: true, sfxVol: 1, sfxNight: true, missDet: null, missDetDraft: "", litBags: 6, mealDemo: false, missBig: false, cEdit: null, cDraft: null, gmailAddr: "", missCats: [], catInfo: CATINFO0, catEdit: null, catDraft: null, missDate: (REEL ? addDaysIso(7) : "2026-11-24"), missTime: "09:00", nextMiss: 6, notif: null, musicOn: false, soirActs: ACTS0, soirSel: null, soirDay: 0, soirees: {2: {act:"jeu", name:"Jeu de société", item:"jeu", by:"E", status:"accepte"}}, soirDraft: "", nextAct: 1, taskDraft: "", draftWho: ME, whoFilter: "all", session: null, sessionDone: 0, nextTask: 1, fireOn: true, board: "mots", notes: NOTES0, noteDraft: "", noteColor: "#F7E27A", nextNote: 3, tasks: TASKS0, storeMode: false, screen: "salon", items: ITEMS0, nextId: 9, draft: "", photo: null, portions: 4, ingOff: {muscade: true}, xp: {nahla:60, bao:45, tsunky:10}, lvl: {nahla:5, bao:4, tsunky:2}, finished: false, treeOn: false, saison: "hiver", event: "anniv", eventShown: true, wishTab: "her", reserved: {}, myWishes: MY_WISHES, wishDraft: "", nextWish: 3, tick: 0, sheet: null, anim: {nahla:"repos", bao:"queue", tsunky:"sieste"}};
   }
   componentDidMount() {
     var self = this;
@@ -3044,6 +3141,7 @@ class Component extends DCLogic {
       var d = new Date(TODAY_Y, TODAY_M, TODAY_D + n), iso = isoD(d), jl = JOURS_L[d.getDay()], its = [];
       st.missions.forEach(function (m) { if (!m.done && m.date === iso) its.push({t: m.t + (m.time ? " · " + m.time.replace(":", "h") : ""), c: col[m.type] || "#4A7034"}); });
       if (n === 0) st.tasks.forEach(function (t) { if (!t.done && t.when === "today") its.push({t: t.t, c: "#3E6FB0"}); });
+      (st.agenda || []).forEach(function (a) { if (a.d === iso) its.push({t: a.t + (a.h ? " · " + a.h.replace(":", "h") : ""), c: "#2E4A7A"}); });
       var mi = MEAL_ISO.indexOf(iso); if (mi >= 0 && st.meals[mi] && st.recipes[st.meals[mi]]) its.push({t: "Repas : " + st.recipes[st.meals[mi]].n, c: "#9A5B12"});
       return {short: jl.slice(0, 3), long: jl.charAt(0).toUpperCase() + jl.slice(1, 3) + ". " + d.getDate(), num: d.getDate(), idx: n, today: n === 0, items: its};
     });
@@ -4145,6 +4243,35 @@ class Component extends DCLogic {
         return {name: NAME[k], bg: WHO[k].bg, title: ti >= 0 ? titleOf(cat, k, ti) : "Pas encore de titre", meta: n + " · " + (nx ? "prochain à " + nx[0] + " : " + titleOf(cat, k, ti + 1) : "tous les titres obtenus"), pct: nx ? Math.round((n - prev) * 100 / (nx[0] - prev)) + "%" : "100%"};
       })};
     });
+    // agenda des jeux et du RP (bureau)
+    out.openAgenda = function () { self.setState({sheet: {type: "agenda"}}); };
+    out.isAgenda = !!(sh && sh.type === "agenda");
+    if (out.isAgenda) { out.sheetTitle = "Agenda des jeux & du RP"; out.sheetColor = "#2E4A7A"; }
+    var agCat = function (id) { return AGCATS.filter(function (c) { return c.id === id; })[0] || AGCATS[AGCATS.length - 1]; };
+    var MOIS_C = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+    var agRow = function (a) {
+      var C = agCat(a.cat), d = parseD(a.d), n = Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - TODAY_UTC) / 864e5);
+      var when = n === 0 ? "aujourd'hui" : n === 1 ? "demain" : n > 1 ? "dans " + n + " jours" : n === -1 ? "hier" : "il y a " + (-n) + " jours";
+      var isUrl = /^https?:\/\//.test(a.note || "");
+      return Object.assign({t: a.t, day: String(d.getDate()), mon: MOIS_C[d.getMonth()], wd: JOURS[d.getDay()], cat: C.l, catBg: C.c,
+        meta: (a.h ? a.h.replace(":", "h") + " · " : "") + when, hasNote: !!a.note && !isUrl, note: a.note || "", hasLink: isUrl, link: a.note || "", linkLabel: "Ouvrir le lien : " + a.t, soon: n >= 0 && n <= 2},
+        ED("ag:" + a.id, a.t, function () { return {t: a.t, d: a.d, h: a.h || "", cat: a.cat, note: a.note || ""}; },
+          {f: [["t", "Événement", "text"], ["d", "Date", "date"], ["h", "Heure", "time"], ["note", "Précision ou lien", "text", "facultatif : lieu, serveur, lien du patch…"]], g: [["cat", "Type", AGCATS.map(function (c) { return [c.id, c.l, c.c]; })]]},
+          function (x) { if (!String(x.t || "").trim() || !/^\d{4}-\d{2}-\d{2}$/.test(x.d || "")) return false; self.setState({agenda: self.state.agenda.map(function (y) { return y.id === a.id ? Object.assign({}, y, {t: cap(x.t), d: x.d, h: x.h || "", cat: x.cat, note: String(x.note || "").trim()}) : y; })}); },
+          function () { self.setState({agenda: self.state.agenda.filter(function (y) { return y.id !== a.id; })}); }));
+    };
+    var agSorted = st.agenda.slice().sort(function (a, b) { return (a.d + (a.h || "")) < (b.d + (b.h || "")) ? -1 : 1; });
+    var agUp = agSorted.filter(function (a) { return a.d >= TODAY_ISO; }), agOld = agSorted.filter(function (a) { return a.d < TODAY_ISO; }).reverse();
+    out.agUp = agUp.map(agRow); out.agEmpty = !agUp.length; out.agOld = st.agPast ? agOld.slice(0, 20).map(agRow) : [];
+    out.agHasOld = agOld.length > 0; out.agOldLabel = st.agPast ? "Masquer les événements passés" : "Voir les événements passés (" + agOld.length + ")";
+    out.agTogglePast = function () { self.setState({agPast: !self.state.agPast}); };
+    out.agDraft = st.agDraft; out.onAgDraft = function (e) { self.setState({agDraft: e.target.value}); };
+    out.agDate = st.agDate || TODAY_ISO; out.onAgDate = function (e) { self.setState({agDate: e.target.value}); };
+    out.agTime = st.agTime; out.onAgTime = function (e) { self.setState({agTime: e.target.value}); };
+    out.agCats = AGCATS.map(function (c) { var on = st.agCat === c.id; return {label: c.l, pressed: on ? "true" : "false", bg: on ? c.c : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pick: function () { self.setState({agCat: c.id}); }}; });
+    out.addAg = function () { var t = (self.state.agDraft || "").trim(), d = self.state.agDate || TODAY_ISO; if (!t) return;
+      self.setState({agenda: self.state.agenda.concat([{id: "ag" + self.state.nextAg, d: d, h: self.state.agTime || "", t: cap(t), cat: self.state.agCat, note: "", by: ME}]), nextAg: self.state.nextAg + 1, agDraft: "", agTime: ""});
+      if (self._toast) { self._toast("Ajouté à l'agenda · " + fmtD(parseD(d))); self.setState({toastHead: "Agenda des jeux & du RP"}); } };
     out.isProjets = !!(sh && sh.type === "projets");
     if (out.isProjets) { out.sheetTitle = "Grands projets"; out.sheetColor = "#4A7034"; }
     var setP = function (id, fn) { self.setState({projets: self.state.projets.map(function (p) { return p.id === id ? fn(Object.assign({}, p)) : p; })}); };
