@@ -142,6 +142,15 @@ export function roll(st, today, now = new Date()) {
       out.ff = f;
     }
   }
+  // titres de l'année : remis à zéro le 1er janvier
+  if (st.titles && typeof st.titles === "object") {
+    const y = +today.slice(0, 4), ty = st.titles._y;
+    if (!ty) out.titles = { ...clone(st.titles), _y: y };
+    else if (ty < y) {
+      const t = {}; Object.keys(st.titles).forEach((k) => { if (k !== "_y") t[k] = Object.fromEntries(Object.keys(st.titles[k]).map((w) => [w, 0])); });
+      t._y = y; out.titles = t;
+    }
+  }
   // habitudes des grands projets
   if (Array.isArray(st.projets)) {
     let ch = false;

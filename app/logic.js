@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=69d6e01e";
+import { DCLogic, blobUrl } from "./runtime.js?v=4b906626";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -842,7 +842,7 @@ class Component extends DCLogic {
     out.confOn = (bday || personBday || out.nyOn) && ce >= 0 && ce < 45;
     var cc2 = out.nyOn ? ["#F2C14E", "#C9CED6", "#FFFFFF", "#E8B84A", "#8A8F99", "#F7E27A"] : [CAT_COL[bk], "#F2C14E", "#F6C1C7", "#E04848", "#FFFFFF", "#6FBF5A"];
     out.confetti = []; for (var ci = 0; ci < 40; ci++) out.confetti.push({cls: "wconf" + (st.confGen % 2), x: Math.round(rnd(ci + 50) * 380) + "px", w: (rnd(ci + 51) > 0.5 ? 6 : 4) + "px", h: (rnd(ci + 52) > 0.5 ? 8 : 5) + "px", c: cc2[ci % 6], dur: (2.4 + rnd(ci + 53) * 1.6).toFixed(1) + "s", delay: (rnd(ci + 54) * 0.6).toFixed(2) + "s"});
-    out.bareme = [{t:"Tâche quotidienne (vaisselle, litière, machine)", v:"2 XP"}, {t:"Tâche hebdomadaire (poubelles, aspirateur, Bain)", v:"5 XP"}, {t:"Tâche mensuelle ou saisonnière", v:"10 XP"}, {t:"Liste de courses vidée en mode magasin", v:"8 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"5 XP chacun"}, {t:"Défi", v:"50 à 150 XP"}];
+    out.bareme = [{t:"Tâche quotidienne (vaisselle, litière, machine)", v:"2 XP"}, {t:"Tâche hebdomadaire (poubelles, aspirateur, Bain)", v:"5 XP"}, {t:"Tâche mensuelle ou saisonnière", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"5 XP chacun"}, {t:"Défi", v:"50 à 150 XP"}];
     out.gardeFous = ["Une même tâche répétable ne rapporte que 2 fois par jour", "Tâches répétables plafonnées à 25 XP par jour et par personne", "Une mission rapporte une fois cochée ; un rendez-vous à partir du jour J", "Papiers faits avant l'échéance : +50 %", "Décocher retire l'XP", "Un chat qui dort donne ×1,5 sur sa prochaine tâche"];
     out.paliers = []; for (var pn = 2; pn <= 35; pn++) { var pc = FOYER_COST(pn), rm = ROOMS.filter(function (r) { return r.lvl === pn; })[0]; out.paliers.push({t: "Niv. " + pn + " · " + pc + (rm ? " ★" : ""), c: pn <= FOYER_LVL ? "#36532A" : "#2B2A30", w: rm ? "700" : "400"}); }
     out.isAnnivEvent = st.event === "anniv";
@@ -877,7 +877,9 @@ class Component extends DCLogic {
       out.fLvl = n; out.fPct = Math.round(x * 100 / need) + "%"; out.fXpTxt = x + " / " + need + " XP avant le niveau " + (n + 1) + "."; out.fXpShort = x + " / " + need + " XP avant le niveau " + (n + 1); })();
     out.demoReel = REEL;
     out.saisonNow = "Maintenant : " + ({printemps: "printemps", ete: "été", automne: "automne", hiver: "hiver", noel: "période de Noël", classique: "classique"})[st.saison] + ((st.event && st.eventShown) ? " · " + ({nouvelan: "Nouvelle année", noel: "Noël", anniv: "anniversaire de " + CATS[st.bdayCat].name, annivE: "anniversaire d'Emie", annivC: "anniversaire de Co", couple: "notre jour", valentin: "Saint-Valentin", paques: "Pâques", halloween: "Halloween"})[st.event] : "");
-    out.demoUi = !REEL; out.deOther = OTHER === "E" ? "d'Emie" : "de Co"; out.otherE = OTHER === "E" ? "e" : ""; out.otherName = NAME[OTHER]; out.meName = NAME[ME];
+    out.demoUi = !REEL; out.ceQueOther = OTHER === "E" ? "Ce qu'Emie" : "Ce que Co"; out.deOther = OTHER === "E" ? "d'Emie" : "de Co"; out.otherE = OTHER === "E" ? "e" : ""; out.otherName = NAME[OTHER]; out.meName = NAME[ME];
+    // XP donnée à un chat (et donc au foyer)
+    var giveXp = function (k, n) { var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl), an = Object.assign({}, self.state.anim); xp[k] += n; while (xp[k] >= 100) { xp[k] -= 100; lvl[k] += 1; } an[k] = "ronron"; self.setState({xp: xp, lvl: lvl, anim: an}); };
     // éditeur générique : chaque fiche passe par lui pour modifier un élément
     var ED = function (key, label, init, spec, onSave, onDel, delText) {
       var open = st.ed === key, D = st.edD || {};
@@ -991,7 +993,12 @@ class Component extends DCLogic {
         who: byLabel(byOf(t)), whoBg: byBg(byOf(t)),
         toggle: function () { tapTask(t); }};
     });
-    out.seasonal = SEASONAL.map(function (se) {
+    out.entretienTitre = "Entretien de " + MOIS_L[TODAY_M];
+    var SEAS_BY = {hiver: [{id:"sh1", t:"Dégivrer le congélateur", why:"Une fois l'hiver"}, {id:"sh2", t:"Aérer chaque matin 10 minutes", why:"Contre l'humidité"}, {id:"dfm", t:"Tester le détecteur de fumée", why:"Une fois par saison"}],
+      printemps: [{id:"sp1", t:"Nettoyer les vitres", why:"Le grand ménage de printemps"}, {id:"sp2", t:"Laver les rideaux", why:"Une fois au printemps"}, {id:"dfm", t:"Tester le détecteur de fumée", why:"Une fois par saison"}],
+      ete: [{id:"se1", t:"Nettoyer le filtre de la clim", why:"Avant les fortes chaleurs"}, {id:"se2", t:"Nettoyer les moustiquaires", why:"Une fois l'été"}, {id:"dfm", t:"Tester le détecteur de fumée", why:"Une fois par saison"}]};
+    var seasonal0 = REEL ? (SEAS_BY[{noel: "hiver", classique: "automne"}[st.saison] || st.saison] || SEASONAL) : SEASONAL;
+    out.seasonal = seasonal0.map(function (se) {
       var added = st.tasks.some(function (t) { return t.id === se.id; });
       return {t: se.t, why: se.why, label: added ? "Ajoutée" : "+ Ajouter", bg: added ? "#E4EEDC" : "#D9A441", fg: added ? "#36532A" : "#2B2A30",
         add: function () { if (self.state.tasks.some(function (t) { return t.id === se.id; })) return;
@@ -1054,7 +1061,7 @@ class Component extends DCLogic {
         [{n:7, l:"J-7"}, {n:2, l:"J-2"}, {n:0, l:"Jour J"}].forEach(function (r) {
           var rd = new Date(d.getTime() - r.n * 86400000);
           var past = daysBetween(TODAY, rd) < 0, today = daysBetween(TODAY, rd) === 0;
-          rem.push({label: r.l + (past ? " · envoyé" : (today ? " · aujourd'hui" : " · " + rd.getDate() + "/" + (rd.getMonth() + 1))),
+          rem.push({label: r.l + (past ? (REEL ? " · passé" : " · envoyé") : (today ? " · aujourd'hui" : " · " + rd.getDate() + "/" + (rd.getMonth() + 1))),
             bg: past ? "#ECE6DD" : "#FFF1D6", fg: past ? "#5E5864" : "#6E400C"});
         });
         var dd = daysBetween(TODAY, d);
@@ -1116,7 +1123,7 @@ class Component extends DCLogic {
       self._tt = setTimeout(function () { self.setState({toast: null}); }, 3200);
     };
     self._toast = toast;
-    out.toastShow = !!st.toast; out.toastText = st.toast || ""; out.toastHead = st.toastHead || "Notification envoyée à " + NAME[OTHER];
+    out.toastShow = !!st.toast; out.toastText = st.toast || ""; out.toastHead = st.toastHead || (REEL ? "Maison" : "Notification envoyée à " + NAME[OTHER]);
     out.openSettings = function () { self.setState({sheet: {type: "settings"}}); };
     out.isSettings = !!(sh && sh.type === "settings");
     if (out.isSettings) { out.sheetTitle = "Réglages"; out.sheetColor = "#2B2A30"; }
@@ -1342,12 +1349,12 @@ class Component extends DCLogic {
       return {name: x.name || x.n, pct: pct + "%", col: col, state: state, stateFg: low ? (x.blue ? "#2E6DB4" : "#B23A48") : "#4A4450",
         info: info, label: label, isTime: !isCount, isCount: isCount,
         resetLabel: x.blue ? "Filtre changé aujourd'hui" : (x.act || "Racheté") + " aujourd'hui",
-        reset: function () { setStock(x.id, function () { return {ago: 0}; }); self._toast(x.n + " : jauge remise à plein · +5 XP pour Bao"); },
+        reset: function () { setStock(x.id, function () { return {ago: 0}; }); giveXp("bao", 5); self._toast(x.n + " : jauge remise à plein · +5 XP pour Bao"); },
         qtyText: isCount ? String(x.qty) : "", unitText: isCount ? x.unit + (x.qty > 1 ? "s" : "") : "",
         minus: function () { setStock(x.id, function (y) { return {qty: Math.max(0, y.qty - 1)}; }); },
         plus: function () { setStock(x.id, function (y) { return {qty: y.qty + 1}; }); },
         hasPack: !!x.pack, packLabel: x.packLabel || "",
-        addPack: function () { setStock(x.id, function (y) { return {qty: y.qty + x.pack}; }); self._toast(x.n + " : une boîte ajoutée · +5 XP pour Bao"); },
+        addPack: function () { setStock(x.id, function (y) { return {qty: y.qty + x.pack}; }); giveXp("bao", 5); self._toast(x.n + " : une boîte ajoutée · +5 XP pour Bao"); },
         minusLabel: "Retirer un " + (x.unit || "") + " de " + x.n, plusLabel: "Ajouter un " + (x.unit || "") + " à " + x.n,
         canAdd: !x.blue && low && !inList, inList: !x.blue && low && inList,
         add: function () { var id = self.state.nextId; self.setState({items: self.state.items.concat([{id: id, n: x.n, q: "", r: "Chats", by: "A", tag: "Stock bas"}]), nextId: id + 1}); self._toast(x.n + " ajouté aux courses"); },
@@ -1503,9 +1510,10 @@ class Component extends DCLogic {
       return {ed: ED("soin:" + ck + ":" + so.id, so.n, function () { return {d: unk ? "" : last}; }, {f: [["d", "Date du dernier " + so.n.toLowerCase(), "date"]]},
           function (d) { if (!/^\d{4}-\d{2}-\d{2}$/.test(d.d || "")) return false; var sa = JSON.parse(JSON.stringify(self.state.sante)); sa[ck].soins[so.id] = d.d; self.setState({sante: sa}); }),
         name: so.n, last: unk ? "Pas encore noté" : "Dernier : " + dfmt(last), next: unk ? "Date à noter (crayon)" : left > 0 ? "Prochain dans " + left + " j" : (left === 0 ? "À faire aujourd'hui" : "En retard de " + (-left) + " j"), col: unk ? "#8A8490" : col, pct: Math.max(4, Math.min(100, Math.round(left * 100 / so.every))) + "%",
-        done: function () { var sa = JSON.parse(JSON.stringify(self.state.sante)); sa[self.state.santeCat].soins[so.id] = TODAY_ISO; self.setState({sante: sa}); self._toast(so.n + " noté pour " + CATS[self.state.santeCat].name + " · +10 XP pour Tsunky"); }};
+        done: function () { var sa = JSON.parse(JSON.stringify(self.state.sante)); sa[self.state.santeCat].soins[so.id] = TODAY_ISO; self.setState({sante: sa}); giveXp("tsunky", 10); self._toast(so.n + " noté pour " + CATS[self.state.santeCat].name + " · +10 XP pour Tsunky"); }};
     });
     var pw = SC.poids.length ? SC.poids : [0], pmax = Math.max.apply(null, pw), pmin = Math.min.apply(null, pw) - 0.3;
+    out.hasPoids = SC.poids.length > 1;
     out.poidsNow = SC.poids.length ? String(pw[pw.length - 1]).replace(".", ",") + " kg" : "Pas encore de pesée";
     (function () { var ck = st.santeCat; out.poidsEd = ED("poids:" + ck, "les pesées", function () { return {p: self.state.sante[ck].poids.map(function (v) { return String(v).replace(".", ","); }).join("  ")}; },
       {f: [["p", "Pesées en kg, de la plus ancienne à la plus récente", "text", "ex. 4,0  4,1  4,1"]]},
@@ -1674,7 +1682,7 @@ class Component extends DCLogic {
       else if (st.play && st.play.cat === k && st.tick < st.play.until) { o.src = "/_blob/" + IMG[k][["chaseA", "chaseB", "chaseC"][Math.floor(st.tick / 3) % 3]]; o.css = st.tick % 8 < 4 ? "hop" : "calm"; }
       return o; }); };
     out.bureauCats = interact(out.bureauCats); out.kitchenCats = interact(out.kitchenCats); out.chambreCats = interact(out.chambreCats); out.sdbCats = interact(out.sdbCats); out.verandaCats = interact(out.verandaCats);
-    out.demoAnims = st.demoUnlock;
+    out.demoAnims = st.demoUnlock; out.demoAnimsTest = st.demoUnlock && !REEL;
     self._log = function (kind, text, sub, extra) { var n = self.state.nextJ; self.setState({journal: [Object.assign({id: "j" + n, ts: Date.now(), kind: kind, text: text, sub: sub || ""}, extra || {})].concat(self.state.journal).slice(0, 200), nextJ: n + 1}); };
     if (self._jSeenPending && st.sheet && st.sheet.type === "journal") { self._jSeenPending = false; var seenAt = st.journalSeen; setTimeout(function () { self.setState({journalSeen: Date.now(), journalSeenShown: seenAt}); }, 0); }
     var seenRef = (st.sheet && st.sheet.type === "journal" && st.journalSeenShown != null) ? st.journalSeenShown : st.journalSeen;
@@ -1804,12 +1812,12 @@ class Component extends DCLogic {
     };
     out.showRadio = st.radioOn;
     out.optFurn = [
-      {id:"treeOn", l:"Arbre à chat", sub:"Aperçu : débloqué au niveau 11"},
+      REEL && FOYER_LVL < 11 ? null : {id:"treeOn", l:"Arbre à chat", sub:REEL ? "Débloqué au niveau 11" : "Aperçu : débloqué au niveau 11"},
       {id:"radioOn", l:"Radio", sub:"La musique reste réglable ici"},
       {id:"plaidOn", l:"Plaid sur le canapé", sub:"Motif à choisir dans les meubles"},
       {id:"logsOn", l:"Panier de bûches", sub:"Près de la cheminée, en automne et en hiver"},
       {id:"tableDecoOn", l:"Jeu et console sur la table basse", sub:"L'objet de la soirée s'affiche quand même"}
-    ].map(function (f) {
+    ].filter(Boolean).map(function (f) {
       var on = !!st[f.id];
       return {label: f.l, sub: f.sub, on: on ? "true" : "false", op: "1", track: on ? "#4A7034" : "#C9C2B5", knob: on ? "24px" : "2px",
         toggle: function () { var u = {}; u[f.id] = !self.state[f.id]; self.setState(u); }};
