@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=b0e47063";
+import { DCLogic, blobUrl } from "./runtime.js?v=c70596d9";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -616,7 +616,11 @@ class Component extends DCLogic {
     var st = this.state;
     var bday = st.event === "anniv" && st.eventShown, bk = st.bdayCat, be = st.tick - st.bdayStart;
     var personBday = st.eventShown && (st.event === "annivE" || st.event === "annivC"), pwho = st.event === "annivE" ? "Emie" : "Co", pkey = st.event === "annivE" ? "E" : "C", pe = st.tick - st.personStart;
-    var home = function (k) { var c = CATS[k]; return {x: parseInt(st.treeOn ? TREE_POS[k].x : c.x, 10), y: parseInt(st.treeOn ? TREE_POS[k].y : c.y, 10)}; };
+    // les chats échangent leurs places dans chaque pièce (tous les quarts d'heure dans l'appli, toutes les 30 s en démo)
+    var ROT = REEL ? Math.floor(Date.now() / (15 * 60e3)) : Math.floor(st.tick / (SLOT * 2));
+    var slotK = function (k) { return ORDER[(ORDER.indexOf(k) + ROT) % 3]; };
+    var sj3 = function (i) { return (i + ROT) % 3; };
+    var home = function (k) { var c = CATS[slotK(k)]; return {x: parseInt(st.treeOn ? TREE_POS[slotK(k)].x : c.x, 10), y: parseInt(st.treeOn ? TREE_POS[slotK(k)].y : c.y, 10)}; };
     var givers = ORDER.filter(function (k) { return k !== bk; });
     var lvlNow0 = st.demoUnlock ? 99 : FOYER_LVL;
     var mv = st.demoUnlock && !st.night, slot = mv ? Math.floor(st.tick / SLOT) : 5, ph = mv ? st.tick % SLOT : 999;
@@ -687,8 +691,8 @@ class Component extends DCLogic {
     var sh = st.sheet;
     var zv = false, zx = 0, zy = 0, zf = 1, zb = false, zbx = "0px", zby = "0px", zbt = "", zex = false, zrot = "0deg", zd = false, zdx = "0px", zdy = "0px", zsrc = "";
     if (st.zoom) {
-      var zk = st.zoom.cat, e = st.tick - st.zoom.start, cc = CATS[zk];
-      var px = parseInt(st.treeOn ? TREE_POS[zk].x : cc.x, 10), py = parseInt(st.treeOn ? TREE_POS[zk].y : cc.y, 10);
+      var zk = st.zoom.cat, e = st.tick - st.zoom.start, cc = CATS[slotK(zk)];
+      var px = parseInt(st.treeOn ? TREE_POS[slotK(zk)].x : cc.x, 10), py = parseInt(st.treeOn ? TREE_POS[slotK(zk)].y : cc.y, 10);
       var y0 = Math.min(770, py + 105 - 55), x0 = px - 10;
       var zr = ROOMS.filter(function (r) { return r.id !== "salon" && r.lvl <= lvlNow0; }).map(function (r) { return ROOM_DE[r.id]; }); if (!zr.length) zr = ["le couloir"];
       var room1 = zr[(st.zoom.start) % zr.length], room2 = zr[(st.zoom.start + 1) % zr.length];
@@ -1128,15 +1132,15 @@ class Component extends DCLogic {
     var here = ORDER.filter(function (k) { return pres[k] === st.room && !transit[k]; });
     var rIdx = function (r) { return ROOMS.map(function (x) { return x.id; }).indexOf(r); };
     var spotX = function (room, k, P) {
-      if (room === "salon") return parseInt(CATS[k].x, 10) - 10;
+      if (room === "salon") return parseInt(CATS[slotK(k)].x, 10) - 10;
       var list = ORDER.filter(function (q) { return P[q] === room; }), i = Math.max(0, list.indexOf(k));
-      return ((WALK_X[room] || [150, 150, 150])[i] || 150) - 10;
+      return ((WALK_X[room] || [150, 150, 150])[sj3(i)] || 150) - 10;
     };
     var spotFeet = function (room, k, P) {
-      if (room === "salon") return parseInt(st.treeOn ? TREE_POS[k].y : CATS[k].y, 10) + 85;
+      if (room === "salon") return parseInt(st.treeOn ? TREE_POS[slotK(k)].y : CATS[slotK(k)].y, 10) + 85;
       var list = ORDER.filter(function (q) { return P[q] === room; }), i = Math.max(0, list.indexOf(k));
-      if (room === "bureau") { var stg = MURAL_STAGES.filter(function (l) { return l <= lvlNow; }).length; return [252, 600, stg >= 2 ? 175 : (stg ? 197 : 612)][i] + 85; }
-      return ((WALK_Y[room] || [620, 620, 620])[i] || 620) + 85;
+      if (room === "bureau") { var stg = MURAL_STAGES.filter(function (l) { return l <= lvlNow; }).length; return [252, 600, stg >= 2 ? 175 : (stg ? 197 : 612)][sj3(i)] + 85; }
+      return ((WALK_Y[room] || [620, 620, 620])[sj3(i)] || 620) + 85;
     };
     var FLOOR = 705, JT = 12, JD = 40;
     out.walkers = [];
@@ -1245,7 +1249,7 @@ class Component extends DCLogic {
     out.openProjets = function () { self.setState({sheet: {type: "projets"}}); };
     var spots = [{x: 150, y: 252, sleep: true}, {x: 150, y: 600}, stageNow >= 2 ? {x: 252, y: 175} : (stageNow ? {x: 222, y: 197} : {x: 248, y: 612})];
     out.bureauCats = (out.inBureau ? here : []).map(function (k, i) {
-      var sp = spots[i], fr = sp.sleep ? (st.tick % 20 < 10 ? "sleepA" : "sleepB") : (st.tick % 40 < 3 ? "blink" : "sit");
+      var sp = spots[sj3(i)], fr = sp.sleep ? (st.tick % 20 < 10 ? "sleepA" : "sleepB") : (st.tick % 40 < 3 ? "blink" : "sit");
       return {name: CATS[k].name, x: sp.x + "px", y: sp.y + "px", src: "/_blob/" + IMG[k][fr], k: k, aria: CATS[k].name + (sp.sleep ? " dort dans son dodo" : " est dans le bureau"), open: function () { self.open({type:"cat", key:k}); }};
     });
     var mkFurn = function (order, here) { return order.map(function (k) {
@@ -1283,7 +1287,7 @@ class Component extends DCLogic {
     out.openVFurn = function () { var a = Object.assign({}, self.state.accOpen); a.veranda = true; self.setState({accOpen: a, sheet: {type: "settings"}}); };
     out.verandaCats = (out.inVeranda ? here : []).map(function (k, i) {
       var fr = (st.tick + i * 7) % 20 < 10 ? "sleepA" : "sleepB";
-      return {css: "calm", x: [60, 150, 240][i] + "px", y: "503px", src: "/_blob/" + IMG[k][fr], k: k, aria: CATS[k].name + " fait la sieste au soleil", open: function () { self.open({type:"cat", key:k}); }};
+      return {css: "calm", x: [60, 150, 240][sj3(i)] + "px", y: "503px", src: "/_blob/" + IMG[k][fr], k: k, aria: CATS[k].name + " fait la sieste au soleil", open: function () { self.open({type:"cat", key:k}); }};
     });
     out.verandaAll = here.length === 3 && out.inVeranda;
     out.openKFurn = function () { var a = Object.assign({}, self.state.accOpen); a.cuisine = true; self.setState({accOpen: a, sheet: {type: "settings"}}); };
@@ -1353,7 +1357,7 @@ class Component extends DCLogic {
     out.pMeal = st.mealDemo ? "true" : "false"; out.mealTrack = st.mealDemo ? "#4A7034" : "#C9C2B5"; out.mealKnob = st.mealDemo ? "24px" : "2px";
     out.toggleMeal = function () { self.setState({mealDemo: !self.state.mealDemo}); };
     out.kitchenCats = (out.inCuisine ? kHere : []).map(function (k, i) {
-      var sp = kspots[i], kfr = (sp.sleep && !out.potOn) || st.night ? ((st.tick + i * 5) % 20 < 10 ? "sleepA" : "sleepB") : (st.tick % 40 < 3 ? "blink" : "sit");
+      var sp = kspots[sj3(i)], kfr = (sp.sleep && !out.potOn) || st.night ? ((st.tick + i * 5) % 20 < 10 ? "sleepA" : "sleepB") : (st.tick % 40 < 3 ? "blink" : "sit");
       return {x: sp.x + "px", y: sp.y + "px", src: "/_blob/" + IMG[k][kfr], k: k, aria: CATS[k].name + " est dans la cuisine", open: function () { self.open({type:"cat", key:k}); }};
     });
 
@@ -1367,15 +1371,16 @@ class Component extends DCLogic {
     var shut = et % 12 < 2, dx = Math.floor(et / 14) % 2 * 8;
     out.eyeC = bedCat ? EYES[bedCat] : "#FFF"; out.eyeH = shut ? "2px" : "6px"; out.eyeY = shut ? "703px" : "700px";
     out.eyeL = (205 + dx) + "px"; out.eyeR = (223 + dx) + "px";
+    var cj = function (i) { return ev ? i : sj3(i); };   // pendant le cache-cache, le chat du lit reste au lit
     var cspots = [{x: 177, y: 515, sleep: true}, {x: 300, y: 205}, {x: 15, y: 533}];
     out.chambreCats = (out.inChambre ? cHere : []).map(function (k, i) {
-      var sp = cspots[i], fr = (sp.sleep || st.night) ? ((st.tick + i * 5) % 20 < 10 ? "sleepA" : "sleepB") : ((st.tick + i * 9) % 40 < 3 ? "blink" : "sit"), x = sp.x, y = sp.y, css = "calm", show = true;
-      if (i === 0 && ev && et >= 0) {
+      var sp = cspots[cj(i)], fr = (sp.sleep || st.night) ? ((st.tick + i * 5) % 20 < 10 ? "sleepA" : "sleepB") : ((st.tick + i * 9) % 40 < 3 ? "blink" : "sit"), x = sp.x, y = sp.y, css = "calm", show = true;
+      if (cj(i) === 0 && ev && et >= 0) {
         if (et < 40) show = false;
         else if (et < 56) { y = 707; fr = (st.tick % 30 < 3) ? "blink" : "sit"; }
         else if (et < 64) { y = 611; fr = "happy"; css = "hop"; }
       }
-      return {show: show, x: x + "px", y: y + "px", css: css, src: "/_blob/" + IMG[k][fr], k: k, aria: CATS[k].name + (i === 0 ? " est sur le lit" : (i === 1 ? " est sur l'arbre à chat" : " est dans la penderie")), open: function () { self.open({type:"cat", key:k}); }};
+      return {show: show, x: x + "px", y: y + "px", css: css, src: "/_blob/" + IMG[k][fr], k: k, aria: CATS[k].name + (cj(i) === 0 ? " est sur le lit" : (cj(i) === 1 ? " est sur l'arbre à chat" : " est dans la penderie")), open: function () { self.open({type:"cat", key:k}); }};
     }).filter(function (c) { return c.show; });
 
     var evKey = st.eventShown && EVO[st.event] ? st.event : null;
@@ -1433,9 +1438,9 @@ class Component extends DCLogic {
     out.openSFurn = function () { var a = Object.assign({}, self.state.accOpen); a.sdb = true; self.setState({accOpen: a, sheet: {type: "settings"}}); };
     var sspots = [{x: 21, y: 397, fr: ["sit", "blink"]}, {x: 267, y: 443, fr: ["groomA", "groomB"]}, {x: 177, y: 610, fr: ["sit", "tailup"]}];
     out.sdbCats = (out.inSdb ? here : []).map(function (k, i) {
-      var sp2 = sspots[i], fr = sp2.fr[Math.floor((st.tick + i * 7) / 5) % 2];
+      var sp2 = sspots[sj3(i)], fr = sp2.fr[Math.floor((st.tick + i * 7) / 5) % 2];
       if (sp2.fr[0] === "sit" && fr === "blink" && st.tick % 40 >= 3) fr = "sit";
-      return {x: sp2.x + "px", y: sp2.y + "px", src: "/_blob/" + IMG[k][fr], k: k, aria: CATS[k].name + (i === 0 ? " est dans le lavabo" : (i === 1 ? " fait sa toilette sur la baignoire" : " est sur le tapis de bain")), open: function () { self.open({type:"cat", key:k}); }};
+      return {x: sp2.x + "px", y: sp2.y + "px", src: "/_blob/" + IMG[k][fr], k: k, aria: CATS[k].name + (sj3(i) === 0 ? " est dans le lavabo" : (sj3(i) === 1 ? " fait sa toilette sur la baignoire" : " est sur le tapis de bain")), open: function () { self.open({type:"cat", key:k}); }};
     });
     // room-specific settings
     out.roomIs = {salon: st.room === "salon", bureau: st.room === "bureau", cuisine: st.room === "cuisine", chambre: st.room === "chambre", sdb: st.room === "sdb", veranda: st.room === "veranda"};
