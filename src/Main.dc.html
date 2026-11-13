@@ -530,6 +530,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px">
 <h3 style="margin: 0; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700">Dernières tâches</h3>
+<sc-if value="{{ sc.noHistory }}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #5E5864">Rien de coché pour l'instant.</span></sc-if>
 <sc-for list="{{ sc.history }}" as="h" hint-placeholder-count="3">
 <div style="display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px; background: #FFFFFF; border: 2px solid #2B2A30; font-size: 13px">
 <span>{{ h.t }}</span>
@@ -2598,13 +2599,13 @@ var ANIM_EXTRA = {nahla: ["chant", "pain"], tsunky: ["pain"], bao: ["pompon", "p
 var ANIM_ORDER = ["repos","queue","toilette","chasse","ronron","sieste"];
 var CATS = {
   nahla: {name:"Nahla", domain:"Ménage & tâches", color:"#3E6FB0", level:5, xp:60, x:"36px", y:"630px", status:"Dernière tâche : hier",
-    history:[{t:"Sortir les poubelles", xp:"+5 XP"},{t:"Vermifuge des chats", xp:"+10 XP"},{t:"Changer la litière", xp:"+5 XP"}],
+    history:[{t:"Sortir les poubelles", xp:"+5 XP"},{t:"Changer la litière", xp:"+5 XP"}],
     next:"Niveau 6 : Nahla débloque la pose « perchée » sur l'étagère."},
   bao: {name:"Bao", domain:"Courses & cuisine", color:"#9A5B12", level:4, xp:45, x:"272px", y:"585px", status:"Dernière tâche : il y a 2 j",
     history:[{t:"Courses du samedi", xp:"+15 XP"},{t:"Planning des repas", xp:"+10 XP"},{t:"Recette ajoutée en photo", xp:"+5 XP"}],
     next:"Niveau 5 : Bao gagne un petit bol en céramique à côté du frigo."},
   tsunky: {name:"Tsunky", domain:"Missions & rendez-vous", color:"#4A7034", level:2, xp:10, x:"150px", y:"718px", status:"Rien depuis 9 j : elle fait la sieste",
-    history:[{t:"Déchèterie (cartons)", xp:"+20 XP"},{t:"Relevé du compteur d'eau", xp:"+10 XP"}],
+    history:[{t:"Déchèterie (cartons)", xp:"+20 XP"}],
     next:"Une mission faite la réveille. Niveau 3 : coussin sur le bureau."}
 };
 var ORDER = ["nahla","bao","tsunky"];
@@ -2627,10 +2628,10 @@ var TABS = {
 var WEEK = [
   {short:"lun", long:"Lun. 9", num:9, items:[{t:"Sortir les poubelles", c:"#3E6FB0"}]},
   {short:"mar", long:"Mar. 10", num:10, items:[]},
-  {short:"mer", long:"Mer. 11", num:11, items:[{t:"Vermifuge des chats", c:"#3E6FB0"}]},
+  {short:"mer", long:"Mer. 11", num:11, items:[]},
   {short:"jeu", long:"Jeu. 12", num:12, items:[{t:"Sortir les poubelles", c:"#3E6FB0"}]},
   {short:"ven", long:"Ven. 13", num:13, today:true, items:[{t:"Passer l'aspirateur", c:"#3E6FB0"},{t:"Courses de la semaine", c:"#9A5B12"},{t:"Attestation d'assurance", c:"#4A7034"}]},
-  {short:"sam", long:"Sam. 14", num:14, items:[{t:"Relevé du compteur d'eau", c:"#4A7034"}]},
+  {short:"sam", long:"Sam. 14", num:14, items:[]},
   {short:"dim", long:"Dim. 15", num:15, items:[{t:"Planifier les repas", c:"#9A5B12"}]}
 ];
 var DECOS = [
@@ -3128,6 +3129,11 @@ class Component extends DCLogic {
     }, 100);
   }
   componentWillUnmount() { clearInterval(this._t); }
+  _catHistory(st, k) {
+    if (k === "nahla") return st.tasks.filter(function (t) { return t.done; }).slice(0, 4).map(function (t) { return {t: t.t, xp: "+" + (t.pts || 5) + " XP"}; });
+    if (k === "tsunky") return st.missions.filter(function (m) { return m.done; }).slice(0, 4).map(function (m) { return {t: m.t, xp: "+" + m.pts + " XP"}; });
+    return st.items.filter(function (i) { return i.done; }).slice(0, 4).map(function (i) { return {t: i.n + " (coché aux courses)", xp: ""}; });
+  }
   _realWeek(st) {
     var col = {rdv: "#B23A48", achat: "#9A5B12", sortie: "#3E6FB0", papiers: "#4A7034"};
     return [0, 1, 2, 3, 4, 5, 6].map(function (n) {
@@ -3315,8 +3321,8 @@ class Component extends DCLogic {
       var k = sh.key; var c = CATS[k]; var cur = st.anim[k];
       out.isCat = true; out.sheetTitle = c.name; out.sheetColor = c.color;
       out.sc = {
-        domain: c.domain, level: st.lvl[k], xp: st.xp[k], pct: st.xp[k] + "%", color: c.color, status: (st.event === "anniv" && st.eventShown && st.bdayCat === k) ? "C'est son anniversaire ! XP ×2 aujourd'hui" : c.status,
-        history: c.history, next: c.next,
+        domain: c.domain, level: st.lvl[k], xp: st.xp[k], pct: st.xp[k] + "%", color: c.color, status: (st.event === "anniv" && st.eventShown && st.bdayCat === k) ? "C'est son anniversaire ! XP ×2 aujourd'hui" : (REEL ? (self._catHistory(st, k).length ? "Dernière : " + self._catHistory(st, k)[0].t : "Elle attend sa première tâche") : c.status),
+        history: REEL ? self._catHistory(st, k) : c.history, noHistory: REEL && !self._catHistory(st, k).length, next: c.next,
         isBday: st.event === "anniv" && st.eventShown && st.bdayCat === k,
         bedTest: function () { self.setState({sheet: null, screen: "salon", demoUnlock: true, room: "chambre", bedEv: {start: self.state.tick + 1, cat: k}, bedHold: {cat: k, until: self.state.tick + 400}}); },
         pet: function () { if (self.busy()) { self._toast("Pas maintenant : une animation est en cours"); return; } var r = pres[k]; self.setState({sheet: null, screen: "salon", room: r, purr: {cat: k, until: self.state.tick + 45}}); },
