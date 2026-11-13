@@ -9,12 +9,13 @@ const clone = (v) => (v === undefined ? undefined : JSON.parse(J(v)));
 
 // Données partagées telles quelles entre Co et Emie.
 export const SHARED = ["items", "tasks", "missions", "soirActs", "recipes", "garde", "titles", "plaidOn", "logsOn", "ff",
-  "ward", "sizes", "sante", "mice", "hf", "stocks", "bSel", "projets", "radioOn", "roomSel", "furnSel", "tableDecoOn",
+  "ward", "sizes", "sante", "stocks", "bSel", "projets", "radioOn", "roomSel", "furnSel", "tableDecoOn",
   "contacts", "journal", "litBags", "gmailAddr", "catInfo", "notes", "fireOn", "xp", "lvl", "treeOn", "vacances", "candleOff"];
 // Données partagées rangées autrement que dans l'appli (par date, ou par personne).
 export const ADAPTED = ["soirees", "meals", "wishes"];
 // Données propres à chaque personne (dans Firestore) et à chaque appareil (dans le navigateur).
-export const PERSO = ["notifOn", "reserved", "journalSeen"];
+// Les hauts faits (et la chasse aux souris) se débloquent compte par compte.
+export const PERSO = ["notifOn", "reserved", "journalSeen", "hf", "mice"];
 export const DEVICE = ["sfxOn", "sfxVol", "sfxNight", "zoomAuto"];
 const COUNTERS = ["nextId", "nextTask", "nextMiss", "nextNote", "nextContact", "nextFf", "nextWard", "nextProj", "nextAct",
   "nextRec", "nextGarde", "nextWish", "nextJ"];
@@ -206,7 +207,7 @@ export function seeds(st) {
   const zero = (o, v) => Object.fromEntries(Object.keys(o).map((k) => [k, v]));
   const titles = Object.fromEntries(Object.entries(st.titles).map(([k, v]) => [k, zero(v, 0)]));
   return {
-    notes: [], projets: [], ward: [], journal: [], hf: {}, mice: 0, titles,
+    notes: [], projets: [], ward: [], journal: [], titles,
     xp: zero(st.xp, 0), lvl: zero(st.lvl, 1),
     contacts: st.contacts.filter((c) => c.cat === "chats"),
     sante: Object.fromEntries(Object.keys(st.sante).map((k) => [k, { poids: [], soins: {}, rdv: "" }])),
@@ -244,7 +245,7 @@ export function createSync({ logic, backend, ctx, onStatus = () => {} }) {
       Object.assign(patch, toLocalPatch(k, v));
       base[localKey(k)] = clone(patch[localKey(k)]);
     });
-    Object.assign(patch, { reserved: {}, ...clone(perso || {}) });
+    Object.assign(patch, { reserved: {}, hf: {}, mice: 0, ...clone(perso || {}) });
     try { DEVICE.forEach((k) => { const v = localStorage.getItem("maison." + k); if (v != null) patch[k] = JSON.parse(v); }); } catch (e) { /* stockage indisponible */ }
     COUNTERS.forEach((k) => (patch[k] = 1e8 + Math.floor(Math.random() * 8e8)));
     // passage des jours
