@@ -124,7 +124,7 @@ logic = script.replace('this.el.src = "/_blob/" +', 'this.el.src = blobUrl("/_bl
 logic = re.sub(r'this\.el\.src = blobUrl\("/_blob/" \+ ([^;]*);', r'this.el.src = blobUrl("/_blob/" + \1);', logic)
 open(os.path.join(ROOT, 'app', 'logic.js'), 'w', encoding='utf-8').write(
     '// Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.\n'
-    'import { DCLogic, blobUrl } from "./runtime.js";\n' + logic + '\nexport { Component, SOIR_DAYS, MEAL_ISO, CATINFO0 };\n')
+    'import { DCLogic, blobUrl } from "./runtime.js";\n' + logic + '\nexport { Component, SOIR_DAYS, MEAL_ISO, CATINFO0, SFX };\n')
 
 # --- en-tête
 head = re.sub(r'\n+', '\n', helm.strip())

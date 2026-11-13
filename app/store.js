@@ -248,6 +248,10 @@ export function createSync({ logic, backend, ctx, onStatus = () => {} }) {
     Object.assign(patch, { reserved: {}, hf: {}, mice: 0, ...clone(perso || {}) });
     try { DEVICE.forEach((k) => { const v = localStorage.getItem("maison." + k); if (v != null) patch[k] = JSON.parse(v); }); } catch (e) { /* stockage indisponible */ }
     COUNTERS.forEach((k) => (patch[k] = 1e8 + Math.floor(Math.random() * 8e8)));
+    // activités des soirées : l'ancienne liste de la maquette est remplacée par la vôtre
+    if (Array.isArray(patch.soirActs) && ["jdr", "resto", "balade", "lecture"].every((id) => patch.soirActs.some((a) => a.id === id))) {
+      patch.soirActs = clone(initialState.soirActs); base.soirActs = null; missing.push("soirActs");
+    }
     // passage des jours
     const merged = { ...initialState, ...patch };
     const rolled = roll(merged, ctx.today, ctx.now);

@@ -61,6 +61,9 @@ async function meteo(logic) {
   } catch (e) { console.warn("météo indisponible", e); }
 }
 
+// La maison passe en mode nuit de 1 h 30 à 7 h 30.
+export const isNight = (d) => { const m = d.getHours() * 60 + d.getMinutes(); return m >= 90 && m < 450; };
+
 export function ctxFor(me, L) {
   const now = new Date();
   return { me, other: me === "C" ? "E" : "C", now, today: iso(now), soirDates: L.SOIR_DAYS.map((d) => d.iso), mealDates: L.MEAL_ISO };
@@ -75,7 +78,7 @@ export async function boot({ me, backend, createSync }) {
   const logic = new L.Component({});
   const initial = JSON.parse(JSON.stringify(logic.state));
   const now = ctx.now;
-  logic.setState({ saison: seasonOf(now), event: null, eventShown: false, night: now.getHours() >= 21 || now.getHours() < 7, zoomedOnce: true });
+  logic.setState({ saison: seasonOf(now), event: null, eventShown: false, night: isNight(now), zoomedOnce: true });
   const sync = createSync({ logic, backend, ctx, onStatus: (s, e) => { if (s === "error") console.error("enregistrement", e); window.__syncStatus = s; } });
   await sync.start(remote, perso, initial);
   document.getElementById("porte").style.display = "none";
@@ -88,8 +91,10 @@ export async function boot({ me, backend, createSync }) {
     if (b) b.pick();
   }
   // nuit : vérifiée chaque minute ; nouvelle journée : rechargement au retour sur l'appli
+  // Son : les navigateurs (Firefox, Safari) n'autorisent l'audio qu'après un geste ; on le réveille à chaque toucher.
+  ["pointerdown", "touchend", "keydown"].forEach((t) => document.addEventListener(t, () => { try { L.SFX.ac(); } catch (e) { /* pas d'audio */ } }, { capture: true, passive: true }));
   meteo(logic); setInterval(() => meteo(logic), 30 * 60e3);
-  setInterval(() => { const h = new Date().getHours(), n = h >= 21 || h < 7; if (logic.state.night !== n) logic.setState({ night: n }); }, 60000);
+  setInterval(() => { const n = isNight(new Date()); if (logic.state.night !== n) logic.setState({ night: n }); }, 60000);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") sync.flush();
     else if (iso(new Date()) !== ctx.today) location.reload();

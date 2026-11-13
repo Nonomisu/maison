@@ -2648,9 +2648,8 @@ function winParticles(kind) {
 }
 var ITEMS_IMG = {popcorn:"/_blob/5c48c837fd4345d6352bd864d472aad8", jeu:"/_blob/a9b2dca8831eaaa5860fdd1d503c924f", de:"/_blob/9d829005f27125a390b022acaabdbd44", livre:"/_blob/01cd2faad48307d5d3eb0b3adcc2148b", manette:"/_blob/637ed11179bf29ec4f7a9bab040f784f", cuisine:"/_blob/2d085e070fafb53a164044547134b3b4", bougie:"/_blob/ac7aedfaf010db9648142b6c53d1e846"};
 var ACTS0 = [
-  {id:"film", n:"Film", item:"popcorn"}, {id:"serie", n:"Série", item:"popcorn"}, {id:"jeu", n:"Jeu de société", item:"jeu"},
-  {id:"jdr", n:"JdR", item:"de"}, {id:"rp", n:"Soirée RP", item:"de"}, {id:"resto", n:"Resto", item:"bougie"},
-  {id:"cuisine", n:"Cuisiner ensemble", item:"cuisine"}, {id:"balade", n:"Balade", item:null}, {id:"lecture", n:"Lecture", item:"livre"}, {id:"jv", n:"Jeu vidéo à deux", item:"manette"}
+  {id:"serie", n:"Série", item:"popcorn"}, {id:"film", n:"Film", item:"popcorn"}, {id:"rp", n:"Soirée RP", item:"de"},
+  {id:"overwatch", n:"Overwatch", item:"manette"}, {id:"baldur", n:"Baldur", item:"manette"}, {id:"minecraft", n:"Minecraft", item:"manette"}
 ];
 var SOIR_DAYS0 = [{s:"ven", n:13, l:"Ce soir · vendredi 13"}, {s:"sam", n:14, l:"Samedi 14"}, {s:"dim", n:15, l:"Dimanche 15"}, {s:"lun", n:16, l:"Lundi 16"}, {s:"mar", n:17, l:"Mardi 17"}, {s:"mer", n:18, l:"Mercredi 18"}, {s:"jeu", n:19, l:"Jeudi 19"}];
 var SOIR_DAYS = !REEL ? SOIR_DAYS0 : [0, 1, 2, 3, 4, 5, 6].map(function (n) { var d = new Date(TODAY_Y, TODAY_M, TODAY_D + n), jl = JOURS_L[d.getDay()];
