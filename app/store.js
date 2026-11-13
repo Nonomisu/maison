@@ -10,12 +10,12 @@ const clone = (v) => (v === undefined ? undefined : JSON.parse(J(v)));
 // Données partagées telles quelles entre Co et Emie.
 export const SHARED = ["items", "tasks", "missions", "soirActs", "recipes", "garde", "titles", "plaidOn", "logsOn", "ff",
   "ward", "sizes", "sante", "stocks", "bSel", "projets", "radioOn", "roomSel", "furnSel", "tableDecoOn",
-  "contacts", "journal", "litBags", "gmailAddr", "catInfo", "notes", "fireOn", "xp", "lvl", "treeOn", "vacances", "candleOff", "agenda"];
+  "contacts", "journal", "litBags", "gmailAddr", "catInfo", "notes", "fireOn", "xp", "lvl", "treeOn", "vacances", "candleOff", "agenda", "stats"];
 // Données partagées rangées autrement que dans l'appli (par date, ou par personne).
 export const ADAPTED = ["soirees", "meals", "wishes"];
 // Données propres à chaque personne (dans Firestore) et à chaque appareil (dans le navigateur).
 // Les hauts faits (et la chasse aux souris) se débloquent compte par compte.
-export const PERSO = ["notifOn", "reserved", "journalSeen", "hf", "mice"];
+export const PERSO = ["notifOn", "reserved", "journalSeen", "hf", "mice", "xpDay"];
 export const DEVICE = ["sfxOn", "sfxVol", "sfxNight", "zoomAuto"];
 const COUNTERS = ["nextId", "nextTask", "nextMiss", "nextNote", "nextContact", "nextFf", "nextWard", "nextProj", "nextAct",
   "nextRec", "nextGarde", "nextWish", "nextJ", "nextAg"];

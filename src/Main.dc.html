@@ -1163,7 +1163,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 
 <sc-if value="{{ isProjets }}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 10px">
-<span style="font-size: 13px; color: #4A4450">Les projets au long cours, découpés en étapes. Chaque étape franchie fait gagner de l'XP au foyer.</span>
+<span style="font-size: 13px; color: #4A4450">Les projets au long cours, découpés en étapes. Chaque étape franchie donne 10 XP à chaque chat ; chaque jour d'habitude, 5 XP à Nahla.</span>
 <sc-for list="{{ projList }}" as="pj" hint-placeholder-count="2">
 <div style="display: flex; flex-direction: column; background: #FFFFFF; border: 2px solid #2B2A30">
 <button type="button" onClick="{{ pj.toggle }}" aria-expanded="{{ pj.exp }}" style="display: flex; flex-direction: column; gap: 6px; padding: 10px; background: none; border: 0; cursor: pointer; text-align: left; font-family: Inter, sans-serif; color: #2B2A30">
@@ -2841,6 +2841,7 @@ var MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", 
 function parseD(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
 function fmtD(d) { return JOURS[d.getDay()] + " " + d.getDate() + " " + MOIS[d.getMonth()]; }
 function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+function catSleeping(st, k) { var l = ((st.stats || {}).catLast || {})[k]; return !!l && Math.round((parseD(TODAY_ISO) - parseD(l)) / 864e5) >= 3; }
 var BASKETS = {
   rond: {full:"/_blob/51ec7f85673fd728da76b1864e3fa618", half:"/_blob/0793c3445a0abb81a7c2cc06fe631014", empty:"/_blob/627c14459ad470c8728c06183fc7194e"},
   sac: {full:"/_blob/e9a9bb22bb3de128ace99a82c980f18b", half:"/_blob/2b7aaa15e3863eb594caaa32f8c95645", empty:"/_blob/0c205c4bea3d6c9d92346559e4bec711"},
@@ -3131,7 +3132,7 @@ function presence(slot, lvl) {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = {agenda: AGENDA0, nextAg: 5, agDraft: "", agDate: "", agTime: "", agCat: "patch", agPast: false, ed: null, edD: null, recipes: JSON.parse(JSON.stringify(RECIPES)), nextRec: 1, recDraft: "", garde: GARDE0, nextGarde: 7, gardeDraft: "", witchT0: 200, titles: TITLES0, plaidOn: true, logsOn: true, ffEdit: null, ffEditT: "", ffEditL: "", play: null, ff: FF0, ffWho: ME, ffDraft: "", ffSec: "jour", ffLink: "", nextFf: 12, ward: WARD0, wardWho: ME, wardDraft: "", wardCat: "Hauts", wardPrio: "bientot", nextWard: 6, sizes: SIZES0, candleOff: false, candleBlow: -99, personStart: -1, coupleStart: -1, purr: null, meteo: "auto", vacances: false, meals: MEALS0, mealPick: null, sante: SANTE0, santeCat: "nahla", poidsDraft: "", duckEv: null, mouse: null, mice: 0, zoomLock: null, hf: {}, birdEv: null, vHold: 0, night: false, santaT0: 0, bedEv: null, bedHold: null, stocks: STOCKS0, bSel: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, bView: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, projets: PROJ0, projOpen: "p1", projDraft: "", projWho: ME, stepDraft: "", nextProj: 3, editCtx: null, room: "salon", radioOn: true, demoUnlock: false, roomSel: {mur: 0, sol: 0, tapis: 0}, roomView: {mur: 0, sol: 0, tapis: 0}, accOpen: {piece: true, meubles: false, bureau: false, cuisine: false, chambre: false, sdb: false, veranda: false, affiches: false, saison: false, musique: false, notifs: false}, furnSel: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, furnView: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, tableDecoOn: true, contacts: CONTACTS0, contactQuery: "", contactCat: "all", cName: "", cPhone: "", cMail: "", nextContact: 17, bdayCat: "nahla", bdayStart: 15, candleLit: true, confStart: 15, confGen: 0, toastHead: null, zoom: null, zoomAuto: true, zoomedOnce: false, notifOn: {rdv:true, mot:true, coeur:true, magasin:true, soiree:true, taches:false}, toast: null, missions: MISS0, missDraft: "", missType: "rdv", journal: JOURNAL0, journalSeen: Date.UTC(2026, 10, 12, 20, 0), jFilter: "tout", nextJ: 6, sfxOn: true, sfxVol: 1, sfxNight: true, missDet: null, missDetDraft: "", litBags: 6, mealDemo: false, missBig: false, cEdit: null, cDraft: null, gmailAddr: "", missCats: [], catInfo: CATINFO0, catEdit: null, catDraft: null, missDate: (REEL ? addDaysIso(7) : "2026-11-24"), missTime: "09:00", nextMiss: 6, notif: null, musicOn: false, soirActs: ACTS0, soirSel: null, soirDay: 0, soirees: {2: {act:"jeu", name:"Jeu de société", item:"jeu", by:"E", status:"accepte"}}, soirDraft: "", nextAct: 1, taskDraft: "", draftWho: ME, whoFilter: "all", session: null, sessionDone: 0, nextTask: 1, fireOn: true, board: "mots", notes: NOTES0, noteDraft: "", noteColor: "#F7E27A", nextNote: 3, tasks: TASKS0, storeMode: false, screen: "salon", items: ITEMS0, nextId: 9, draft: "", photo: null, portions: 4, ingOff: {muscade: true}, xp: {nahla:60, bao:45, tsunky:10}, lvl: {nahla:5, bao:4, tsunky:2}, finished: false, treeOn: false, saison: "hiver", event: "anniv", eventShown: true, wishTab: "her", reserved: {}, myWishes: MY_WISHES, wishDraft: "", nextWish: 3, tick: 0, sheet: null, anim: {nahla:"repos", bao:"queue", tsunky:"sieste"}};
+    this.state = {stats: {}, xpDay: null, agenda: AGENDA0, nextAg: 5, agDraft: "", agDate: "", agTime: "", agCat: "patch", agPast: false, ed: null, edD: null, recipes: JSON.parse(JSON.stringify(RECIPES)), nextRec: 1, recDraft: "", garde: GARDE0, nextGarde: 7, gardeDraft: "", witchT0: 200, titles: TITLES0, plaidOn: true, logsOn: true, ffEdit: null, ffEditT: "", ffEditL: "", play: null, ff: FF0, ffWho: ME, ffDraft: "", ffSec: "jour", ffLink: "", nextFf: 12, ward: WARD0, wardWho: ME, wardDraft: "", wardCat: "Hauts", wardPrio: "bientot", nextWard: 6, sizes: SIZES0, candleOff: false, candleBlow: -99, personStart: -1, coupleStart: -1, purr: null, meteo: "auto", vacances: false, meals: MEALS0, mealPick: null, sante: SANTE0, santeCat: "nahla", poidsDraft: "", duckEv: null, mouse: null, mice: 0, zoomLock: null, hf: {}, birdEv: null, vHold: 0, night: false, santaT0: 0, bedEv: null, bedHold: null, stocks: STOCKS0, bSel: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, bView: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, projets: PROJ0, projOpen: "p1", projDraft: "", projWho: ME, stepDraft: "", nextProj: 3, editCtx: null, room: "salon", radioOn: true, demoUnlock: false, roomSel: {mur: 0, sol: 0, tapis: 0}, roomView: {mur: 0, sol: 0, tapis: 0}, accOpen: {piece: true, meubles: false, bureau: false, cuisine: false, chambre: false, sdb: false, veranda: false, affiches: false, saison: false, musique: false, notifs: false}, furnSel: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, furnView: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, tableDecoOn: true, contacts: CONTACTS0, contactQuery: "", contactCat: "all", cName: "", cPhone: "", cMail: "", nextContact: 17, bdayCat: "nahla", bdayStart: 15, candleLit: true, confStart: 15, confGen: 0, toastHead: null, zoom: null, zoomAuto: true, zoomedOnce: false, notifOn: {rdv:true, mot:true, coeur:true, magasin:true, soiree:true, taches:false}, toast: null, missions: MISS0, missDraft: "", missType: "rdv", journal: JOURNAL0, journalSeen: Date.UTC(2026, 10, 12, 20, 0), jFilter: "tout", nextJ: 6, sfxOn: true, sfxVol: 1, sfxNight: true, missDet: null, missDetDraft: "", litBags: 6, mealDemo: false, missBig: false, cEdit: null, cDraft: null, gmailAddr: "", missCats: [], catInfo: CATINFO0, catEdit: null, catDraft: null, missDate: (REEL ? addDaysIso(7) : "2026-11-24"), missTime: "09:00", nextMiss: 6, notif: null, musicOn: false, soirActs: ACTS0, soirSel: null, soirDay: 0, soirees: {2: {act:"jeu", name:"Jeu de société", item:"jeu", by:"E", status:"accepte"}}, soirDraft: "", nextAct: 1, taskDraft: "", draftWho: ME, whoFilter: "all", session: null, sessionDone: 0, nextTask: 1, fireOn: true, board: "mots", notes: NOTES0, noteDraft: "", noteColor: "#F7E27A", nextNote: 3, tasks: TASKS0, storeMode: false, screen: "salon", items: ITEMS0, nextId: 9, draft: "", photo: null, portions: 4, ingOff: {muscade: true}, xp: {nahla:60, bao:45, tsunky:10}, lvl: {nahla:5, bao:4, tsunky:2}, finished: false, treeOn: false, saison: "hiver", event: "anniv", eventShown: true, wishTab: "her", reserved: {}, myWishes: MY_WISHES, wishDraft: "", nextWish: 3, tick: 0, sheet: null, anim: {nahla:"repos", bao:"queue", tsunky:"sieste"}};
   }
   componentDidMount() {
     var self = this;
@@ -3149,7 +3150,7 @@ class Component extends DCLogic {
       if (self._lvPrev) ORDER.forEach(function (k) { if (st.lvl[k] > self._lvPrev[k]) self._log("chat", CATS[k].name + " passe au niveau " + st.lvl[k], CATS[k].domain || ""); });
       self._lvSum = lvSum; self._lvPrev = Object.assign({}, st.lvl);
       if (st.purr && st.purr !== self._purrSeen) { self._purrSeen = st.purr; SFX.play("ronron", Math.min(4, Math.max(1.5, (st.purr.until - st.tick) / 10))); }
-      if (self._hfq && !st.hf[self._hfq]) { SFX.play("hautfait"); (function (h) { if (h) self._log("hf", h.n, REEL ? NAME[ME] + " · " + h.d : h.d, REEL ? {hfId: h.id, who: ME} : null); })(HF.filter(function (h) { return h.id === self._hfq; })[0]); var hfn = HF.filter(function (h) { return h.id === self._hfq; })[0]; var o = Object.assign({}, st.hf); o[self._hfq] = true; upd.hf = o; upd.toast = "Haut fait débloqué : " + hfn.n + " · +20 XP pour le foyer"; upd.toastHead = "Animation rare"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 3800); }
+      if (self._hfq && !st.hf[self._hfq]) { SFX.play("hautfait"); (function (h) { if (h) self._log("hf", h.n, REEL ? NAME[ME] + " · " + h.d : h.d, REEL ? {hfId: h.id, who: ME} : null); })(HF.concat(HF_PROG).filter(function (h) { return h.id === self._hfq; })[0]); var hfn = HF.concat(HF_PROG).filter(function (h) { return h.id === self._hfq; })[0]; if (self._spreadXp) setTimeout(function () { self._spreadXp(20, 1); }, 0); var o = Object.assign({}, st.hf); o[self._hfq] = true; upd.hf = o; upd.toast = "Haut fait débloqué : " + hfn.n + " · +20 XP pour le foyer"; upd.toastHead = "Animation rare"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 3800); }
       self._hfq = null;
       if ((st.event === "annivE" || st.event === "annivC") && st.eventShown && st.tick === st.personStart) { upd.toast = "Joyeux anniversaire " + (st.event === "annivE" ? "Emie" : "Co") + " ! Les chats t'attendent au salon, et un petit mot est sur le pense-bête. XP ×2 aujourd'hui."; upd.toastHead = "Notification du matin"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 4500); }
       if (st.event === "couple" && st.eventShown && st.tick === st.coupleStart) { upd.toast = "Joyeux anniversaire à nous deux ! Toute l'XP du jour compte double."; upd.toastHead = "22 avril · notification du matin"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 4200); }
@@ -3364,7 +3365,7 @@ class Component extends DCLogic {
       var k = sh.key; var c = CATS[k]; var cur = st.anim[k];
       out.isCat = true; out.sheetTitle = c.name; out.sheetColor = c.color;
       out.sc = {
-        domain: c.domain, level: st.lvl[k], xp: st.xp[k], pct: st.xp[k] + "%", color: c.color, status: (st.event === "anniv" && st.eventShown && st.bdayCat === k) ? "C'est son anniversaire ! XP ×2 aujourd'hui" : (REEL ? (self._catHistory(st, k).length ? "Dernière : " + self._catHistory(st, k)[0].t : "Elle attend sa première tâche") : c.status),
+        domain: c.domain, level: st.lvl[k], xp: st.xp[k], pct: st.xp[k] + "%", color: c.color, status: (st.event === "anniv" && st.eventShown && st.bdayCat === k) ? "C'est son anniversaire ! XP ×2 aujourd'hui" : (REEL ? (catSleeping(st, k) ? "Elle dort : sa prochaine tâche comptera ×1,5" : self._catHistory(st, k).length ? "Dernière : " + self._catHistory(st, k)[0].t : "Elle attend sa première tâche") : c.status),
         history: REEL ? self._catHistory(st, k) : c.history, noHistory: REEL && !self._catHistory(st, k).length, next: c.next,
         isBday: st.event === "anniv" && st.eventShown && st.bdayCat === k,
         bedTest: function () { self.setState({sheet: null, screen: "salon", demoUnlock: true, room: "chambre", bedEv: {start: self.state.tick + 1, cat: k}, bedHold: {cat: k, until: self.state.tick + 400}}); },
@@ -3448,8 +3449,8 @@ class Component extends DCLogic {
     out.confOn = (bday || personBday || out.nyOn) && ce >= 0 && ce < 45;
     var cc2 = out.nyOn ? ["#F2C14E", "#C9CED6", "#FFFFFF", "#E8B84A", "#8A8F99", "#F7E27A"] : [CAT_COL[bk], "#F2C14E", "#F6C1C7", "#E04848", "#FFFFFF", "#6FBF5A"];
     out.confetti = []; for (var ci = 0; ci < 40; ci++) out.confetti.push({cls: "wconf" + (st.confGen % 2), x: Math.round(rnd(ci + 50) * 380) + "px", w: (rnd(ci + 51) > 0.5 ? 6 : 4) + "px", h: (rnd(ci + 52) > 0.5 ? 8 : 5) + "px", c: cc2[ci % 6], dur: (2.4 + rnd(ci + 53) * 1.6).toFixed(1) + "s", delay: (rnd(ci + 54) * 0.6).toFixed(2) + "s"});
-    out.bareme = [{t:"Tâche quotidienne (vaisselle, litière, machine)", v:"2 XP"}, {t:"Tâche hebdomadaire (poubelles, aspirateur, Bain)", v:"5 XP"}, {t:"Tâche mensuelle ou saisonnière", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"5 XP chacun"}, {t:"Défi", v:"50 à 150 XP"}];
-    out.gardeFous = ["Une même tâche répétable ne rapporte que 2 fois par jour", "Tâches répétables plafonnées à 25 XP par jour et par personne", "Une mission rapporte une fois cochée ; un rendez-vous à partir du jour J", "Papiers faits avant l'échéance : +50 %", "Décocher retire l'XP", "Un chat qui dort donne ×1,5 sur sa prochaine tâche"];
+    out.bareme = [{t:"Tâche quotidienne (vaisselle, litière, machine)", v:"2 XP"}, {t:"Tâche hebdomadaire (poubelles, aspirateur, Bain)", v:"5 XP"}, {t:"Tâche mensuelle ou saisonnière", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"10 XP au chat le moins avancé"}, {t:"Grand projet : étape franchie", v:"10 XP par chat"}, {t:"Haut fait débloqué", v:"20 XP"}, {t:"Défi de la semaine", v:"80 à 150 XP"}];
+    out.gardeFous = ["Une même tâche répétable ne rapporte que 2 fois par jour", "Tâches répétables plafonnées à 25 XP par jour et par personne", "Une mission rapporte une fois cochée ; un rendez-vous à partir du jour J", "Papiers faits avant l'échéance (date à mettre dans la mission) : +50 %", "Décocher retire l'XP", "Un chat sans XP depuis 3 jours dort : sa prochaine tâche compte ×1,5"];
     out.paliers = []; for (var pn = 2; pn <= 35; pn++) { var pc = FOYER_COST(pn), rm = ROOMS.filter(function (r) { return r.lvl === pn; })[0]; out.paliers.push({t: "Niv. " + pn + " · " + pc + (rm ? " ★" : ""), c: pn <= FOYER_LVL ? "#36532A" : "#2B2A30", w: rm ? "700" : "400"}); }
     out.isAnnivEvent = st.event === "anniv";
     out.bdayBtns = ORDER.map(function (k) {
@@ -3485,7 +3486,34 @@ class Component extends DCLogic {
     out.saisonNow = "Maintenant : " + ({printemps: "printemps", ete: "été", automne: "automne", hiver: "hiver", noel: "période de Noël", classique: "classique"})[st.saison] + ((st.event && st.eventShown) ? " · " + ({nouvelan: "Nouvelle année", noel: "Noël", anniv: "anniversaire de " + CATS[st.bdayCat].name, annivE: "anniversaire d'Emie", annivC: "anniversaire de Co", couple: "notre jour", valentin: "Saint-Valentin", paques: "Pâques", halloween: "Halloween"})[st.event] : "");
     out.demoUi = !REEL; out.ceQueOther = OTHER === "E" ? "Ce qu'Emie" : "Ce que Co"; out.deOther = OTHER === "E" ? "d'Emie" : "de Co"; out.otherE = OTHER === "E" ? "e" : ""; out.otherName = NAME[OTHER]; out.meName = NAME[ME];
     // XP donnée à un chat (et donc au foyer)
-    var giveXp = function (k, n) { var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl), an = Object.assign({}, self.state.anim); xp[k] += n; while (xp[k] >= 100) { xp[k] -= 100; lvl[k] += 1; } an[k] = "ronron"; self.setState({xp: xp, lvl: lvl, anim: an}); };
+    var MON_ISO = (function () { var wd = (new Date(TODAY_Y, TODAY_M, TODAY_D).getDay() + 6) % 7; return isoD(new Date(TODAY_Y, TODAY_M, TODAY_D - wd)); })();
+    var monOf = function (iso) { var d = parseD(iso), wd = (d.getDay() + 6) % 7; return isoD(new Date(d.getFullYear(), d.getMonth(), d.getDate() - wd)); };
+    var isoDiff = function (a, b) { return Math.round((parseD(b) - parseD(a)) / 864e5); };
+    // statistiques partagées : semaine en cours (défis), total des tâches, semaines avec soirée, dernière XP de chaque chat
+    var STATS0 = function () {
+      var x = JSON.parse(JSON.stringify(self.state.stats || {}));
+      if (x.week !== MON_ISO) { x.week = MON_ISO; x.tasks = {C: 0, E: 0}; x.sansEcran = false; x.magasin = false; x.defisDone = {}; }
+      x.tasks = x.tasks || {C: 0, E: 0}; x.total = x.total || 0; x.soirWeeks = x.soirWeeks || []; x.catLast = x.catLast || {}; x.owned = x.owned || {}; x.defisDone = x.defisDone || {};
+      return x;
+    };
+    var addXp = function (xp, lvl, k, n) { xp[k] += n; while (xp[k] >= 100) { xp[k] -= 100; lvl[k] += 1; } while (xp[k] < 0 && lvl[k] > 1) { xp[k] += 100; lvl[k] -= 1; } if (xp[k] < 0) xp[k] = 0; };
+    // un chat sans XP depuis 3 jours dort : sa prochaine tâche compte ×1,5
+    var sleeping = function (k) { return catSleeping(self.state, k); };
+    var giveXp = function (k, n, opt) {
+      if (!n) return 0;
+      var boost = opt && opt.boost && sleeping(k); if (boost) n = Math.round(n * 1.5);
+      var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl), an = Object.assign({}, self.state.anim);
+      addXp(xp, lvl, k, n); an[k] = "ronron";
+      var S = STATS0(); S.catLast[k] = TODAY_ISO;
+      self.setState({xp: xp, lvl: lvl, anim: an, stats: S});
+      if (boost) setTimeout(function () { self._toast && self._toast(CATS[k].name + " se réveille : XP ×1,5 sur cette tâche !"); }, 50);
+      return n;
+    };
+    var takeXp = function (k, n) { if (!n) return; var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl); addXp(xp, lvl, k, -n); self.setState({xp: xp, lvl: lvl}); };
+    var spreadXp = function (n, sign) { ORDER.forEach(function (k, i) { var part = Math.floor(n / 3) + (i < n % 3 ? 1 : 0); if (sign < 0) takeXp(k, part); else giveXp(k, part); }); };
+    var lowestCat = function () { var st2 = self.state; return ORDER.slice().sort(function (a, b) { return (st2.lvl[a] * 100 + st2.xp[a]) - (st2.lvl[b] * 100 + st2.xp[b]); })[0]; };
+    self._spreadXp = spreadXp;
+    var S0 = STATS0();
     // éditeur générique : chaque fiche passe par lui pour modifier un élément
     var ED = function (key, label, init, spec, onSave, onDel, delText) {
       var open = st.ed === key, D = st.edD || {};
@@ -3585,13 +3613,28 @@ class Component extends DCLogic {
     var byLabel = function (b) { return b.length > 1 ? "C&E" : b.length ? b[0] : ""; };
     var byBg = function (b) { return b.length > 1 ? WHO["2"].bg : b.length ? WHO[b[0]].bg : "transparent"; };
     var tapTask = function (t) {
-      var by = byOf(t).slice(), mine = by.indexOf(ME) >= 0, gain = !mine;
-      if (mine) by.splice(by.indexOf(ME), 1); else by.push(ME);
+      var by = byOf(t).slice(), mine = by.indexOf(ME) >= 0, xpBy = Object.assign({}, t.xpBy || {});
+      var day = (self.state.xpDay && self.state.xpDay.d === TODAY_ISO) ? JSON.parse(JSON.stringify(self.state.xpDay)) : {d: TODAY_ISO, n: {}, sum: 0};
+      var rep = !!t.rec && !/une fois|saison/i.test(t.rec), gain = !mine, note = "";
+      if (mine) {
+        by.splice(by.indexOf(ME), 1);
+        var back = xpBy[ME] || 0; takeXp("nahla", back);
+        if (rep && back) { day.n[t.id] = Math.max(0, (day.n[t.id] || 0) - 1); day.sum = Math.max(0, day.sum - back); }
+        delete xpBy[ME];
+      } else {
+        by.push(ME);
+        var pts = t.pts || 5;
+        if (rep) { if ((day.n[t.id] || 0) >= 2) { pts = 0; note = "déjà comptée 2 fois aujourd'hui"; } else if (day.sum >= 25) { pts = 0; note = "plafond de 25 XP atteint aujourd'hui"; } else pts = Math.min(pts, 25 - day.sum); }
+        var got = giveXp("nahla", pts, {boost: true});
+        if (rep && got) { day.n[t.id] = (day.n[t.id] || 0) + 1; day.sum += got; }
+        xpBy[ME] = got;
+        self._textTitles("task", t.t, ME); SFX.play("ding");
+        if (note) self._toast("Tâche cochée, sans XP : " + note);
+      }
+      var S = STATS0(); S.tasks[ME] = Math.max(0, (S.tasks[ME] || 0) + (gain ? 1 : -1)); S.total = Math.max(0, S.total + (gain ? 1 : -1));
       by = ["C", "E"].filter(function (k) { return by.indexOf(k) >= 0; });
-      var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl), anim = Object.assign({}, self.state.anim), pts = t.pts || 5;
-      if (gain) { xp.nahla += pts; while (xp.nahla >= 100) { xp.nahla -= 100; lvl.nahla += 1; } anim.nahla = "ronron"; self._textTitles("task", t.t, ME); SFX.play("ding"); }
-      self.setState({xp: xp, lvl: lvl, anim: anim, sessionDone: self.state.sessionDone + (gain ? 1 : 0),
-        tasks: self.state.tasks.map(function (x) { if (x.id !== t.id) return x; var y = Object.assign({}, x, {done: by.length > 0, doneBy: by}); delete y.who; if (!by.length) delete y.doneBy; return y; })});
+      self.setState({stats: S, xpDay: day, sessionDone: self.state.sessionDone + (gain ? 1 : 0),
+        tasks: self.state.tasks.map(function (x) { if (x.id !== t.id) return x; var y = Object.assign({}, x, {done: by.length > 0, doneBy: by, xpBy: xpBy}); delete y.who; if (!by.length) { delete y.doneBy; delete y.xpBy; } return y; })});
     };
     out.tasks = st.tasks.map(function (t) {
       return {t: t.t, done: !!t.done, hasWho: byOf(t).length > 0, pressed: t.done ? "true" : "false", seasonal: !!t.seasonal,
@@ -3660,7 +3703,7 @@ class Component extends DCLogic {
     out.notifShow = !!st.notif; out.notifTitle = st.notif ? st.notif.title : ""; out.notifBody = st.notif ? st.notif.body : "";
     var mapM = function (m) {
       var ty = MTYPES.filter(function (x) { return x.id === m.type; })[0];
-      var rem = [], meta = m.note || "", pv = null;
+      var rem = [], meta = (m.type === "papiers" && m.due ? "avant le " + fmtD(parseD(m.due)) + (m.note && m.note !== "À planifier" ? " · " + m.note : "") : m.note || ""), pv = null;
       if (m.type === "rdv" && m.date) {
         var d = parseD(m.date);
         meta = fmtD(d) + (m.time ? " · " + m.time.replace(":", "h") : (m.note ? " · " + m.note : ""));
@@ -3688,12 +3731,12 @@ class Component extends DCLogic {
         startDet: function () { self.setState({missDet: m.id, missDetDraft: m.details || ""}); },
         cancelDet: function () { self.setState({missDet: null, missDetDraft: ""}); },
         saveDet: function () { var v = (self.state.missDetDraft || "").trim(); self.setState({missions: self.state.missions.map(function (x) { return x.id === m.id ? Object.assign({}, x, {details: v}) : x; }), missDet: null, missDetDraft: ""}); },
-        ed: ED("miss:" + m.id, m.t, function () { return {t: m.t, type: m.type, date: m.date || (REEL ? addDaysIso(7) : "2026-11-24"), time: m.time || "", who: m.who, cats: (m.cats || []).slice(), big: m.big ? "oui" : "non", note: m.type === "rdv" ? "" : (m.note || "")}; },
-          function (D) { var f = [["t", "Intitulé", "text"]]; if (D.type === "rdv") f.push(["date", "Date", "date"], ["time", "Heure", "time"]); else f.push(["note", "Échéance", "text", "ex. avant le 30 nov., à planifier"]);
+        ed: ED("miss:" + m.id, m.t, function () { return {t: m.t, type: m.type, due: m.due || "", date: m.date || (REEL ? addDaysIso(7) : "2026-11-24"), time: m.time || "", who: m.who, cats: (m.cats || []).slice(), big: m.big ? "oui" : "non", note: m.type === "rdv" ? "" : (m.note || "")}; },
+          function (D) { var f = [["t", "Intitulé", "text"]]; if (D.type === "rdv") f.push(["date", "Date", "date"], ["time", "Heure", "time"]); else { if (D.type === "papiers") f.push(["due", "Échéance (date) : +50 % d'XP si c'est fait avant", "date"]); f.push(["note", D.type === "papiers" ? "Précision" : "Échéance", "text", "ex. avant le 30 nov., à planifier"]); }
             return {f: f, g: [["type", "Type", MTYPES.map(function (x) { return [x.id, x.l + " · " + x.pts + " XP", "#4A7034"]; })], ["big", "Grosse mission (100 XP)", [["non", "Non"], ["oui", "Oui", "#D9A441", "#2B2A30"]]], ["who", "Qui s'en charge", WHO_OPTS2], ["cats", "Chats concernés", ORDER.map(function (k) { return [k, CATS[k].name, CATS[k].color]; }), true]]}; },
           function (d) { if (!String(d.t || "").trim()) return false; var big = d.big === "oui";
             self.setState({missions: self.state.missions.map(function (x) { if (x.id !== m.id) return x; var y = Object.assign({}, x, {t: cap(d.t), type: d.type, who: d.who, big: big, pts: big ? 100 : MTYPES.filter(function (z) { return z.id === d.type; })[0].pts});
-              if (d.type === "rdv") { y.date = d.date || x.date || (REEL ? addDaysIso(7) : "2026-11-24"); y.time = d.time || ""; delete y.note; } else { delete y.date; delete y.time; y.note = String(d.note || "").trim() || "À planifier"; }
+              if (d.type === "rdv") { y.date = d.date || x.date || (REEL ? addDaysIso(7) : "2026-11-24"); y.time = d.time || ""; delete y.note; } else { delete y.date; delete y.time; y.note = String(d.note || "").trim() || "À planifier"; if (d.type === "papiers" && d.due) y.due = d.due; else delete y.due; }
               if (d.cats && d.cats.length) y.cats = ORDER.filter(function (k) { return d.cats.indexOf(k) >= 0; }); else delete y.cats; return y; })}); },
           function () { self.setState({missions: self.state.missions.filter(function (x) { return x.id !== m.id; })}); }),
         hasCats: !!(m.cats && m.cats.length), catTags: (m.cats || []).map(function (k) { return {n: CATS[k].name, c: CATS[k].color}; }),
@@ -3703,9 +3746,15 @@ class Component extends DCLogic {
         },
         toggle: function () {
           var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl), anim = Object.assign({}, self.state.anim);
-          if (!m.done) { xp.tsunky += m.pts; while (xp.tsunky >= 100) { xp.tsunky -= 100; lvl.tsunky += 1; } anim.tsunky = "ronron"; }
-          if (!m.done) SFX.play("mission");
-          var upd2 = {xp: xp, lvl: lvl, anim: anim, missions: self.state.missions.map(function (x) { return x.id === m.id ? Object.assign({}, x, {done: !x.done}) : x; })};
+          var gotM = 0, noteM = "";
+          if (!m.done) {
+            var ptsM = m.pts;
+            if (m.type === "rdv" && m.date && m.date > TODAY_ISO) { ptsM = 0; noteM = "l'XP d'un rendez-vous arrive à partir du jour J"; }
+            else if (m.type === "papiers" && m.due && TODAY_ISO <= m.due) { ptsM = Math.round(ptsM * 1.5); noteM = "fait avant l'échéance : +50 %"; }
+            gotM = giveXp("tsunky", ptsM, {boost: true}); SFX.play("mission");
+            if (noteM) setTimeout(function () { self._toast(m.t + " · " + noteM); }, 60);
+          } else takeXp("tsunky", m.xpGot || 0);
+          var upd2 = {missions: self.state.missions.map(function (x) { return x.id === m.id ? Object.assign({}, x, {done: !x.done, xpGot: x.done ? 0 : gotM}) : x; })};
           if (!m.done && m.cats && m.cats.length) {
             var sa = JSON.parse(JSON.stringify(self.state.sante)), dd2 = (m.date && m.date <= TODAY_ISO) ? m.date : TODAY_ISO, hit = [];
             SOINS.forEach(function (so) { if (new RegExp(so.id === "antipuces" ? "anti-?puces" : so.id, "i").test(m.t)) { hit.push(so.n.toLowerCase()); m.cats.forEach(function (k) { sa[k].soins[so.id] = dd2; }); } });
@@ -4076,7 +4125,7 @@ class Component extends DCLogic {
     out.musicChip = st.musicOn && !st.sheet && !(st.screen === "salon" && st.room === "salon");
     out.musicChipLabel = (PLAYLISTS[trackKey(st)] || "Musique") + (MUSIC.key ? " · " + MUSIC.label() : "");
     // hauts faits
-    out.hfCount = (HF.filter(function (h) { return !h.prog && st.hf[h.id]; }).length + HF_PROG.filter(function (h) { return (h.id === "souris" ? st.mice : h.v) >= h.goal; }).length) + " / " + (HF.length - 1 + HF_PROG.length);
+    out.hfCount = (HF.filter(function (h) { return !h.prog && st.hf[h.id]; }).length + HF_PROG.filter(function (h) { return REEL ? !!st.hf[h.id] : (h.id === "souris" ? st.mice : h.v) >= h.goal; }).length) + " / " + (HF.length - 1 + HF_PROG.length);
     var testHF = {
       zoomies: function () { self.setState({sheet: null, screen: "salon", room: "salon", zoom: {cat: "tsunky", start: self.state.tick}, zoomedOnce: true}); },
       cachecache: function () { self.setState({sheet: null, screen: "salon", demoUnlock: true, room: "chambre", bedEv: {start: self.state.tick + 1, cat: "nahla"}, bedHold: {cat: "nahla", until: self.state.tick + 400}}); },
@@ -4139,7 +4188,7 @@ class Component extends DCLogic {
       var r = st.meals[i], open = st.mealPick === i;
       return {day: d, meal: r ? st.recipes[r].n : "Rien de prévu", fg: r ? "#2B2A30" : "#8A8490", isOpen: open, exp: open ? "true" : "false",
         toggle: function () { self.setState({mealPick: self.state.mealPick === i ? null : i}); },
-        choices: Object.keys(st.recipes).concat(["none"]).map(function (rk) { var on = (r || "none") === rk; return {label: rk === "none" ? "Rien" : st.recipes[rk].n, bg: on ? "#9A5B12" : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pressed: on ? "true" : "false", pick: function () { var m = Object.assign({}, self.state.meals); if (rk === "none") delete m[i]; else m[i] = rk; self.setState({meals: m, mealPick: null}); }}; })};
+        choices: Object.keys(st.recipes).concat(["none"]).map(function (rk) { var on = (r || "none") === rk; return {label: rk === "none" ? "Rien" : st.recipes[rk].n, bg: on ? "#9A5B12" : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pressed: on ? "true" : "false", pick: function () { var m = Object.assign({}, self.state.meals); if (rk === "none") delete m[i]; else m[i] = rk; self.setState({meals: m, mealPick: null}); setTimeout(function () { self._mealsCheck(); }, 0); }}; })};
     });
     var RAY_OPTS = RAYONS.join(", ");
     out.recList = Object.keys(st.recipes).map(function (rk) { var R = st.recipes[rk];
@@ -4156,6 +4205,10 @@ class Component extends DCLogic {
     out.addRec = function () { var t = (self.state.recDraft || "").trim(); if (!t) return; var id = "r" + self.state.nextRec, rr = Object.assign({}, self.state.recipes); rr[id] = {n: cap(t), ing: []};
       self.setState({recipes: rr, nextRec: self.state.nextRec + 1, recDraft: "", ed: "rec:" + id, edD: {n: cap(t), ing: ""}}); };
     out.mealWeekTxt = REEL ? "Semaine du " + MEAL_MON.getDate() + " " + MOIS_L[MEAL_MON.getMonth()] + "." : "Semaine du 16 novembre.";
+    self._mealsCheck = function () {
+      var ms = self.state.meals, full = [0, 1, 2, 3, 4, 5, 6].every(function (i) { return ms[i] != null; }), S = STATS0();
+      if (full && S.mealsWeek !== MEAL_ISO[0]) { giveXp("bao", 5); S = STATS0(); S.mealsWeek = MEAL_ISO[0]; self.setState({stats: S}); self._toast("Planning de la semaine rempli · +5 XP pour Bao"); }
+    };
     out.mealsToCourses = function () {
       var items = self.state.items.slice(), id = self.state.nextId, n = 0;
       Object.keys(self.state.meals).forEach(function (i) { (self.state.recipes[self.state.meals[i]] || {ing: []}).ing.forEach(function (g) {
@@ -4189,13 +4242,22 @@ class Component extends DCLogic {
     out.addGarde = function () { var t = (self.state.gardeDraft || "").trim(); if (!t) return; self.setState({garde: self.state.garde.concat([{id: "g" + self.state.nextGarde, t: cap(t)}]), nextGarde: self.state.nextGarde + 1, gardeDraft: ""}); };
     out.gardeMail = gmailUrl("", "Garde des chats", gl.join("\n")); out.gardeMailTarget = isIOS() ? "_self" : "_blank";
     // défis
-    out.defis = DEFIS.map(function (d) {
-      var v = d.two ? Math.min(d.c, d.e) : d.v;
-      return {name: d.n, rw: d.rw, prog: d.two ? "Co " + d.c + "/" + d.goal + " · Emie " + d.e + "/" + d.goal : v + " / " + d.goal, pct: Math.round(v * 100 / d.goal) + "%"};
+    var DEFI_RW = [{xp: 150, item: "coussin"}, {xp: 100, item: "bougie"}, {xp: 80, item: "cabas"}];
+    var defiV = function (d, i) { if (!REEL) return d.two ? {c: d.c, e: d.e, v: Math.min(d.c, d.e)} : {v: d.v}; if (i === 0) return {c: S0.tasks.C || 0, e: S0.tasks.E || 0, v: Math.min(S0.tasks.C || 0, S0.tasks.E || 0)}; return {v: i === 1 ? (S0.sansEcran ? 1 : 0) : (S0.magasin ? 1 : 0)}; };
+    if (REEL && !self._defiBusy) DEFIS.forEach(function (d, i) { if (defiV(d, i).v >= d.goal && !S0.defisDone[i]) {
+      self._defiBusy = true;
+      setTimeout(function () { var S = STATS0(); if (S.defisDone[i]) { self._defiBusy = false; return; } S.defisDone[i] = true; S.owned[DEFI_RW[i].item] = true; self.setState({stats: S}); spreadXp(DEFI_RW[i].xp, 1); self._log("hf", "Défi réussi : " + d.n, d.rw); self._toast("Défi réussi : " + d.n + " · " + d.rw); self._defiBusy = false; }, 0);
+    } });
+    out.defis = DEFIS.map(function (d, i) {
+      var dv = defiV(d, i), v = dv.v; d = Object.assign({}, d, dv);
+      return {name: d.n + (REEL && S0.defisDone[i] ? " ✓" : ""), rw: d.rw, prog: d.two ? "Co " + d.c + "/" + d.goal + " · Emie " + d.e + "/" + d.goal : v + " / " + d.goal, pct: Math.round(v * 100 / d.goal) + "%"};
     });
     // hauts faits de progression
+    var soirRun = (function () { var w = S0.soirWeeks.slice().sort(), best = 0, run = 0, prev = null; w.forEach(function (x) { run = prev && isoDiff(prev, x) === 7 ? run + 1 : 1; best = Math.max(best, run); prev = x; }); return best; })();
+    var progV = function (h) { return h.id === "souris" ? st.mice : h.id === "cent" ? S0.total : h.id === "japonais" ? st.projets.reduce(function (a, p) { return Math.max(a, p.streak || 0); }, 0) : h.id === "soirees" ? soirRun : (REEL ? 0 : h.v); };
+    HF_PROG.forEach(function (h) { if (REEL && progV(h) >= h.goal && !st.hf[h.id] && !self._hfq) self._hfq = h.id; });
     out.hfProg = HF_PROG.map(function (h) {
-      var v = h.id === "souris" ? st.mice : h.v, ok = v >= h.goal;
+      var v = progV(h), ok = v >= h.goal;
       return {name: h.n, desc: h.d, prog: Math.min(v, h.goal) + " / " + h.goal, pct: Math.round(Math.min(v, h.goal) * 100 / h.goal) + "%", state: ok ? "Débloqué ✓" : "En cours", fg: ok ? "#36532A" : "#5E5864", bg: ok ? "#E4EEDC" : "#FFFFFF"};
     });
     out.spawnMouse = function () { var sps = MOUSE_SPOTS[self.state.room] || MOUSE_SPOTS.salon, spp = sps[0]; self.setState({sheet: null, screen: "salon", mouse: {room: self.state.room, x: spp[0], y: spp[1], until: self.state.tick + 400}}); };
@@ -4362,13 +4424,13 @@ class Component extends DCLogic {
           function () { self.setState({projets: self.state.projets.filter(function (q) { return q.id !== p.id; })}); }, "Supprimer le projet"),
         hasHabit: !!p.habit, habit: p.habit, streak: "Série : " + p.streak + " jour" + (p.streak > 1 ? "s" : ""),
         todayDone: p.today, todayTodo: !p.today,
-        practice: function () { setP(p.id, function (q) { q.today = true; q.streak += 1; return q; }); self._toast("+5 XP foyer · série de " + (p.streak + 1) + " jours"); },
+        practice: function () { setP(p.id, function (q) { q.today = true; q.streak += 1; return q; }); giveXp("nahla", 5); self._toast("+5 XP pour Nahla · série de " + (p.streak + 1) + " jours"); },
         steps: p.steps.map(function (x, j) {
           return {ed: ED("step:" + p.id + ":" + j, x.t, function () { return {t: x.t}; }, {f: [["t", "Étape", "text"]]},
               function (d) { if (!String(d.t || "").trim()) return false; setP(p.id, function (q) { q.steps = q.steps.map(function (y, jj) { return jj === j ? Object.assign({}, y, {t: cap(d.t)}) : y; }); return q; }); },
               function () { setP(p.id, function (q) { q.steps = q.steps.filter(function (y, jj) { return jj !== j; }); return q; }); }),
             t: x.t, on: x.d ? "true" : "false", box: x.d ? "#4A7034" : "#FFFFFF", tick: x.d ? "✓" : "", fg: x.d ? "#5E5864" : "#2B2A30", deco: x.d ? "line-through" : "none",
-            toggle: function () { setP(p.id, function (q) { q.steps = q.steps.map(function (y, jj) { return jj === j ? Object.assign({}, y, {d: !y.d}) : y; }); return q; }); if (!x.d) self._toast("Étape franchie : +30 XP pour le foyer"); }};
+            toggle: function () { setP(p.id, function (q) { q.steps = q.steps.map(function (y, jj) { return jj === j ? Object.assign({}, y, {d: !y.d}) : y; }); return q; }); if (!x.d) { spreadXp(30, 1); self._toast("Étape franchie : +10 XP pour chaque chat"); } else spreadXp(30, -1); }};
         }),
         stepDraft: st.stepDraft, onStepDraft: function (e) { self.setState({stepDraft: e.target.value}); },
         addStep: function () { var t = (self.state.stepDraft || "").trim(); if (!t) return; setP(p.id, function (q) { q.steps = q.steps.concat([{t: t, d: false}]); return q; }); self.setState({stepDraft: ""}); }};
@@ -4464,7 +4526,12 @@ class Component extends DCLogic {
         function (d) { var c = self.state.soirees[day]; if (!c) return false; var a = self.state.soirActs.filter(function (x) { return x.id === d.act; })[0];
           var o = Object.assign({}, self.state.soirees); o[day] = Object.assign({}, c, {by: d.by, status: d.status}, a ? {act: a.id, name: a.n, item: a.item} : {}); self.setState({soirees: o}); },
         function () { var o = Object.assign({}, self.state.soirees); delete o[day]; self.setState({soirees: o}); }, "Annuler la soirée"); })();
-    var answer = function (status) { var cs = self.state.soirees[self.state.soirDay]; if (status === "accepte" && cs && cs.status !== "accepte") self._bumpTitle("soirees", cs.by); var o = Object.assign({}, self.state.soirees); o[self.state.soirDay] = Object.assign({}, o[self.state.soirDay], {status: status}); self.setState({soirees: o}); };
+    var answer = function (status) { var cs = self.state.soirees[self.state.soirDay]; if (status === "accepte" && cs && cs.status !== "accepte") { self._bumpTitle("soirees", cs.by);
+        giveXp(lowestCat(), 10);
+        var S = STATS0(), sd = (SOIR_DAYS[self.state.soirDay] || {}).iso || TODAY_ISO, wk = monOf(sd);
+        if (S.soirWeeks.indexOf(wk) < 0) S.soirWeeks = S.soirWeeks.concat([wk]).slice(-60);
+        if (["popcorn", "manette", "de"].indexOf(cs.item) < 0 && monOf(sd) === MON_ISO) S.sansEcran = true;
+        self.setState({stats: S}); } var o = Object.assign({}, self.state.soirees); o[self.state.soirDay] = Object.assign({}, o[self.state.soirDay], {status: status}); self.setState({soirees: o}); };
     out.answerYes = function () { answer("accepte"); }; out.answerOther = function () { answer("autre"); }; out.answerNo = function () { answer("refuse"); };
     out.soirActs = st.soirActs.map(function (a) {
       var on = st.soirSel === a.id;
@@ -4625,10 +4692,10 @@ class Component extends DCLogic {
     out.finishLabel = st.finished ? "Bravo ! +15 XP" : "Courses faites · +15 XP";
     out.finishCourses = function () {
       if (self.state.finished) return;
-      var xp = Object.assign({}, self.state.xp), lvl = Object.assign({}, self.state.lvl);
-      xp.bao += 15; if (xp.bao >= 100) { xp.bao -= 100; lvl.bao += 1; }
-      var anim = Object.assign({}, self.state.anim); anim.bao = "ronron";
-      self.setState({xp: xp, lvl: lvl, anim: anim, finished: true, items: self.state.items.filter(function (i) { return !i.done; })});
+      var emptied = self.state.storeMode && self.state.items.every(function (i) { return i.done; });
+      giveXp("bao", 15, {boost: true});
+      var S = STATS0(); if (emptied) S.magasin = true;
+      self.setState({stats: S, finished: true, items: self.state.items.filter(function (i) { return !i.done; })});
     };
     out.photoOpen = !!st.photo; out.photoReading = st.photo === "reading"; out.photoReview = st.photo === "review";
     out.startPhoto = function () {

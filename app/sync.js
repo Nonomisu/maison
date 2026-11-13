@@ -1,12 +1,12 @@
 // Connexion Google et enregistrement dans Firestore (projet maison-6b9f4).
-import { firebaseConfig } from "./firebase-config.js?v=4b906626";
+import { firebaseConfig } from "./firebase-config.js?v=1053207f";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
 import { initializeFirestore, doc, getDoc, getDocs, setDoc, collection, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
-import { createSync } from "./store.js?v=4b906626";
-import { porte, boot as bootApp } from "./boot.js?v=4b906626";
+import { createSync } from "./store.js?v=1053207f";
+import { porte, boot as bootApp } from "./boot.js?v=1053207f";
 
 // Empreinte SHA-256 de l'adresse de Co : l'adresse elle-même ne figure pas dans le code public.
 const CO_HASH = "93f3070dff5cd551660e6fa9c55ff25aa21278d964f1c8baeec7dfe9c0da7a2a";
