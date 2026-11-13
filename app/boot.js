@@ -1,6 +1,6 @@
 // Démarrage commun (vrai serveur ou faux serveur de test) : identité, chargement, fêtes du jour.
-import { run } from "./scene.js?v=746853cd";
-import { iso } from "./store.js?v=746853cd";
+import { run } from "./scene.js?v=8bccdc40";
+import { iso } from "./store.js?v=8bccdc40";
 
 export function porte(msg, { button = true, err = false, logout = null } = {}) {
   const el = document.getElementById("porte");
@@ -36,13 +36,14 @@ export function todayEvent(d, catInfo) {
   if (md === 929) return { id: "annivC" };
   if (md === 422) return { id: "couple" };
   if (md >= 1215 && md <= 1227) return { id: "noel" };
+  if (md >= 1230 || md <= 105) return { id: "nouvelan", jan1: md === 101 };
   if (md >= 1020 && md <= 1031) return { id: "halloween" };
   if (md >= 210 && md <= 214) return { id: "valentin" };
   const e = easter(d.getFullYear()), day = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - e) / 864e5);
   if (day >= -2 && day <= 1) return { id: "paques" };
   return null;
 }
-// Saisons réelles ; « Noël » du 15 au 27 décembre (puis viendra un événement « Nouvelle année »).
+// Saisons réelles ; « Noël » du 15 au 27 décembre, « Nouvelle année » du 30 décembre au 5 janvier.
 export function seasonOf(d) {
   const md = (d.getMonth() + 1) * 100 + d.getDate();
   if (md >= 1215 && md <= 1227) return "noel";
@@ -83,7 +84,7 @@ export function ctxFor(me, L) {
 export async function boot({ me, backend, createSync }) {
   window.MAISON_REEL = true;
   window.MAISON_MOI = me;
-  const L = await import("./logic.js?v=746853cd");
+  const L = await import("./logic.js?v=8bccdc40");
   const ctx = ctxFor(me, L);
   const [remote, perso] = await Promise.all([backend.loadAll(), backend.loadPerso()]);
   const logic = new L.Component({});
@@ -100,6 +101,7 @@ export async function boot({ me, backend, createSync }) {
     if (ev.cat) logic.setState({ bdayCat: ev.cat });
     const b = (logic.renderVals().eventBtns || []).find((x) => x.id === ev.id);
     if (b) b.pick();
+    if (ev.jan1) { const v = logic.renderVals(); if (v.nyReplay) setTimeout(v.nyReplay, 1500); }
   }
   // nuit : vérifiée chaque minute ; nouvelle journée : rechargement au retour sur l'appli
   // Son : les navigateurs (Firefox, Safari) n'autorisent l'audio qu'après un geste ; on le réveille à chaque toucher.

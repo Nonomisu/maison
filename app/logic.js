@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=746853cd";
+import { DCLogic, blobUrl } from "./runtime.js?v=8bccdc40";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -436,7 +436,7 @@ var HF_PROG0 = [{id:"cent", n:"Cent tâches", d:"Faire 100 tâches à deux", v:3
 var HF_PROG = HF_PROG0.map(function (h) { return REEL ? Object.assign({}, h, {v: 0}) : h; });
 var WEATHER = [{id:"auto", l:"Auto"}, {id:"soleil", l:"Soleil"}, {id:"pluie", l:"Pluie"}, {id:"neige", l:"Neige"}];
 var EVO = {"couple": {"bureau": "/_blob/d9b9a5157ed68c6b5e0834d401d0f680", "chambre": "/_blob/b077bdf9426653c7fda91d809196e652", "cuisine": "/_blob/95d198f1f79811a041830970adbfc8c1", "salon": "/_blob/63df38e934c9d29c4d8ae7fdbab9f464", "sdb": "/_blob/efa5c815045e69e7da44d9dd02798537", "veranda": "/_blob/9a2cf8b2943fe850c7adafaf2bd1eeff"}, "halloween": {"bureau": "/_blob/475405d8642969266fd49e87443ff564", "chambre": "/_blob/0d7d4ca7e578be9a60efae44f4e5c487", "cuisine": "/_blob/7e3f07df426919d5998d49f975bdb842", "salon": "/_blob/69363d955931f44a939dbea062ee93ad", "sdb": "/_blob/79f34e118c3fd458575638d71157f0f4", "veranda": "/_blob/ceed5a336cbfbf2bc0e13e68d3fbd984"}, "paques": {"bureau": "/_blob/0bc8fba4c85904830d5f41061e14ee8d", "chambre": "/_blob/986b6070c371d9509bea8ca1a51d23d7", "cuisine": "/_blob/f995dab0bb702a107bea4f1615e3e148", "salon": "/_blob/711526bd4b7f64e469f0322dd319fd37", "sdb": "/_blob/8d67d1ec199aa8ed0a310d26cfd8dd44", "veranda": "/_blob/8841211abe3e8dadfaea5980ed2e6e54"}, "valentin": {"bureau": "/_blob/c985ee672e75a1d48f2ae2e1a10cb190", "chambre": "/_blob/236dbd02c7d3365b19f1dad7a4f95f68", "cuisine": "/_blob/0b37e5897647caa49ce813f47a2ff697", "salon": "/_blob/6d53f8712ffe148980362d453eba3081", "sdb": "/_blob/40e4c2921ec9f39af7bb545f011b41f1", "veranda": "/_blob/cc0c00493ddcaeb415c46821f55b0a77"}};
-var EV_SEASON = {halloween: "automne", valentin: "hiver", paques: "printemps", couple: "printemps"};
+var EV_SEASON = {nouvelan: "hiver", halloween: "automne", valentin: "hiver", paques: "printemps", couple: "printemps"};
 var GRANDES = [["10 janvier", "Anniversaire d'Emie · rappel à Co à J-7 et la veille", "#8A4F9E"], ["14 février", "Saint-Valentin (décor dès le 10)", "#C0392B"], ["Pâques", "date variable, du vendredi au lundi", "#9DC9EA"], ["22 avril", "Notre anniversaire de couple", "#D9A441"], ["29 septembre", "Anniversaire de Co · rappel à Emie à J-7 et la veille", "#2F7F86"], ["31 octobre", "Halloween (décor dès le 20)", "#E8762B"], ["25 décembre", "Noël (décor du 15 au 27 décembre)", "#2F5E4A"]];
 var WARD0 = [
   {id:"w1", who:"C", n:"Chemise blanche pour le travail", cat:"Hauts", prio:"bientot", done:false},
@@ -821,6 +821,12 @@ class Component extends DCLogic {
     out.winParts = winParticles(wk);
     out.hasEvent = !!st.event;
     out.bday = bday; out.bannerOn = bday || personBday;
+    // Nouvelle année
+    var nyOn = st.event === "nouvelan" && st.eventShown, nyY = TODAY_M === 11 ? TODAY_Y + 1 : TODAY_Y, nyLeft = TODAY_M === 11 ? 32 - TODAY_D : 0;
+    out.nyOn = nyOn && !bday && !personBday;
+    out.nyText = nyLeft > 1 ? "Plus que " + nyLeft + " jours avant " + nyY + " !" : nyLeft === 1 ? "Ce soir, on passe en " + nyY + " !" : "Bonne année " + nyY + " !";
+    out.nyFlags = []; for (var nf = 0; nf < 24; nf++) out.nyFlags.push({x: (12 + nf * 15.5) + "px", c: ["#F2C14E", "#C9CED6", "#2B2A30", "#E8B84A"][nf % 4]});
+    out.nyReplay = function () { var t = self.state.tick + 2; self.setState({confStart: t, confGen: self.state.confGen + 1, sheet: null}); };
     var replay = function () { var t = self.state.tick + 2, an = Object.assign({}, self.state.anim); an[self.state.bdayCat] = "repos"; self.setState({bdayStart: t, confStart: t, confGen: self.state.confGen + 1, candleLit: true, anim: an, sheet: null, zoom: null}); };
     out.replayBday = personBday ? function () { var t = self.state.tick + 2; self.setState({personStart: t, confStart: t, confGen: self.state.confGen + 1, sheet: null, zoom: null, purr: null, play: null}); } : replay;
     out.bdayText = "Joyeux anniversaire " + (personBday ? pwho : CATS[bk].name) + " !"; out.bdayColor = personBday ? WHO[pkey].bg : CAT_COL[bk];
@@ -833,8 +839,8 @@ class Component extends DCLogic {
     out.cakeSrc = st.candleLit ? CAKE.on : CAKE.off;
     out.droppedGifts = (bday && be >= 20) ? givers.map(function (g, i) { return {src: GIFTS[i], x: (hb2.x - 4 + i * 66) + "px", y: (hb2.y + 105 - 24) + "px"}; }) : [];
     var ce = st.tick - st.confStart;
-    out.confOn = (bday || personBday) && ce >= 0 && ce < 45;
-    var cc2 = [CAT_COL[bk], "#F2C14E", "#F6C1C7", "#E04848", "#FFFFFF", "#6FBF5A"];
+    out.confOn = (bday || personBday || out.nyOn) && ce >= 0 && ce < 45;
+    var cc2 = out.nyOn ? ["#F2C14E", "#C9CED6", "#FFFFFF", "#E8B84A", "#8A8F99", "#F7E27A"] : [CAT_COL[bk], "#F2C14E", "#F6C1C7", "#E04848", "#FFFFFF", "#6FBF5A"];
     out.confetti = []; for (var ci = 0; ci < 40; ci++) out.confetti.push({cls: "wconf" + (st.confGen % 2), x: Math.round(rnd(ci + 50) * 380) + "px", w: (rnd(ci + 51) > 0.5 ? 6 : 4) + "px", h: (rnd(ci + 52) > 0.5 ? 8 : 5) + "px", c: cc2[ci % 6], dur: (2.4 + rnd(ci + 53) * 1.6).toFixed(1) + "s", delay: (rnd(ci + 54) * 0.6).toFixed(2) + "s"});
     out.bareme = [{t:"Tâche quotidienne (vaisselle, litière, machine)", v:"2 XP"}, {t:"Tâche hebdomadaire (poubelles, aspirateur, Bain)", v:"5 XP"}, {t:"Tâche mensuelle ou saisonnière", v:"10 XP"}, {t:"Liste de courses vidée en mode magasin", v:"8 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"5 XP chacun"}, {t:"Défi", v:"50 à 150 XP"}];
     out.gardeFous = ["Une même tâche répétable ne rapporte que 2 fois par jour", "Tâches répétables plafonnées à 25 XP par jour et par personne", "Une mission rapporte une fois cochée ; un rendez-vous à partir du jour J", "Papiers faits avant l'échéance : +50 %", "Décocher retire l'XP", "Un chat qui dort donne ×1,5 sur sa prochaine tâche"];
@@ -856,9 +862,9 @@ class Component extends DCLogic {
       var on = st.saison === b.id;
       return {label: b.label, pressed: on ? "true" : "false", bg: on ? "#2B2A30" : "#FFFFFF", fg: on ? "#F7F3EE" : "#2B2A30", pick: function () { self.setState({saison: b.id, fireOn: b.id === "automne" || b.id === "hiver"}); }};
     });
-    out.eventBtns = [{id:null, label:"Aucun"}, {id:"noel", label:"Noël"}, {id:"anniv", label:"Anniv. des chats"}, {id:"annivE", label:"10 janv. · anniv. d'Emie"}, {id:"annivC", label:"29 sept. · anniv. de Co"}, {id:"couple", label:"22 avril · nous deux"}, {id:"valentin", label:"Saint-Valentin"}, {id:"paques", label:"Pâques"}, {id:"halloween", label:"Halloween"}].map(function (b) {
+    out.eventBtns = [{id:null, label:"Aucun"}, {id:"noel", label:"Noël"}, {id:"nouvelan", label:"Nouvel an"}, {id:"anniv", label:"Anniv. des chats"}, {id:"annivE", label:"10 janv. · anniv. d'Emie"}, {id:"annivC", label:"29 sept. · anniv. de Co"}, {id:"couple", label:"22 avril · nous deux"}, {id:"valentin", label:"Saint-Valentin"}, {id:"paques", label:"Pâques"}, {id:"halloween", label:"Halloween"}].map(function (b) {
       var on = st.event === b.id;
-      return {label: b.label, pressed: on ? "true" : "false", bg: on ? (b.id ? "#9E2F2F" : "#2B2A30") : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pick: function () { var t = self.state.tick + 5; if (b.id === "anniv") self.setState({event: b.id, eventShown: true, bdayStart: t, confStart: t, confGen: self.state.confGen + 1, candleLit: true, sheet: null}); else if (EV_SEASON[b.id]) self.setState({event: b.id, eventShown: true, saison: EV_SEASON[b.id], fireOn: b.id !== "paques" && b.id !== "couple", coupleStart: t, sheet: b.id === "couple" ? null : self.state.sheet}); else if (b.id === "annivE" || b.id === "annivC") { var from = b.id === "annivE" ? "Co" : "Emie"; self.setState({zoom: null, purr: null, play: null, event: b.id, eventShown: true, saison: b.id === "annivE" ? "hiver" : "automne", personStart: t, confStart: t, confGen: self.state.confGen + 1, sheet: null, notes: [{id: self.state.nextNote, by: from, text: "Joyeux anniversaire ! Les chats et moi, on t'a préparé une petite surprise ♥", color: "#F6C1C7", read: false, liked: false}].concat(self.state.notes), nextNote: self.state.nextNote + 1}); }
+      return {id: b.id, label: b.label, pressed: on ? "true" : "false", bg: on ? (b.id ? "#9E2F2F" : "#2B2A30") : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pick: function () { var t = self.state.tick + 5; if (b.id === "anniv") self.setState({event: b.id, eventShown: true, bdayStart: t, confStart: t, confGen: self.state.confGen + 1, candleLit: true, sheet: null}); else if (EV_SEASON[b.id]) self.setState({event: b.id, eventShown: true, saison: EV_SEASON[b.id], fireOn: b.id !== "paques" && b.id !== "couple", coupleStart: t, sheet: b.id === "couple" ? null : self.state.sheet}); else if (b.id === "annivE" || b.id === "annivC") { var from = b.id === "annivE" ? "Co" : "Emie"; self.setState({zoom: null, purr: null, play: null, event: b.id, eventShown: true, saison: b.id === "annivE" ? "hiver" : "automne", personStart: t, confStart: t, confGen: self.state.confGen + 1, sheet: null, notes: [{id: self.state.nextNote, by: from, text: "Joyeux anniversaire ! Les chats et moi, on t'a préparé une petite surprise ♥", color: "#F6C1C7", read: false, liked: false}].concat(self.state.notes), nextNote: self.state.nextNote + 1}); }
         else self.setState({event: b.id, eventShown: true}); }};
     });
     if (REEL) FOYER_LVL = foyerLvlOf(st);
@@ -870,7 +876,7 @@ class Component extends DCLogic {
       if (!REEL) { n = 7; x = 340; } var need = FOYER_COST(n + 1);
       out.fLvl = n; out.fPct = Math.round(x * 100 / need) + "%"; out.fXpTxt = x + " / " + need + " XP avant le niveau " + (n + 1) + "."; out.fXpShort = x + " / " + need + " XP avant le niveau " + (n + 1); })();
     out.demoReel = REEL;
-    out.saisonNow = "Maintenant : " + ({printemps: "printemps", ete: "été", automne: "automne", hiver: "hiver", noel: "période de Noël", classique: "classique"})[st.saison] + ((st.event && st.eventShown) ? " · " + ({noel: "Noël", anniv: "anniversaire de " + CATS[st.bdayCat].name, annivE: "anniversaire d'Emie", annivC: "anniversaire de Co", couple: "notre jour", valentin: "Saint-Valentin", paques: "Pâques", halloween: "Halloween"})[st.event] : "");
+    out.saisonNow = "Maintenant : " + ({printemps: "printemps", ete: "été", automne: "automne", hiver: "hiver", noel: "période de Noël", classique: "classique"})[st.saison] + ((st.event && st.eventShown) ? " · " + ({nouvelan: "Nouvelle année", noel: "Noël", anniv: "anniversaire de " + CATS[st.bdayCat].name, annivE: "anniversaire d'Emie", annivC: "anniversaire de Co", couple: "notre jour", valentin: "Saint-Valentin", paques: "Pâques", halloween: "Halloween"})[st.event] : "");
     out.demoUi = !REEL; out.deOther = OTHER === "E" ? "d'Emie" : "de Co"; out.otherE = OTHER === "E" ? "e" : ""; out.otherName = NAME[OTHER]; out.meName = NAME[ME];
     // éditeur générique : chaque fiche passe par lui pour modifier un élément
     var ED = function (key, label, init, spec, onSave, onDel, delText) {
@@ -1630,7 +1636,13 @@ class Component extends DCLogic {
           parts.push({cls: cfg.cls, x: Math.round(r1 * (q[2] - 4)) + "px", w: cfg.w, h: cfg.h, c: cfg.c, dur: cfg.dur + "s", delay: (-r3 * 6).toFixed(2) + "s"});
         }
       }
-      return {x: q[0] + "px", y: q[1] + "px", w: q[2] + "px", h: q[3] + "px", bg: DARK ? (low ? "linear-gradient(#24305C 0%, #2A3664 30%, #1B2242 30%, #121730 100%)" : "linear-gradient(#141C40, #24305C)") : "transparent", stars: st2, moon: DARK && !low && i === paneList.filter(function (z) { return z[4] !== "bas"; }).length - 1, parts: parts};
+      var fws = [];
+      if (DARK && !low && st.event === "nouvelan" && st.eventShown) for (var f3 = 0; f3 < 2; f3++) {
+        var fc3 = ["#F2C14E", "#F6C1C7", "#9DC9EA", "#CDE8C1", "#FFFFFF"][(i + f3 * 2) % 5], u = 3;
+        var pts3 = [[0, -2], [1.4, -1.4], [2, 0], [1.4, 1.4], [0, 2], [-1.4, 1.4], [-2, 0], [-1.4, -1.4]].map(function (p) { return Math.round(p[0] * u) + "px " + Math.round(p[1] * u) + "px 0 1px " + fc3; }).join(", ");
+        fws.push({x: Math.round(8 + rnd(i * 23 + f3 + 900) * (q[2] - 16)) + "px", y: Math.round(8 + rnd(i * 23 + f3 + 950) * (q[3] * 0.6)) + "px", sh: pts3, d: (-(i * 0.7 + f3 * 1.1)).toFixed(2) + "s"});
+      }
+      return {fw: fws, x: q[0] + "px", y: q[1] + "px", w: q[2] + "px", h: q[3] + "px", bg: DARK ? (low ? "linear-gradient(#24305C 0%, #2A3664 30%, #1B2242 30%, #121730 100%)" : "linear-gradient(#141C40, #24305C)") : "transparent", stars: st2, moon: DARK && !low && i === paneList.filter(function (z) { return z[4] !== "bas"; }).length - 1, parts: parts};
     }).filter(function (q) { return DARK || q.parts.length; });
     out.openFfC = function () { self.setState({sheet: {type: "ffxiv"}, ffWho: "C"}); };
     out.openFfE = function () { self.setState({sheet: {type: "ffxiv"}, ffWho: "E"}); };
