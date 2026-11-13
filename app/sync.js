@@ -16,27 +16,32 @@ const fb = initializeApp(firebaseConfig);
 const auth = getAuth(fb);
 const db = initializeFirestore(fb, { ignoreUndefinedProperties: true });
 
+// ?test : tout est enregistré à part (collections test-…), pour essayer sans toucher aux vraies données ni à l'XP.
+const TEST = new URLSearchParams(location.search).has("test");
+const C_ETAT = TEST ? "test-etat" : "etat", C_PERSO = TEST ? "test-perso" : "perso";
+
 function firestoreBackend(me) {
-  const etat = collection(db, "etat");
+  const etat = collection(db, C_ETAT);
   return {
     async loadAll() {
       const out = {};
       (await getDocs(etat)).forEach((d) => { try { out[d.id] = JSON.parse(d.data().j); } catch (e) { console.error(d.id, e); } });
       return out;
     },
-    write: (k, v) => setDoc(doc(db, "etat", k), { j: JSON.stringify(v), by: me, at: serverTimestamp() }),
+    write: (k, v) => setDoc(doc(db, C_ETAT, k), { j: JSON.stringify(v), by: me, at: serverTimestamp() }),
     listen(cb) {
       onSnapshot(etat, (snap) => snap.docChanges().forEach((c) => {
         if (c.doc.metadata.hasPendingWrites || c.type === "removed") return;
         try { cb(c.doc.id, JSON.parse(c.doc.data().j)); } catch (e) { console.error(e); }
       }));
     },
-    async loadPerso() { const s = await getDoc(doc(db, "perso", me)); return s.exists() ? JSON.parse(s.data().j) : null; },
-    writePerso: (o) => setDoc(doc(db, "perso", me), { j: JSON.stringify(o), at: serverTimestamp() }),
+    async loadPerso() { const s = await getDoc(doc(db, C_PERSO, me)); return s.exists() ? JSON.parse(s.data().j) : null; },
+    writePerso: (o) => setDoc(doc(db, C_PERSO, me), { j: JSON.stringify(o), at: serverTimestamp() }),
   };
 }
 
 export function boot() {
+  if (TEST) document.getElementById("bandeauTest").style.display = "block";
   const btn = document.getElementById("porteBtn");
   btn.onclick = async () => {
     const p = new GoogleAuthProvider();

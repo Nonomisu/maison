@@ -3284,7 +3284,7 @@ class Component extends DCLogic {
     out.pTree = st.treeOn ? "true" : "false"; out.treeBg = st.treeOn ? "#E4EEDC" : "#FFFFFF";
     out.toggleTree = function () { self.setState({treeOn: !self.state.treeOn}); };
     var wk = (st.event === "noel" && st.eventShown) ? "snow" : ({hiver:"snow", automne:"leaves", printemps:"petals", ete:"sea", classique:"leaves"})[st.saison];
-    if (st.meteo === "pluie") wk = "rain"; else if (st.meteo === "neige") wk = "snow"; else if (st.meteo === "soleil") wk = "none";
+    if (MTO === "pluie") wk = "rain"; else if (MTO === "neige") wk = "snow"; else if (MTO === "soleil") wk = "none"; else if (MTO === "nuageux" && wk === "snow") wk = "none";
     out.winParts = winParticles(wk);
     out.hasEvent = !!st.event;
     out.bday = bday; out.bannerOn = bday || personBday;
@@ -3329,6 +3329,8 @@ class Component extends DCLogic {
         else self.setState({event: b.id, eventShown: true}); }};
     });
     if (REEL) FOYER_LVL = foyerLvlOf(st);
+    // météo effective : en mode réel, « Auto » suit la météo de Bron (Open-Meteo)
+    var MTO = (REEL && st.meteo === "auto" && st.meteoReel) ? st.meteoReel.kind : st.meteo;
     (function () { var x = foyerXpOf(st), n = 1; while (n < 99 && x >= FOYER_COST(n + 1)) { x -= FOYER_COST(n + 1); n++; }
       if (!REEL) { n = 7; x = 340; } var need = FOYER_COST(n + 1);
       out.fLvl = n; out.fPct = Math.round(x * 100 / need) + "%"; out.fXpTxt = x + " / " + need + " XP avant le niveau " + (n + 1) + "."; out.fXpShort = x + " / " + need + " XP avant le niveau " + (n + 1); })();
@@ -3733,11 +3735,11 @@ class Component extends DCLogic {
     out.bSeasOn = !!BSEAS[seasonKey]; out.bSeas = BSEAS[seasonKey] || "";
     out.inVeranda = st.room === "veranda" && !out.roomLocked; out.vBg = VBG[seasonKey] || VBG.ete;
     var VL = out.inVeranda ? verandaLife(seasonKey, st.tick) : {birds: [], parts: []};
-    if (out.inVeranda && st.meteo !== "auto") {
+    if (out.inVeranda && MTO !== "auto" && MTO !== "nuageux") {
       VL.parts = [];
-      var nP = st.meteo === "pluie" ? 40 : (st.meteo === "neige" ? 34 : 0);
-      for (var ip = 0; ip < nP; ip++) VL.parts.push(st.meteo === "pluie" ? {cls: "vrain", x: Math.round(rnd(700 + ip) * 400) + "px", w: "2px", h: "10px", c: "rgba(225,235,245,0.8)", dur: (0.9 + rnd(750 + ip) * 0.5).toFixed(2) + "s", delay: (-rnd(790 + ip) * 1.4).toFixed(2) + "s"} : {cls: "vsnow", x: Math.round(rnd(800 + ip) * 380) + "px", w: "5px", h: "5px", c: "#FFFFFF", dur: (9 + rnd(850 + ip) * 5).toFixed(1) + "s", delay: (-rnd(890 + ip) * 13).toFixed(1) + "s"});
-      if (st.meteo === "pluie") VL.birds = [];
+      var nP = MTO === "pluie" ? 40 : (MTO === "neige" ? 34 : 0);
+      for (var ip = 0; ip < nP; ip++) VL.parts.push(MTO === "pluie" ? {cls: "vrain", x: Math.round(rnd(700 + ip) * 400) + "px", w: "2px", h: "10px", c: "rgba(225,235,245,0.8)", dur: (0.9 + rnd(750 + ip) * 0.5).toFixed(2) + "s", delay: (-rnd(790 + ip) * 1.4).toFixed(2) + "s"} : {cls: "vsnow", x: Math.round(rnd(800 + ip) * 380) + "px", w: "5px", h: "5px", c: "#FFFFFF", dur: (9 + rnd(850 + ip) * 5).toFixed(1) + "s", delay: (-rnd(890 + ip) * 13).toFixed(1) + "s"});
+      if (MTO === "pluie") VL.birds = [];
     } out.vBirds = VL.birds; out.vParts = VL.parts; out.vFrame = VFRAME;
     out.openVFurn = function () { var a = Object.assign({}, self.state.accOpen); a.veranda = true; self.setState({accOpen: a, sheet: {type: "settings"}}); };
     out.verandaCats = (out.inVeranda ? here : []).map(function (k, i) {
@@ -4031,7 +4033,7 @@ class Component extends DCLogic {
     out.spawnMouse = function () { var sps = MOUSE_SPOTS[self.state.room] || MOUSE_SPOTS.salon, spp = sps[0]; self.setState({sheet: null, screen: "salon", mouse: {room: self.state.room, x: spp[0], y: spp[1], until: self.state.tick + 400}}); };
     // météo
     out.weathers = WEATHER.map(function (w) { var on = st.meteo === w.id; return {label: w.l, pressed: on ? "true" : "false", bg: on ? "#2B2A30" : "#FFFFFF", fg: on ? "#F7F3EE" : "#2B2A30", pick: function () { self.setState({meteo: w.id}); }}; });
-    out.meteoNote = st.meteo === "auto" ? "Auto : météo réelle de Bron (ex. 6 °C, nuageux). Démo : la saison décide." : "Démo : météo forcée sur les fenêtres et la véranda";
+    out.meteoNote = st.meteo === "auto" ? (REEL ? (st.meteoReel ? "Auto : à Bron, " + st.meteoReel.txt + " (" + st.meteoReel.t + " °C), mis à jour à " + st.meteoReel.h + "." : "Auto : météo de Bron en cours de chargement.") : "Auto : météo réelle de Bron (ex. 6 °C, nuageux). Démo : la saison décide.") : REEL ? "Météo forcée sur les fenêtres et la véranda" : "Démo : météo forcée sur les fenêtres et la véranda";
     out.nightTint = st.night && st.screen === "salon";
     if (st.vacances) { out.stockList = out.stockList.map(function (x) { return Object.assign({}, x, {state: "En pause", info: "Mode vacances : la jauge ne descend plus", canAdd: false}); }); }
     if (evKey) { out.bSeasOn = false; out.kSeasOn = false; out.cSeasOn = false; out.sSeasOn = false; }
@@ -4061,7 +4063,7 @@ class Component extends DCLogic {
     var SZ = st.sizes[st.wardWho];
     out.sizeFields = [["haut", "Taille haut"], ["bas", "Taille bas"], ["pointure", "Pointure"]].map(function (f) { return {id: "sz-" + f[0], label: f[1], val: SZ[f[0]], ph: "—", on: function (e) { var z = JSON.parse(JSON.stringify(self.state.sizes)); z[self.state.wardWho][f[0]] = e.target.value; self.setState({sizes: z}); }}; });
     out.wardWhoName = NAME[st.wardWho];
-    var wkind = st.meteo === "pluie" ? "rain" : (st.meteo === "neige" ? "snow" : (st.meteo === "soleil" ? null : ({hiver: "snow", noel: "snow", automne: "leaf", printemps: "petal"})[seasonKey] || null));
+    var wkind = MTO === "pluie" ? "rain" : (MTO === "neige" ? "snow" : (MTO === "soleil" ? null : (MTO === "nuageux" ? ({automne: "leaf", printemps: "petal"})[seasonKey] || null : ({hiver: "snow", noel: "snow", automne: "leaf", printemps: "petal"})[seasonKey] || null)));
     var paneList = (st.screen === "salon" && !out.roomLocked && NIGHT_PANES[st.room]) ? NIGHT_PANES[st.room] : [];
     if (st.room === "salon" && !st.night) paneList = [];
     out.nightPanes = paneList.map(function (q, i) {

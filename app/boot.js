@@ -49,6 +49,18 @@ export function seasonOf(d) {
   return "automne";
 }
 
+// Météo réelle de Bron (Open-Meteo, gratuit et sans clé) : les fenêtres et la véranda la suivent en « Auto ».
+const WMO = (c) => c <= 1 ? ["soleil", "ensoleillé"] : c <= 3 ? ["nuageux", c === 2 ? "partiellement nuageux" : "couvert"] : c <= 48 ? ["nuageux", "brouillard"]
+  : (c >= 71 && c <= 77) || c === 85 || c === 86 ? ["neige", "neige"] : ["pluie", c >= 95 ? "orage" : c <= 57 ? "bruine" : "pluie"];
+async function meteo(logic) {
+  try {
+    const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.7386&longitude=4.9118&current=weather_code,temperature_2m&timezone=Europe%2FParis");
+    const c = (await r.json()).current;
+    const [kind, txt] = WMO(c.weather_code), d = new Date();
+    logic.setState({ meteoReel: { kind, txt, t: Math.round(c.temperature_2m), h: d.getHours() + "h" + String(d.getMinutes()).padStart(2, "0") } });
+  } catch (e) { console.warn("météo indisponible", e); }
+}
+
 export function ctxFor(me, L) {
   const now = new Date();
   return { me, other: me === "C" ? "E" : "C", now, today: iso(now), soirDates: L.SOIR_DAYS.map((d) => d.iso), mealDates: L.MEAL_ISO };
@@ -76,6 +88,7 @@ export async function boot({ me, backend, createSync }) {
     if (b) b.pick();
   }
   // nuit : vérifiée chaque minute ; nouvelle journée : rechargement au retour sur l'appli
+  meteo(logic); setInterval(() => meteo(logic), 30 * 60e3);
   setInterval(() => { const h = new Date().getHours(), n = h >= 21 || h < 7; if (logic.state.night !== n) logic.setState({ night: n }); }, 60000);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") sync.flush();
