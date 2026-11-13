@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=1053207f";
+import { DCLogic, blobUrl } from "./runtime.js?v=75ccfab6";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -33,13 +33,13 @@ var ANIM_ORDER = ["repos","queue","toilette","chasse","ronron","sieste"];
 var CATS = {
   nahla: {name:"Nahla", domain:"Ménage & tâches", color:"#3E6FB0", level:5, xp:60, x:"36px", y:"630px", status:"Dernière tâche : hier",
     history:[{t:"Sortir les poubelles", xp:"+5 XP"},{t:"Changer la litière", xp:"+5 XP"}],
-    next:"Niveau 6 : Nahla débloque la pose « perchée » sur l'étagère."},
+    next:"Niveau 6 : Nahla gagne son étagère perchée au salon, au-dessus du bureau."},
   bao: {name:"Bao", domain:"Courses & cuisine", color:"#9A5B12", level:4, xp:45, x:"272px", y:"585px", status:"Dernière tâche : il y a 2 j",
     history:[{t:"Courses du samedi", xp:"+15 XP"},{t:"Planning des repas", xp:"+10 XP"},{t:"Recette ajoutée en photo", xp:"+5 XP"}],
-    next:"Niveau 5 : Bao gagne un petit bol en céramique à côté du frigo."},
+    next:"Niveau 5 : Bao gagne un petit bol en céramique devant le frigo."},
   tsunky: {name:"Tsunky", domain:"Missions & rendez-vous", color:"#4A7034", level:2, xp:10, x:"150px", y:"718px", status:"Rien depuis 9 j : elle fait la sieste",
     history:[{t:"Déchèterie (cartons)", xp:"+20 XP"}],
-    next:"Une mission faite la réveille. Niveau 3 : coussin sur le bureau."}
+    next:"Une mission faite la réveille. Niveau 3 : son coussin dans le bureau."}
 };
 var ORDER = ["nahla","bao","tsunky"];
 var TREE_POS = {nahla:{x:"30px", y:"456px"}, bao:{x:"85px", y:"556px"}, tsunky:{x:"68px", y:"691px"}};
@@ -621,7 +621,10 @@ class Component extends DCLogic {
     var ROT = REEL ? Math.floor(Date.now() / (15 * 60e3)) : Math.floor(st.tick / (SLOT * 2));
     var slotK = function (k) { return ORDER[(ORDER.indexOf(k) + ROT) % 3]; };
     var sj3 = function (i) { return (i + ROT) % 3; };
-    var home = function (k) { var c = CATS[slotK(k)]; return {x: parseInt(st.treeOn ? TREE_POS[slotK(k)].x : c.x, 10), y: parseInt(st.treeOn ? TREE_POS[slotK(k)].y : c.y, 10)}; };
+    var LVD = st.demoUnlock ? 99 : FOYER_LVL, OWN = (st.stats || {}).owned || {};
+    var DECO = {bol: st.lvl.bao >= 5, perch: st.lvl.nahla >= 6, tsu: st.lvl.tsunky >= 3, plante: LVD >= 8, tapis: LVD >= 9, lampe: LVD >= 10, coussins: LVD >= 12, etoile: !!OWN.coussin, bougie: !!OWN.bougie, cabas: !!OWN.cabas};
+    var perched = DECO.perch && ROT % 3 === 0 && !st.treeOn;   // Nahla sur son étagère, un quart d'heure sur trois
+    var home = function (k) { if (k === "nahla" && perched) return {x: 15, y: 249}; var c = CATS[slotK(k)]; return {x: parseInt(st.treeOn ? TREE_POS[slotK(k)].x : c.x, 10), y: parseInt(st.treeOn ? TREE_POS[slotK(k)].y : c.y, 10)}; };
     var givers = ORDER.filter(function (k) { return k !== bk; });
     var lvlNow0 = st.demoUnlock ? 99 : FOYER_LVL;
     var mv = st.demoUnlock && !st.night, slot = mv ? Math.floor(st.tick / SLOT) : 5, ph = mv ? st.tick % SLOT : 999;
@@ -721,7 +724,7 @@ class Component extends DCLogic {
       }
     }
     var out_zoom = {v: zv, x: Math.round(zx) + "px", y: zy + "px", f: zf, src: zsrc, b: zb, bx: zbx, by: zby, bt: zbt};
-    var out = {
+    var out = {deco: DECO,
       zoomExcl: zex, zoomRot: zrot, zoomDust: zd, zoomDustX: zdx, zoomDustY: zdy,
       zoomVisible: out_zoom.v, zoomX: out_zoom.x, zoomY: out_zoom.y, zoomFlip: out_zoom.f, zoomSrc: out_zoom.src,
       zoomBubbleOn: out_zoom.b, zoomBubbleX: out_zoom.bx, zoomBubbleY: out_zoom.by, zoomBubbleText: out_zoom.bt,
@@ -745,7 +748,8 @@ class Component extends DCLogic {
       openDemarches: function () { self.open({type:"tab", key:"demarches"}); },
       openInfos: function () { self.setState({screen: "infos", sheet: null}); },
       decos: DECOS.map(function (d) {
-        return {name: d.name, state: d.ok ? "Débloqué · niv. " + d.lvl : "Niveau " + d.lvl, bg: d.ok ? "#E4EEDC" : "#ECE6DD", fg: d.ok ? "#36532A" : "#5E5864"};
+        var okD = REEL ? FOYER_LVL >= d.lvl : d.ok;
+        return {name: d.name, state: okD ? "Débloqué · niv. " + d.lvl : "Niveau " + d.lvl, bg: okD ? "#E4EEDC" : "#ECE6DD", fg: okD ? "#36532A" : "#5E5864"};
       }),
       week: (REEL ? self._realWeek(st) : WEEK).map(function (d) {
         var sv = REEL ? st.soirees[d.idx] : st.soirees[d.num - 13];
