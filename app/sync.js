@@ -1,12 +1,12 @@
 // Connexion Google et enregistrement dans Firestore (projet maison-6b9f4).
-import { firebaseConfig } from "./firebase-config.js?v=302f6b56";
+import { firebaseConfig } from "./firebase-config.js?v=f8fc7d3f";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc, getDocs, setDoc, deleteDoc, addDoc, collection, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
-import { createSync } from "./store.js?v=302f6b56";
-import { porte, boot as bootApp } from "./boot.js?v=302f6b56";
+import { createSync } from "./store.js?v=f8fc7d3f";
+import { porte, boot as bootApp } from "./boot.js?v=f8fc7d3f";
 
 // Empreinte SHA-256 de l'adresse de Co : l'adresse elle-même ne figure pas dans le code public.
 const CO_HASH = "93f3070dff5cd551660e6fa9c55ff25aa21278d964f1c8baeec7dfe9c0da7a2a";
@@ -63,8 +63,12 @@ function pushApi(me) {
     async state() {
       if (!pushSupported() || !VAPID_PUBLIC) return "unsupported";
       if (Notification.permission === "denied") return "denied";
-      const reg = await swReg; if (!reg) return "unsupported";
-      return Notification.permission === "granted" && (await reg.pushManager.getSubscription()) ? "on" : "off";
+      // sans réponse du navigateur en 4 s, on propose quand même le bouton
+      const lent = new Promise((ok) => setTimeout(() => ok("off"), 4000));
+      return Promise.race([lent, (async () => {
+        const reg = await swReg; if (!reg) return "unsupported";
+        return Notification.permission === "granted" && (await reg.pushManager.getSubscription()) ? "on" : "off";
+      })().catch(() => "off")]);
     },
     async enable() {
       const perm = await Notification.requestPermission();   // doit partir pendant le geste (iPhone)

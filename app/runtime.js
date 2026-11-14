@@ -1,7 +1,7 @@
 // Petit moteur qui fait tourner la logique de la maquette (classe Component)
 // et son gabarit compilé, avec Preact pour mettre à jour la page sans la reconstruire.
-import { h as ph, render as prender } from "./preact.module.js?v=302f6b56";
-import { BLOBS } from "./blobs.js?v=302f6b56";
+import { h as ph, render as prender } from "./preact.module.js?v=f8fc7d3f";
+import { BLOBS } from "./blobs.js?v=f8fc7d3f";
 
 export function blobUrl(u) {
   if (typeof u !== "string" || u.indexOf("/_blob/") !== 0) return u;
