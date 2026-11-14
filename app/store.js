@@ -10,7 +10,7 @@ const clone = (v) => (v === undefined ? undefined : JSON.parse(J(v)));
 // Données partagées telles quelles entre Co et Emie.
 export const SHARED = ["items", "tasks", "missions", "soirActs", "recipes", "garde", "titles", "plaidOn", "logsOn", "ff",
   "ward", "sizes", "sante", "stocks", "bSel", "projets", "radioOn", "roomSel", "furnSel", "tableDecoOn",
-  "contacts", "journal", "litBags", "gmailAddr", "catInfo", "notes", "fireOn", "xp", "lvl", "treeOn", "vacances", "candleOff", "agenda", "stats"];
+  "contacts", "journal", "litBags", "gmailAddr", "catInfo", "notes", "fireOn", "xp", "lvl", "treeOn", "vacances", "candleOff", "agenda", "stats", "annuels"];
 // Données partagées rangées autrement que dans l'appli (par date, ou par personne).
 export const ADAPTED = ["soirees", "meals", "wishes"];
 // Données propres à chaque personne (dans Firestore) et à chaque appareil (dans le navigateur).
@@ -121,6 +121,16 @@ export function roll(st, today, now = new Date()) {
       return y;
     });
     if (ch) out.tasks = t;
+  }
+  // tâches annuelles : ajoutées au ménage le 1er de leur mois (une fois par an)
+  if (Array.isArray(st.annuels) && Array.isArray(st.tasks)) {
+    const y = +today.slice(0, 4), m = +today.slice(5, 7) - 1;
+    const due = st.annuels.filter((a) => a.m === m && a.y !== y);
+    if (due.length) {
+      const base = out.tasks || st.tasks;
+      out.annuels = st.annuels.map((a) => (due.includes(a) ? { ...a, y } : a));
+      out.tasks = base.concat(due.filter((a) => !base.some((x) => x.id === `an-${a.id}-${y}`)).map((a) => ({ id: `an-${a.id}-${y}`, t: a.t, freq: "une", seasonal: true, rec: "", pts: 10 })));
+    }
   }
   // réserves
   if (Array.isArray(st.stocks)) {
@@ -279,6 +289,10 @@ export function createSync({ logic, backend, ctx, onStatus = () => {} }) {
     // « Arroser la plante » retirée du ménage
     if (Array.isArray(patch.tasks) && patch.tasks.some((t) => t.id === "c" && t.t === "Arroser la plante")) {
       patch.tasks = patch.tasks.filter((t) => !(t.id === "c" && t.t === "Arroser la plante")); missing.push("tasks");
+    }
+    // entretien saisonnier retiré (détecteur de fumée, VMC, joints)
+    if (Array.isArray(patch.tasks) && patch.tasks.some((x) => ["dfm", "vmc", "joint"].includes(x.id))) {
+      patch.tasks = patch.tasks.filter((x) => !["dfm", "vmc", "joint"].includes(x.id)); missing.push("tasks");
     }
     // poubelles et litières : deux fois par semaine
     if (Array.isArray(patch.tasks) && patch.tasks.some((t) => ((t.id === "d" && t.rec === "mardi et vendredi") || (t.id === "b" && t.rec === "tous les 2 jours")) && !t.mig2)) {
