@@ -22,7 +22,7 @@ const APP = 'https://nonomisu.github.io/maison/';
 webpush.setVapidDetails(APP, vapid.publicKey, vapid.privateKey);
 const db = admin.initializeApp({ credential: admin.credential.cert(key) }, 'maison-notifs').firestore();
 const log = (...a) => console.log(new Date().toLocaleString('fr-FR'), ...a);
-const PREFS0 = { rdv: true, mot: true, coeur: true, magasin: true, soiree: true, taches: false };
+const PREFS0 = { rdv: true, mot: true, coeur: true, magasin: true, soiree: true, victoire: true, taches: false };
 
 async function prefs(who, test) {
   const s = await db.doc(`${test ? 'test-perso' : 'perso'}/${who}`).get();
@@ -68,7 +68,7 @@ function watchNews() {
         if (!n || !n.to || !n.text) return;
         const age = Date.now() - (n.createdAt && n.createdAt.toMillis ? n.createdAt.toMillis() : Date.now());
         if (age > 6 * 3600e3) return;                                    // trop vieux (service arrêté longtemps) : on ne l'envoie pas
-        if (!(await prefs(n.to, n.test))[n.kind || 'mot']) { log(`message pour ${n.to} non envoyé (réglage ${n.kind})`); return; }
+        if ((await prefs(n.to, n.test))[n.kind || 'mot'] === false) { log(`message pour ${n.to} non envoyé (réglage ${n.kind})`); return; }
         const sent = await sendTo(n.to, { title: (n.test ? '[Test] ' : '') + 'Maison', body: n.text, tag: (n.kind || 'mot') + '-' + ref.id, url: APP });
         log(`message ${n.kind} pour ${n.to} : ${sent} appareil(s)`);
       }, 3000);
