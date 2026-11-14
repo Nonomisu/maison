@@ -15,7 +15,7 @@ export const SHARED = ["items", "tasks", "missions", "soirActs", "recipes", "gar
 export const ADAPTED = ["soirees", "meals", "wishes"];
 // Données propres à chaque personne (dans Firestore) et à chaque appareil (dans le navigateur).
 // Les hauts faits (et la chasse aux souris) se débloquent compte par compte.
-export const PERSO = ["notifOn", "reserved", "journalSeen", "hf", "mice", "xpDay", "mig"];
+export const PERSO = ["notifOn", "reserved", "journalSeen", "hf", "mice", "xpDay", "mig", "soinsPerso"];
 export const DEVICE = ["sfxOn", "sfxVol", "sfxNight", "zoomAuto"];
 const COUNTERS = ["nextId", "nextTask", "nextMiss", "nextNote", "nextContact", "nextFf", "nextWard", "nextProj", "nextAct",
   "nextRec", "nextGarde", "nextWish", "nextJ", "nextAg"];
