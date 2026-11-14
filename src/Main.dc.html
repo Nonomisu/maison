@@ -215,7 +215,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </sc-if>
 <sc-for list="{{ cats }}" as="cat" hint-placeholder-count="3">
 <sc-if value="{{ cat.visible }}" hint-placeholder-val="{{ true }}">
-<button type="button" onClick="{{ cat.open }}" onTouchStart="{{ cat.pressStart }}" onTouchEnd="{{ cat.pressEnd }}" onMouseDown="{{ cat.pressStart }}" onMouseUp="{{ cat.pressEnd }}" onMouseLeave="{{ cat.pressEnd }}" aria-label="{{ cat.aria }}" style="position: absolute; left: {{ cat.x }}; top: {{ cat.y }}; width: 90px; height: 106px; background: none; border: 0; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center">
+<button type="button" onClick="{{ cat.open }}" onTouchStart="{{ cat.pressStart }}" onTouchEnd="{{ cat.pressEnd }}" onMouseDown="{{ cat.pressStart }}" onMouseUp="{{ cat.pressEnd }}" onMouseLeave="{{ cat.pressEnd }}" aria-label="{{ cat.aria }}" style="position: absolute; left: {{ cat.x }}; top: {{ cat.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 106px; background: none; border: 0; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center">
 <span class="{{ cat.bubbleCss }}" style="height: 20px; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700; color: {{ cat.color }}">{{ cat.bubble }}</span>
 <img class="{{ cat.css }}" src="{{ cat.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 <sc-if value="{{ cat.hat }}" hint-placeholder-val="{{ false }}">
@@ -281,7 +281,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <img src="{{ kSeas }}" alt="" style="position: absolute; left: 0; top: 0; width: 390px; height: 846px; display: block; image-rendering: pixelated; pointer-events: none">
 </sc-if>
 <sc-for list="{{ kitchenCats }}" as="kc" hint-placeholder-count="1">
-<button type="button" onClick="{{ kc.open }}" aria-label="{{ kc.aria }}" style="position: absolute; left: {{ kc.x }}; top: {{ kc.y }}; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<button type="button" onClick="{{ kc.open }}" aria-label="{{ kc.aria }}" style="position: absolute; left: {{ kc.x }}; top: {{ kc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
 <img class="{{ kc.css }}" src="{{ kc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -328,7 +328,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <div aria-hidden="true" style="pointer-events: none; position: absolute; left: {{ bz.vfauteuil.x }}; top: {{ bz.vfauteuil.y }}; width: {{ bz.vfauteuil.w }}; height: {{ bz.vfauteuil.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.vfauteuil.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></div>
 <div aria-hidden="true" style="pointer-events: none; position: absolute; left: {{ bz.vbanquette.x }}; top: {{ bz.vbanquette.y }}; width: {{ bz.vbanquette.w }}; height: {{ bz.vbanquette.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.vbanquette.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></div>
 <sc-for list="{{ verandaCats }}" as="vc" hint-placeholder-count="3">
-<button type="button" onClick="{{ vc.open }}" aria-label="{{ vc.aria }}" style="position: absolute; left: {{ vc.x }}; top: {{ vc.y }}; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<button type="button" onClick="{{ vc.open }}" aria-label="{{ vc.aria }}" style="position: absolute; left: {{ vc.x }}; top: {{ vc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
 <img class="{{ vc.css }}" src="{{ vc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -352,7 +352,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <div aria-hidden="true" style="position: absolute; left: {{ eyeR }}; top: {{ eyeY }}; width: 6px; height: {{ eyeH }}; background: {{ eyeC }}; box-shadow: 0 0 6px {{ eyeC }}; pointer-events: none"></div>
 </sc-if>
 <sc-for list="{{ chambreCats }}" as="cc" hint-placeholder-count="2">
-<button type="button" onClick="{{ cc.open }}" aria-label="{{ cc.aria }}" style="position: absolute; left: {{ cc.x }}; top: {{ cc.y }}; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<button type="button" onClick="{{ cc.open }}" aria-label="{{ cc.aria }}" style="position: absolute; left: {{ cc.x }}; top: {{ cc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
 <img class="{{ cc.css }}" src="{{ cc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -386,7 +386,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <img src="{{ sSeas }}" alt="" style="position: absolute; left: 0; top: 0; width: 390px; height: 846px; display: block; image-rendering: pixelated; pointer-events: none">
 </sc-if>
 <sc-for list="{{ sdbCats }}" as="sd" hint-placeholder-count="1">
-<button type="button" onClick="{{ sd.open }}" aria-label="{{ sd.aria }}" style="position: absolute; left: {{ sd.x }}; top: {{ sd.y }}; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<button type="button" onClick="{{ sd.open }}" aria-label="{{ sd.aria }}" style="position: absolute; left: {{ sd.x }}; top: {{ sd.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
 <img class="{{ sd.css }}" src="{{ sd.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -414,7 +414,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </sc-if>
 <sc-if value="{{ deco.tsu }}" hint-placeholder-val="{{ false }}"><img src="a/deco-coussin-tsunky.svg" alt="" style="position: absolute; left: 154px; top: 660px; width: 78px; height: 27px; display: block; image-rendering: pixelated; pointer-events: none"></sc-if>
 <sc-for list="{{ bureauCats }}" as="bc" hint-placeholder-count="2">
-<button type="button" onClick="{{ bc.open }}" aria-label="{{ bc.aria }}" style="position: absolute; left: {{ bc.x }}; top: {{ bc.y }}; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<button type="button" onClick="{{ bc.open }}" aria-label="{{ bc.aria }}" style="position: absolute; left: {{ bc.x }}; top: {{ bc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
 <img class="{{ bc.css }}" src="{{ bc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
