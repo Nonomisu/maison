@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=ce36ab4a";
+import { DCLogic, blobUrl } from "./runtime.js?v=830f4fa5";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
