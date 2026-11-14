@@ -1,6 +1,6 @@
 // Faux serveur pour les tests : les onglets d'un même navigateur partagent les données (localStorage + BroadcastChannel).
-import { boot as bootApp } from "./boot.js?v=9c682602";
-import { createSync } from "./store.js?v=9c682602";
+import { boot as bootApp } from "./boot.js?v=6b061d94";
+import { createSync } from "./store.js?v=6b061d94";
 
 export function boot(me) {
   const ch = new BroadcastChannel("maison-essai");
@@ -15,5 +15,8 @@ export function boot(me) {
     async loadPerso() { const v = localStorage.getItem("essai.perso." + me); return v ? JSON.parse(v) : null; },
     async writePerso(o) { localStorage.setItem("essai.perso." + me, JSON.stringify(o)); },
   };
+  // notifications simulées : rangées dans localStorage pour les tests
+  window.MAISON_NOTIFY = (kind, to, text) => { const l = JSON.parse(localStorage.getItem("essai.news") || "[]"); l.push({ kind, to, from: me, text }); localStorage.setItem("essai.news", JSON.stringify(l)); };
+  window.MAISON_PUSH = { state: async () => "off", enable: async () => {}, disable: async () => {} };
   return bootApp({ me, backend, createSync });
 }

@@ -1,0 +1,9 @@
+{
+  "name": "maison-sauvegarde",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sauvegarde hebdomadaire de Maison (service pm2 du VPS).",
+  "main": "sauvegarde.js",
+  "scripts": { "start": "node sauvegarde.js", "test": "node test-sauvegarde.js" },
+  "dependencies": { "firebase-admin": "^13.0.0" }
+}

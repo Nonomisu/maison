@@ -1,12 +1,12 @@
 // Connexion Google et enregistrement dans Firestore (projet maison-6b9f4).
-import { firebaseConfig } from "./firebase-config.js?v=9c682602";
+import { firebaseConfig } from "./firebase-config.js?v=6b061d94";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
-import { initializeFirestore, doc, getDoc, getDocs, setDoc, collection, onSnapshot, serverTimestamp }
+import { initializeFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, addDoc, collection, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
-import { createSync } from "./store.js?v=9c682602";
-import { porte, boot as bootApp } from "./boot.js?v=9c682602";
+import { createSync } from "./store.js?v=6b061d94";
+import { porte, boot as bootApp } from "./boot.js?v=6b061d94";
 
 // Empreinte SHA-256 de l'adresse de Co : l'adresse elle-même ne figure pas dans le code public.
 const CO_HASH = "93f3070dff5cd551660e6fa9c55ff25aa21278d964f1c8baeec7dfe9c0da7a2a";
@@ -40,6 +40,39 @@ function firestoreBackend(me) {
   };
 }
 
+// ------------------------------------------------ notifications push
+const pushSupported = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+const swReg = pushSupported() ? navigator.serviceWorker.register("sw.js").catch((e) => { console.error(e); return null; }) : Promise.resolve(null);
+const b64u = (s) => { const b = atob((s + "=".repeat((4 - s.length % 4) % 4)).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(b, (c) => c.charCodeAt(0)); };
+function pushApi(me) {
+  const subRef = async (endpoint) => doc(db, "pushSubs", me, "subs", (await sha256(endpoint)).slice(0, 40));
+  return {
+    // 'unsupported' | 'denied' | 'off' | 'on'
+    async state() {
+      if (!pushSupported() || !VAPID_PUBLIC) return "unsupported";
+      if (Notification.permission === "denied") return "denied";
+      const reg = await swReg; if (!reg) return "unsupported";
+      return Notification.permission === "granted" && (await reg.pushManager.getSubscription()) ? "on" : "off";
+    },
+    async enable() {
+      const perm = await Notification.requestPermission();   // doit partir pendant le geste (iPhone)
+      if (perm !== "granted") throw new Error("autorisation refusée");
+      const reg = await swReg; if (!reg) throw new Error("service worker indisponible");
+      await navigator.serviceWorker.ready;
+      const sub = (await reg.pushManager.getSubscription()) || (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(VAPID_PUBLIC) }));
+      const j = sub.toJSON();
+      await setDoc(await subRef(j.endpoint), { endpoint: j.endpoint, keys: j.keys, device: navigator.userAgent.slice(0, 200), createdAt: serverTimestamp() });
+    },
+    async disable() {
+      const reg = await swReg, sub = reg && (await reg.pushManager.getSubscription()); if (!sub) return;
+      await deleteDoc(await subRef(sub.endpoint)).catch((e) => console.error(e));
+      await sub.unsubscribe();
+    },
+  };
+}
+// Message pour l'autre : rangé dans « news », envoyé par le service du VPS selon ses réglages.
+const notifyFn = (me) => (kind, to, text) => addDoc(collection(db, "news"), { kind, to, from: me, text, test: TEST, createdAt: serverTimestamp() }).catch((e) => console.error("notification", e));
+
 export function boot() {
   if (TEST) document.getElementById("bandeauTest").style.display = "block";
   const btn = document.getElementById("porteBtn");
@@ -61,6 +94,8 @@ export function boot() {
     porte("Ouverture de la maison…", { button: false });
     try {
       const backend = firestoreBackend(me);
+      window.MAISON_PUSH = pushApi(me);
+      window.MAISON_NOTIFY = notifyFn(me);
       await bootApp({ me, backend, createSync });
     } catch (e) {
       console.error(e);

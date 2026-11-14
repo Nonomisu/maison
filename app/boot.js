@@ -1,6 +1,6 @@
 // Démarrage commun (vrai serveur ou faux serveur de test) : identité, chargement, fêtes du jour.
-import { run } from "./scene.js?v=9c682602";
-import { iso } from "./store.js?v=9c682602";
+import { run } from "./scene.js?v=6b061d94";
+import { iso } from "./store.js?v=6b061d94";
 
 export function porte(msg, { button = true, err = false, logout = null } = {}) {
   const el = document.getElementById("porte");
@@ -84,7 +84,7 @@ export function ctxFor(me, L) {
 export async function boot({ me, backend, createSync }) {
   window.MAISON_REEL = true;
   window.MAISON_MOI = me;
-  const L = await import("./logic.js?v=9c682602");
+  const L = await import("./logic.js?v=6b061d94");
   const ctx = ctxFor(me, L);
   const [remote, perso] = await Promise.all([backend.loadAll(), backend.loadPerso()]);
   const logic = new L.Component({});
@@ -106,6 +106,8 @@ export async function boot({ me, backend, createSync }) {
   // nuit : vérifiée chaque minute ; nouvelle journée : rechargement au retour sur l'appli
   // Son : les navigateurs (Firefox, Safari) n'autorisent l'audio qu'après un geste ; on le réveille à chaque toucher.
   ["pointerdown", "touchend", "keydown"].forEach((t) => document.addEventListener(t, () => { try { L.SFX.ac(); } catch (e) { /* pas d'audio */ } }, { capture: true, passive: true }));
+  // notifications : état sur cet appareil (affiché dans les réglages)
+  if (window.MAISON_PUSH) window.MAISON_PUSH.state().then((x) => logic.setState({ pushState: x }), () => logic.setState({ pushState: "unsupported" }));
   meteo(logic); setInterval(() => meteo(logic), 30 * 60e3);
   const ciel = () => { const d = new Date(), n = isNight(d), k = isDark(d); if (logic.state.night !== n || logic.state.dark !== k) logic.setState({ night: n, dark: k }); };
   setInterval(ciel, 60000);

@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=9c682602";
+import { DCLogic, blobUrl } from "./runtime.js?v=6b061d94";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -472,7 +472,7 @@ var FOYER_LVL = 7;
 function foyerXpOf(st) { return ["nahla", "bao", "tsunky"].reduce(function (a, k) { return a + Math.max(0, (st.lvl[k] - 1) * 100 + st.xp[k]); }, 0); }
 function foyerLvlOf(st) { var x = foyerXpOf(st), n = 1; while (n < 99 && x >= FOYER_COST(n + 1)) { x -= FOYER_COST(n + 1); n++; } return n; }
 function FOYER_COST(n) { return n <= 7 ? [0, 0, 150, 450, 650, 750, 850, 850][n] : 900 + 30 * (n - 8); }
-var NOTIF_PREFS = [{id:"rdv", l:"Rappels de rendez-vous"}, {id:"mot", l:"Nouveau petit mot"}, {id:"coeur", l:"Cœur sur un petit mot"}, {id:"magasin", l:"Mode magasin activé"}, {id:"soiree", l:"Proposition de soirée"}, {id:"taches", l:"Tâches du jour"}];
+var NOTIF_PREFS = [{id:"rdv", l:"Rappels (rendez-vous, anniversaires, réserves)"}, {id:"mot", l:"Nouveau petit mot"}, {id:"coeur", l:"Cœur sur un petit mot"}, {id:"magasin", l:"Mode magasin activé"}, {id:"soiree", l:"Soirées et planning des repas"}, {id:"taches", l:"Tâches du jour pas faites (18 h)"}];
 var WALKF = {nahla: ["ff92ecdcb63db041977abb03cdadef94","e675c02f4183dea8f23ed62ed4ef0bd8","3ac0d96604614e1414e32612ea5ed04c","4d763227912cfaf33e428a82ad906f91"], bao: ["f8fbf9da81e2943197e08acbdd12b402","11824f949b6161e3780e891694603134","97407ea22d7eff7533780d38dca3e3f3","7c6d2889e7397a139f5eb8040da278ce"], tsunky: ["9aa887b47543384e266a3dd3bc84603a","502db9af4fe35d02b7ffd4f07b323081","5b07174ecc4ff9896c3b3236ac659a07","c1d98565ba811d64709fd984b72f13f4"]};
 var JUMPF = {nahla: {crouch:"1cc5d422c8e4b41d4127a660a3542f61", down:"65e4c7536d4aa047e87355a09e33d0f0", up:"7c2243ed325041e0d23ca6c38e9f6d60"}, bao: {crouch:"936908900a03e1e6228bdf7049ac2576", down:"9bd1690af928dc00a405b67e70379a37", up:"e896abe3ef0574d184db78a46c074a7b"}, tsunky: {crouch:"206f5c1e64d0c3218402100981e5d287", down:"ce2a3fabf674707a72877cb9d8249a33", up:"dbdda7fdeec4edf08535be4a0174bf4d"}};
 var WALK_Y = {cuisine: [623, 503, 125], chambre: [515, 205, 533], sdb: [397, 443, 610], veranda: [503, 503, 503]};
@@ -889,6 +889,8 @@ class Component extends DCLogic {
     out.demoReel = REEL;
     out.saisonNow = "Maintenant : " + ({printemps: "printemps", ete: "été", automne: "automne", hiver: "hiver", noel: "période de Noël", classique: "classique"})[st.saison] + ((st.event && st.eventShown) ? " · " + ({nouvelan: "Nouvelle année", noel: "Noël", anniv: "anniversaire de " + CATS[st.bdayCat].name, annivE: "anniversaire d'Emie", annivC: "anniversaire de Co", couple: "notre jour", valentin: "Saint-Valentin", paques: "Pâques", halloween: "Halloween"})[st.event] : "");
     out.demoUi = !REEL; out.ceQueOther = OTHER === "E" ? "Ce qu'Emie" : "Ce que Co"; out.deOther = OTHER === "E" ? "d'Emie" : "de Co"; out.otherE = OTHER === "E" ? "e" : ""; out.otherName = NAME[OTHER]; out.meName = NAME[ME];
+    // notification à l'autre (envoyée par le service du VPS si ses réglages l'acceptent)
+    self._notify = function (kind, to, text) { if (REEL && typeof window !== "undefined" && window.MAISON_NOTIFY) { window.MAISON_NOTIFY(kind, to, text); return true; } return false; };
     // XP donnée à un chat (et donc au foyer)
     var MON_ISO = (function () { var wd = (new Date(TODAY_Y, TODAY_M, TODAY_D).getDay() + 6) % 7; return isoD(new Date(TODAY_Y, TODAY_M, TODAY_D - wd)); })();
     var monOf = function (iso) { var d = parseD(iso), wd = (d.getDay() + 6) % 7; return isoD(new Date(d.getFullYear(), d.getMonth(), d.getDate() - wd)); };
@@ -1001,7 +1003,8 @@ class Component extends DCLogic {
       var t = (self.state.noteDraft || "").trim(); if (!t) return;
       var n = {id: self.state.nextNote, by: NAME[ME], text: t, color: self.state.noteColor, read: true, liked: false};
       self.setState({notes: [n].concat(self.state.notes), nextNote: self.state.nextNote + 1, noteDraft: ""});
-      if (self.state.notifOn.mot && self._toast) self._toast("Nouveau petit mot de " + NAME[ME] + " sur le pense-bête");
+      if (self._notify("mot", OTHER, "Nouveau petit mot de " + NAME[ME] + " : « " + (t.length > 80 ? t.slice(0, 77) + "…" : t) + " »")) self._toast("Petit mot épinglé · " + NAME[OTHER] + " est prévenu" + (OTHER === "E" ? "e" : ""));
+      else if (self.state.notifOn.mot && self._toast) self._toast("Nouveau petit mot de " + NAME[ME] + " sur le pense-bête");
     };
     var rots = ["-2deg", "1.5deg", "-1deg", "2deg", "0.5deg", "-1.5deg"];
     out.notes = st.notes.map(function (n, i) {
@@ -1010,7 +1013,7 @@ class Component extends DCLogic {
       return Object.assign(ne, {span: ne.edOpen ? "1 / -1" : "auto", rotE: ne.edOpen ? "0deg" : rots[i % rots.length], editOn: st.editCtx === "board", delLabel: "Supprimer ce mot", remove: function () { self.setState({notes: self.state.notes.filter(function (x) { return x.id !== n.id; })}); },
         text: n.text, by: n.by, color: n.color, rot: rots[i % rots.length], pressed: n.liked ? "true" : "false",
         heartFill: n.liked ? "currentColor" : "none", likeLabel: n.liked ? "Retirer le cœur" : "Mettre un cœur",
-        like: function () { self.setState({notes: self.state.notes.map(function (x) { return x.id === n.id ? Object.assign({}, x, {liked: !x.liked}) : x; })}); if (!n.liked && n.by !== NAME[ME] && self.state.notifOn.coeur && self._toast) self._toast(NAME[ME] + " a mis un cœur à ton petit mot"); }});
+        like: function () { self.setState({notes: self.state.notes.map(function (x) { return x.id === n.id ? Object.assign({}, x, {liked: !x.liked}) : x; })}); if (!n.liked && n.by !== NAME[ME]) { if (!self._notify("coeur", n.by === "Co" ? "C" : "E", NAME[ME] + " a mis un cœur à ton petit mot ♥") && self.state.notifOn.coeur && self._toast) self._toast(NAME[ME] + " a mis un cœur à ton petit mot"); } }});
     });
     // qui a coché la tâche (ce jour-là) : C, E ou C&E
     var byOf = function (t) { return t.doneBy ? t.doneBy : (t.done && (t.who === "C" || t.who === "E") ? [t.who] : []); };
@@ -1065,7 +1068,7 @@ class Component extends DCLogic {
     });
     out.storeMode = st.storeMode; out.notStore = !st.storeMode; out.pStore = st.storeMode ? "true" : "false";
     out.storeBtnBg = st.storeMode ? "#F2D35B" : "#F7F3EE";
-    out.toggleStore = function () { var on = !self.state.storeMode; self.setState({storeMode: on}); if (on && self.state.notifOn.magasin && self._toast) self._toast(NAME[ME] + " est aux courses : besoin de quelque chose ?"); };
+    out.toggleStore = function () { var on = !self.state.storeMode; self.setState({storeMode: on}); if (on) { if (!self._notify("magasin", OTHER, NAME[ME] + " est aux courses : besoin de quelque chose ? Ajoute-le à la liste.") && self.state.notifOn.magasin && self._toast) self._toast(NAME[ME] + " est aux courses : besoin de quelque chose ?"); } };
     out.favs = FAVS.map(function (f) {
       var on = st.items.some(function (i) { return i.n === f.n && !i.done; });
       return {label: (on ? "✓ " : "+ ") + f.n, aria: on ? f.n + " : déjà sur la liste" : "Ajouter " + f.n,
@@ -1627,7 +1630,7 @@ class Component extends DCLogic {
       }); });
       self.setState({items: items, nextId: id}); self._toast(n ? n + " ingrédients ajoutés à la liste de courses" : "Tout est déjà dans la liste");
     };
-    out.mealsPropose = function () { self._toast("Planning proposé à " + NAME[OTHER] + " · " + (OTHER === "E" ? "elle" : "il") + " peut valider ou changer un repas"); };
+    out.mealsPropose = function () { self._notify("soiree", OTHER, NAME[ME] + " propose le planning des repas de la semaine : à valider ou changer dans la cuisine."); self._toast("Planning proposé à " + NAME[OTHER] + " · " + (OTHER === "E" ? "elle" : "il") + " peut valider ou changer un repas"); };
     // vacances
     out.vacOn = st.vacances; out.pVac = st.vacances ? "true" : "false"; out.vacTrack = st.vacances ? "#3E6FB0" : "#C9C2B5"; out.vacKnob = st.vacances ? "24px" : "2px";
     GMAIL_SHARED.addr = (st.gmailAddr || "").trim(); out.gmailAddr = st.gmailAddr; out.onGmailAddr = function (e) { self.setState({gmailAddr: e.target.value}); };
@@ -1848,6 +1851,11 @@ class Component extends DCLogic {
     out.projDraft = st.projDraft; out.onProjDraft = function (e) { self.setState({projDraft: e.target.value}); };
     out.projWhos = ["C", "E", "N"].map(function (w) { var on = st.projWho === w; return {label: WHO_P[w].l, pressed: on ? "true" : "false", bg: on ? WHO_P[w].c : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pick: function () { self.setState({projWho: w}); }}; });
     out.addProj = function () { var t = (self.state.projDraft || "").trim(); if (!t) return; var id = "p" + self.state.nextProj; self.setState({projets: self.state.projets.concat([{id: id, who: self.state.projWho, t: t, habit: "", streak: 0, today: false, steps: []}]), projOpen: id, projDraft: "", nextProj: self.state.nextProj + 1}); };
+    var PS = st.pushState || "chargement";
+    out.pushTxt = {chargement: "Vérification…", unsupported: "Ce navigateur ne reçoit pas les notifications. Sur iPhone : ouvre l'appli depuis l'écran d'accueil (Safari › Partager › Sur l'écran d'accueil).", denied: "Les notifications sont bloquées pour ce site : autorise-les dans les réglages du navigateur ou du téléphone.", off: "Les notifications ne sont pas activées sur cet appareil.", on: "Notifications activées sur cet appareil.", erreur: "L'activation n'a pas marché. Réessaie, ou envoie une capture à Claude."}[PS] || "";
+    out.pushCan = PS === "off" || PS === "on" || PS === "erreur"; out.pushLabel = PS === "on" ? "Désactiver sur cet appareil" : "Activer les notifications";
+    out.pushBg = PS === "on" ? "#FFFFFF" : "#4A7034"; out.pushFg = PS === "on" ? "#2B2A30" : "#FFFFFF";
+    out.pushBtn = function () { var P = typeof window !== "undefined" && window.MAISON_PUSH; if (!P) return; (PS === "on" ? P.disable() : P.enable()).then(function () { return P.state(); }).then(function (x) { self.setState({pushState: x}); if (x === "on") self._toast("Notifications activées : une notification de bienvenue arrive."); }, function () { self.setState({pushState: "erreur"}); }); };
     out.notifPrefs = NOTIF_PREFS.map(function (p) {
       var on = !!st.notifOn[p.id];
       return {label: p.l, on: on ? "true" : "false", track: on ? "#4A7034" : "#C9C2B5", knob: on ? "24px" : "2px",
@@ -1936,7 +1944,8 @@ class Component extends DCLogic {
         function (d) { var c = self.state.soirees[day]; if (!c) return false; var a = self.state.soirActs.filter(function (x) { return x.id === d.act; })[0];
           var o = Object.assign({}, self.state.soirees); o[day] = Object.assign({}, c, {by: d.by, status: d.status}, a ? {act: a.id, name: a.n, item: a.item} : {}); self.setState({soirees: o}); },
         function () { var o = Object.assign({}, self.state.soirees); delete o[day]; self.setState({soirees: o}); }, "Annuler la soirée"); })();
-    var answer = function (status) { var cs = self.state.soirees[self.state.soirDay]; if (status === "accepte" && cs && cs.status !== "accepte") { self._bumpTitle("soirees", cs.by);
+    var answer = function (status) { var cs = self.state.soirees[self.state.soirDay];
+      if (cs && cs.by && cs.by !== ME) self._notify("soiree", cs.by, NAME[ME] + ({accepte: " accepte « " + cs.name + " » pour ", autre: " a une autre idée que « " + cs.name + " » pour ", refuse: " ne peut pas pour « " + cs.name + " » "})[status] + (SOIR_DAYS[self.state.soirDay] || {l: ""}).l.toLowerCase().replace("ce soir · ", "ce soir, ") + "."); if (status === "accepte" && cs && cs.status !== "accepte") { self._bumpTitle("soirees", cs.by);
         giveXp(lowestCat(), 10);
         var S = STATS0(), sd = (SOIR_DAYS[self.state.soirDay] || {}).iso || TODAY_ISO, wk = monOf(sd);
         if (S.soirWeeks.indexOf(wk) < 0) S.soirWeeks = S.soirWeeks.concat([wk]).slice(-60);
@@ -1966,7 +1975,9 @@ class Component extends DCLogic {
       var a = self.state.soirActs.filter(function (x) { return x.id === self.state.soirSel; })[0]; if (!a) return;
       var o = Object.assign({}, self.state.soirees); o[self.state.soirDay] = {act: a.id, name: a.n, item: a.item, by: ME, status: "attente"};
       self.setState({soirees: o, soirSel: null});
-      if (self.state.notifOn.soiree && self._toast) self._toast(NAME[ME] + " propose « " + a.n + " » pour " + SOIR_DAYS[self.state.soirDay].l.toLowerCase());
+      var quand = SOIR_DAYS[self.state.soirDay].l.toLowerCase();
+      if (self._notify("soiree", OTHER, NAME[ME] + " propose « " + a.n + " » pour " + quand + ". Tu réponds dans Nos soirées ?")) self._toast("Proposition envoyée à " + NAME[OTHER]);
+      else if (self.state.notifOn.soiree && self._toast) self._toast(NAME[ME] + " propose « " + a.n + " » pour " + quand);
     };
     out.soirWeek = SOIR_DAYS.map(function (d, i) {
       var ev = st.soirees[i];

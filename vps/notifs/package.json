@@ -1,0 +1,9 @@
+{
+  "name": "maison-notifs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Notifications push de Maison (service pm2 du VPS).",
+  "main": "notifs.js",
+  "scripts": { "start": "node notifs.js", "test": "node test-notifs.js && node test-service.js" },
+  "dependencies": { "firebase-admin": "^13.0.0", "web-push": "^3.6.7" }
+}
