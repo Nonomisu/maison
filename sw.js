@@ -13,7 +13,7 @@ self.addEventListener('fetch', (e) => {
   // la page : réseau d'abord (4 s max), sinon la copie
   if (req.mode === 'navigate') {
     e.respondWith((async () => {
-      try { const r = await Promise.race([fetch(req), delai(4000)]); if (r.ok) (await caches.open(FICHIERS)).put('index.html', r.clone()); return r; }
+      try { const r = await Promise.race([fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }), delai(4000)]);   // toujours la dernière version publiée if (r.ok) (await caches.open(FICHIERS)).put('index.html', r.clone()); return r; }
       catch (err) { return (await caches.match('index.html')) || (await caches.match('./')) || Response.error(); }
     })());
     return;
