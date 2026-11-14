@@ -234,26 +234,10 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </button>
 </sc-if>
 </sc-for>
-<sc-if value="{{ zoomVisible }}" hint-placeholder-val="{{ false }}">
-<div aria-hidden="true" style="position: absolute; left: {{ zoomX }}; top: {{ zoomY }}; width: 110px; height: 55px; transform: scaleX({{ zoomFlip }}) rotate({{ zoomRot }}); pointer-events: none">
-<img src="{{ zoomSrc }}" alt="" style="width: 110px; height: 55px; display: block; image-rendering: pixelated">
-<span style="position: absolute; left: -14px; top: 22px; width: 10px; height: 3px; background: rgba(43,42,48,0.35)"></span>
-<span style="position: absolute; left: -24px; top: 30px; width: 14px; height: 3px; background: rgba(43,42,48,0.25)"></span>
-</div>
-</sc-if>
 <sc-if value="{{ bday }}" hint-placeholder-val="{{ false }}">
 <sc-for list="{{ droppedGifts }}" as="dg">
 <img src="{{ dg.src }}" alt="" style="position: absolute; left: {{ dg.x }}; top: {{ dg.y }}; width: 32px; height: 32px; image-rendering: pixelated; pointer-events: none">
 </sc-for>
-</sc-if>
-<sc-if value="{{ zoomExcl }}" hint-placeholder-val="{{ false }}">
-<span class="hop" aria-hidden="true" style="position: absolute; left: {{ zoomBubbleX }}; top: {{ zoomBubbleY }}; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 30px; font-weight: 700; color: #F2C14E; text-shadow: 2px 0 #2B2A30, -2px 0 #2B2A30, 0 2px #2B2A30, 0 -2px #2B2A30, 2px 2px #2B2A30, -2px -2px #2B2A30, 2px -2px #2B2A30, -2px 2px #2B2A30; pointer-events: none">!</span>
-</sc-if>
-<sc-if value="{{ zoomDust }}" hint-placeholder-val="{{ false }}">
-<span aria-hidden="true" style="position: absolute; left: {{ zoomDustX }}; top: {{ zoomDustY }}; width: 18px; height: 10px; background: rgba(214,188,152,0.85); border: 2px solid rgba(43,42,48,0.35); pointer-events: none"></span>
-</sc-if>
-<sc-if value="{{ zoomBubbleOn }}" hint-placeholder-val="{{ false }}">
-<span class="hop" aria-hidden="true" style="position: absolute; left: {{ zoomBubbleX }}; top: {{ zoomBubbleY }}; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700; color: #F2C14E; white-space: nowrap; text-shadow: 2px 0 #2B2A30, -2px 0 #2B2A30, 0 2px #2B2A30, 0 -2px #2B2A30, 2px 2px #2B2A30, -2px -2px #2B2A30, 2px -2px #2B2A30, -2px 2px #2B2A30; pointer-events: none">{{ zoomBubbleText }}</span>
 </sc-if>
 
 
@@ -419,6 +403,23 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <img class="{{ bc.css }}" src="{{ bc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
+</sc-if>
+<!-- zoomies : dans la pièce où elles commencent -->
+<sc-if value="{{ zoomVisible }}" hint-placeholder-val="{{ false }}">
+<div aria-hidden="true" style="position: absolute; left: {{ zoomX }}; top: {{ zoomY }}; width: 110px; height: 55px; transform: scaleX({{ zoomFlip }}) rotate({{ zoomRot }}); pointer-events: none">
+<img src="{{ zoomSrc }}" alt="" style="width: 110px; height: 55px; display: block; image-rendering: pixelated">
+<span style="position: absolute; left: -14px; top: 22px; width: 10px; height: 3px; background: rgba(43,42,48,0.35)"></span>
+<span style="position: absolute; left: -24px; top: 30px; width: 14px; height: 3px; background: rgba(43,42,48,0.25)"></span>
+</div>
+</sc-if>
+<sc-if value="{{ zoomExcl }}" hint-placeholder-val="{{ false }}">
+<span class="hop" aria-hidden="true" style="position: absolute; left: {{ zoomBubbleX }}; top: {{ zoomBubbleY }}; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 30px; font-weight: 700; color: #F2C14E; text-shadow: 2px 0 #2B2A30, -2px 0 #2B2A30, 0 2px #2B2A30, 0 -2px #2B2A30, 2px 2px #2B2A30, -2px -2px #2B2A30, 2px -2px #2B2A30, -2px 2px #2B2A30; pointer-events: none">!</span>
+</sc-if>
+<sc-if value="{{ zoomDust }}" hint-placeholder-val="{{ false }}">
+<span aria-hidden="true" style="position: absolute; left: {{ zoomDustX }}; top: {{ zoomDustY }}; width: 18px; height: 10px; background: rgba(214,188,152,0.85); border: 2px solid rgba(43,42,48,0.35); pointer-events: none"></span>
+</sc-if>
+<sc-if value="{{ zoomBubbleOn }}" hint-placeholder-val="{{ false }}">
+<span class="hop" aria-hidden="true" style="position: absolute; left: {{ zoomBubbleX }}; top: {{ zoomBubbleY }}; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700; color: #F2C14E; white-space: nowrap; text-shadow: 2px 0 #2B2A30, -2px 0 #2B2A30, 0 2px #2B2A30, 0 -2px #2B2A30, 2px 2px #2B2A30, -2px -2px #2B2A30, 2px -2px #2B2A30, -2px 2px #2B2A30; pointer-events: none">{{ zoomBubbleText }}</span>
 </sc-if>
 <sc-if value="{{ roomLocked }}" hint-placeholder-val="{{ true }}">
 <div style="position: absolute; inset: 0; background: rgba(43,42,48,0.72); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px">
@@ -3292,8 +3293,10 @@ class Component extends DCLogic {
       var st = self.state, upd = {tick: st.tick + 1};
       if (st.zoom && st.tick - st.zoom.start >= ZOOM_LEN) { upd.zoom = null; upd.zoomLock = {cat: st.zoom.cat, until: (Math.floor(st.tick / SLOT) + 2) * SLOT}; }
       if (st.event === "anniv" && st.eventShown && st.tick === st.bdayStart) { upd.toast = "C'est l'anniversaire de " + CATS[st.bdayCat].name + " aujourd'hui !"; upd.toastHead = "Notification du matin"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 3500); }
-      var startZ = function () { var sc = self._salonCats || ORDER; if (!sc.length) return; upd.zoom = {cat: sc[Math.floor(Math.random() * sc.length)], start: st.tick + 1}; upd.zoomedOnce = true; };
-      if (!st.zoom && st.zoomAuto && st.screen === "salon" && !st.sheet && !self.busy(st, true) && !((st.event === "annivE" || st.event === "annivC") && st.eventShown && st.tick - st.personStart < 70)) {
+      var startZ = function () {
+        if (st.room !== "salon") { var rc = (self._roomCats || {})[st.room] || []; if (!rc.length) return; var zc = rc[Math.floor(Math.random() * rc.length)]; upd.zoom = {cat: zc.k, start: st.tick + 1, room: st.room, x: zc.x, y: zc.y}; upd.zoomedOnce = true; return; }
+        var sc = self._salonCats || ORDER; if (!sc.length) return; upd.zoom = {cat: sc[Math.floor(Math.random() * sc.length)], start: st.tick + 1, room: "salon"}; upd.zoomedOnce = true; };
+      if (!st.zoom && st.zoomAuto && st.screen === "salon" && !st.sheet && !st.night && !self.busy(st, true) && !((st.event === "annivE" || st.event === "annivC") && st.eventShown && st.tick - st.personStart < 70)) {
         if (!st.zoomedOnce) { if (st.tick >= 40) startZ(); }
         else if (Math.random() < 1 / (300 * RARE)) startZ();
       }
@@ -3437,7 +3440,7 @@ class Component extends DCLogic {
         hat: (bday && k === bk) || personBday, hatSrc: HATS[k], hatTop: k === "bao" ? "2px" : "-4px",
         carry: carry, giftSrc: GIFTS[givers.indexOf(k) < 0 ? 0 : givers.indexOf(k)],
         bubble: bubble, bubbleCss: (bubble === "♪ ♫" || bubble === "♥ rrr") ? "note1" : (bubble === "Miaou !" ? "calm" : (bubble ? "zzz" : "calm")),
-        visible: pres[k] === "salon" && !transit[k] && !(st.zoom && st.zoom.cat === k && st.tick - st.zoom.start >= 5),
+        visible: pres[k] === "salon" && !transit[k] && !(st.zoom && st.zoom.cat === k && (st.zoom.room || "salon") === "salon" && st.tick - st.zoom.start >= 5),
         aria: c.name + " : ouvrir sa fiche",
         open: function () {
           if (self._lp === k) { self._lp = null; return; }
@@ -3453,10 +3456,10 @@ class Component extends DCLogic {
     var sh = st.sheet;
     var zv = false, zx = 0, zy = 0, zf = 1, zb = false, zbx = "0px", zby = "0px", zbt = "", zex = false, zrot = "0deg", zd = false, zdx = "0px", zdy = "0px", zsrc = "";
     if (st.zoom) {
-      var zk = st.zoom.cat, e = st.tick - st.zoom.start, cc = CATS[slotK(zk)];
-      var px = parseInt(st.treeOn ? TREE_POS[slotK(zk)].x : cc.x, 10), py = parseInt(st.treeOn ? TREE_POS[slotK(zk)].y : cc.y, 10);
-      var y0 = Math.min(770, py + 105 - 55), x0 = px - 10;
-      var zr = ROOMS.filter(function (r) { return r.id !== "salon" && r.lvl <= lvlNow0; }).map(function (r) { return ROOM_DE[r.id]; }); if (!zr.length) zr = ["le couloir"];
+      var zk = st.zoom.cat, e = st.tick - st.zoom.start, cc = CATS[slotK(zk)], zRoom = st.zoom.room || "salon", zSal = zRoom === "salon";
+      var px = zSal ? parseInt(st.treeOn ? TREE_POS[slotK(zk)].x : cc.x, 10) : st.zoom.x, py = zSal ? parseInt(st.treeOn ? TREE_POS[slotK(zk)].y : cc.y, 10) : st.zoom.y;
+      var y0 = Math.min(770, py + (zSal ? 105 : 85) - 55), x0 = px - 10;
+      var zr = ROOMS.filter(function (r) { return r.id !== zRoom && r.lvl <= lvlNow0; }).map(function (r) { return ROOM_DE[r.id]; }); if (!zr.length) zr = ["le couloir"];
       var room1 = zr[(st.zoom.start) % zr.length], room2 = zr[(st.zoom.start + 1) % zr.length];
       var hop = 0, run = false, seg = 0, t = 0;
       if (e < 5) { zex = true; zbx = (px + 36) + "px"; zby = (py - 24) + "px"; }
@@ -4529,6 +4532,12 @@ class Component extends DCLogic {
       else if (st.play && st.play.cat === k && st.tick < st.play.until) { o.src = "/_blob/" + IMG[k][["chaseA", "chaseB", "chaseC"][Math.floor(st.tick / 3) % 3]]; o.css = st.tick % 8 < 4 ? "hop" : "calm"; }
       return o; }); };
     out.bureauCats = interact(out.bureauCats); out.kitchenCats = interact(out.kitchenCats); out.chambreCats = interact(out.chambreCats); out.sdbCats = interact(out.sdbCats); out.verandaCats = interact(out.verandaCats);
+    // zoomies hors du salon : chats présents dans la pièce affichée, et le chat parti en courant disparaît de sa place
+    var RCL = {bureau: "bureauCats", cuisine: "kitchenCats", chambre: "chambreCats", sdb: "sdbCats", veranda: "verandaCats"};
+    self._roomCats = {};
+    Object.keys(RCL).forEach(function (r) { self._roomCats[r] = (out[RCL[r]] || []).filter(function (c) { return c.show !== false && c.k; }).map(function (c) { return {k: c.k, x: parseInt(c.x, 10), y: parseInt(c.y, 10)}; }); });
+    if (st.zoom && RCL[st.zoom.room] && st.tick - st.zoom.start >= 5) out[RCL[st.zoom.room]] = out[RCL[st.zoom.room]].filter(function (c) { return c.k !== st.zoom.cat; });
+    if (st.zoom && (st.zoom.room || "salon") !== st.room) { out.zoomVisible = false; out.zoomExcl = false; out.zoomDust = false; out.zoomBubbleOn = false; }
     out.demoAnims = st.demoUnlock && !REEL; out.demoAnimsTest = st.demoUnlock && !REEL;
     self._log = function (kind, text, sub, extra) { var n = self.state.nextJ; self.setState({journal: [Object.assign({id: "j" + n, ts: Date.now(), kind: kind, text: text, sub: sub || ""}, extra || {})].concat(self.state.journal).slice(0, 200), nextJ: n + 1}); };
     if (self._jSeenPending && st.sheet && st.sheet.type === "journal") { self._jSeenPending = false; var seenAt = st.journalSeen; setTimeout(function () { self.setState({journalSeen: Date.now(), journalSeenShown: seenAt}); }, 0); }

@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=6d0cd0fd";
+import { DCLogic, blobUrl } from "./runtime.js?v=bb154846";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -536,8 +536,10 @@ class Component extends DCLogic {
       var st = self.state, upd = {tick: st.tick + 1};
       if (st.zoom && st.tick - st.zoom.start >= ZOOM_LEN) { upd.zoom = null; upd.zoomLock = {cat: st.zoom.cat, until: (Math.floor(st.tick / SLOT) + 2) * SLOT}; }
       if (st.event === "anniv" && st.eventShown && st.tick === st.bdayStart) { upd.toast = "C'est l'anniversaire de " + CATS[st.bdayCat].name + " aujourd'hui !"; upd.toastHead = "Notification du matin"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 3500); }
-      var startZ = function () { var sc = self._salonCats || ORDER; if (!sc.length) return; upd.zoom = {cat: sc[Math.floor(Math.random() * sc.length)], start: st.tick + 1}; upd.zoomedOnce = true; };
-      if (!st.zoom && st.zoomAuto && st.screen === "salon" && !st.sheet && !self.busy(st, true) && !((st.event === "annivE" || st.event === "annivC") && st.eventShown && st.tick - st.personStart < 70)) {
+      var startZ = function () {
+        if (st.room !== "salon") { var rc = (self._roomCats || {})[st.room] || []; if (!rc.length) return; var zc = rc[Math.floor(Math.random() * rc.length)]; upd.zoom = {cat: zc.k, start: st.tick + 1, room: st.room, x: zc.x, y: zc.y}; upd.zoomedOnce = true; return; }
+        var sc = self._salonCats || ORDER; if (!sc.length) return; upd.zoom = {cat: sc[Math.floor(Math.random() * sc.length)], start: st.tick + 1, room: "salon"}; upd.zoomedOnce = true; };
+      if (!st.zoom && st.zoomAuto && st.screen === "salon" && !st.sheet && !st.night && !self.busy(st, true) && !((st.event === "annivE" || st.event === "annivC") && st.eventShown && st.tick - st.personStart < 70)) {
         if (!st.zoomedOnce) { if (st.tick >= 40) startZ(); }
         else if (Math.random() < 1 / (300 * RARE)) startZ();
       }
@@ -681,7 +683,7 @@ class Component extends DCLogic {
         hat: (bday && k === bk) || personBday, hatSrc: HATS[k], hatTop: k === "bao" ? "2px" : "-4px",
         carry: carry, giftSrc: GIFTS[givers.indexOf(k) < 0 ? 0 : givers.indexOf(k)],
         bubble: bubble, bubbleCss: (bubble === "♪ ♫" || bubble === "♥ rrr") ? "note1" : (bubble === "Miaou !" ? "calm" : (bubble ? "zzz" : "calm")),
-        visible: pres[k] === "salon" && !transit[k] && !(st.zoom && st.zoom.cat === k && st.tick - st.zoom.start >= 5),
+        visible: pres[k] === "salon" && !transit[k] && !(st.zoom && st.zoom.cat === k && (st.zoom.room || "salon") === "salon" && st.tick - st.zoom.start >= 5),
         aria: c.name + " : ouvrir sa fiche",
         open: function () {
           if (self._lp === k) { self._lp = null; return; }
@@ -697,10 +699,10 @@ class Component extends DCLogic {
     var sh = st.sheet;
     var zv = false, zx = 0, zy = 0, zf = 1, zb = false, zbx = "0px", zby = "0px", zbt = "", zex = false, zrot = "0deg", zd = false, zdx = "0px", zdy = "0px", zsrc = "";
     if (st.zoom) {
-      var zk = st.zoom.cat, e = st.tick - st.zoom.start, cc = CATS[slotK(zk)];
-      var px = parseInt(st.treeOn ? TREE_POS[slotK(zk)].x : cc.x, 10), py = parseInt(st.treeOn ? TREE_POS[slotK(zk)].y : cc.y, 10);
-      var y0 = Math.min(770, py + 105 - 55), x0 = px - 10;
-      var zr = ROOMS.filter(function (r) { return r.id !== "salon" && r.lvl <= lvlNow0; }).map(function (r) { return ROOM_DE[r.id]; }); if (!zr.length) zr = ["le couloir"];
+      var zk = st.zoom.cat, e = st.tick - st.zoom.start, cc = CATS[slotK(zk)], zRoom = st.zoom.room || "salon", zSal = zRoom === "salon";
+      var px = zSal ? parseInt(st.treeOn ? TREE_POS[slotK(zk)].x : cc.x, 10) : st.zoom.x, py = zSal ? parseInt(st.treeOn ? TREE_POS[slotK(zk)].y : cc.y, 10) : st.zoom.y;
+      var y0 = Math.min(770, py + (zSal ? 105 : 85) - 55), x0 = px - 10;
+      var zr = ROOMS.filter(function (r) { return r.id !== zRoom && r.lvl <= lvlNow0; }).map(function (r) { return ROOM_DE[r.id]; }); if (!zr.length) zr = ["le couloir"];
       var room1 = zr[(st.zoom.start) % zr.length], room2 = zr[(st.zoom.start + 1) % zr.length];
       var hop = 0, run = false, seg = 0, t = 0;
       if (e < 5) { zex = true; zbx = (px + 36) + "px"; zby = (py - 24) + "px"; }
@@ -1773,6 +1775,12 @@ class Component extends DCLogic {
       else if (st.play && st.play.cat === k && st.tick < st.play.until) { o.src = "/_blob/" + IMG[k][["chaseA", "chaseB", "chaseC"][Math.floor(st.tick / 3) % 3]]; o.css = st.tick % 8 < 4 ? "hop" : "calm"; }
       return o; }); };
     out.bureauCats = interact(out.bureauCats); out.kitchenCats = interact(out.kitchenCats); out.chambreCats = interact(out.chambreCats); out.sdbCats = interact(out.sdbCats); out.verandaCats = interact(out.verandaCats);
+    // zoomies hors du salon : chats présents dans la pièce affichée, et le chat parti en courant disparaît de sa place
+    var RCL = {bureau: "bureauCats", cuisine: "kitchenCats", chambre: "chambreCats", sdb: "sdbCats", veranda: "verandaCats"};
+    self._roomCats = {};
+    Object.keys(RCL).forEach(function (r) { self._roomCats[r] = (out[RCL[r]] || []).filter(function (c) { return c.show !== false && c.k; }).map(function (c) { return {k: c.k, x: parseInt(c.x, 10), y: parseInt(c.y, 10)}; }); });
+    if (st.zoom && RCL[st.zoom.room] && st.tick - st.zoom.start >= 5) out[RCL[st.zoom.room]] = out[RCL[st.zoom.room]].filter(function (c) { return c.k !== st.zoom.cat; });
+    if (st.zoom && (st.zoom.room || "salon") !== st.room) { out.zoomVisible = false; out.zoomExcl = false; out.zoomDust = false; out.zoomBubbleOn = false; }
     out.demoAnims = st.demoUnlock && !REEL; out.demoAnimsTest = st.demoUnlock && !REEL;
     self._log = function (kind, text, sub, extra) { var n = self.state.nextJ; self.setState({journal: [Object.assign({id: "j" + n, ts: Date.now(), kind: kind, text: text, sub: sub || ""}, extra || {})].concat(self.state.journal).slice(0, 200), nextJ: n + 1}); };
     if (self._jSeenPending && st.sheet && st.sheet.type === "journal") { self._jSeenPending = false; var seenAt = st.journalSeen; setTimeout(function () { self.setState({journalSeen: Date.now(), journalSeenShown: seenAt}); }, 0); }
