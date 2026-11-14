@@ -3217,7 +3217,7 @@ var FF_LINKS = [["Journée RP", "https://nonomisu.github.io/journee-rp/"], ["Lod
 var SANTA = "/_blob/a42d03382520f18806db413c12a21c92";
 var WITCH = ["/_blob/819a0567c233ad31f2c5e5dda602ff98", "/_blob/db4de586c5f05ae5326e7ce0247dac23"];
 var RENNES = [["/_blob/0d2c0402c4d77392b3ee24fe470bcf2e", "/_blob/394d69c578ac443ee8bf50f41881b215"], ["/_blob/837f231558cd2bdd34f8036bde022625", "/_blob/80bb6107ab61cf667dcddc0628fab947"]];
-var HF = [{id:"souris", n:"Chasseurs de souris", d:"Trouver 5 souris en peluche", prog:true}, {id:"zoomies", n:"Zoomies !", d:"Voir une crise de zoomies dans le salon"}, {id:"cachecache", n:"Cache-cache", d:"Voir des yeux briller sous le lit"}, {id:"oiseaux", n:"Visite à plumes", d:"Voir les oiseaux narguer les chats à la véranda"}, {id:"sieste3", n:"Sieste à trois", d:"Voir les trois chats endormis ensemble à la véranda"}, {id:"perenoel", n:"Père Noël en vue", d:"Voir passer le traîneau du Père Noël"}, {id:"sorciere", n:"Petite sorcière", d:"Voir passer la sorcière sur son balai à Halloween"}];
+var HF = [{id:"souris", n:"Chasseurs de souris", d:"Trouver 5 souris en peluche", prog:true}, {id:"zoomies", n:"Zoomies !", d:"Voir une crise de zoomies dans le salon"}, {id:"zoomies_nahla", n:"Zoomies de Nahla", d:"Voir Nahla piquer une crise de zoomies"}, {id:"zoomies_bao", n:"Zoomies de Bao", d:"Voir Bao piquer une crise de zoomies"}, {id:"zoomies_tsunky", n:"Zoomies de Tsunky", d:"Voir Tsunky piquer une crise de zoomies"}, {id:"cachecache", n:"Cache-cache", d:"Voir des yeux briller sous le lit"}, {id:"oiseaux", n:"Visite à plumes", d:"Voir les oiseaux narguer les chats à la véranda"}, {id:"sieste3", n:"Sieste à trois", d:"Voir les trois chats endormis ensemble à la véranda"}, {id:"perenoel", n:"Père Noël en vue", d:"Voir passer le traîneau du Père Noël"}, {id:"sorciere", n:"Petite sorcière", d:"Voir passer la sorcière sur son balai à Halloween"}];
 var STARS = [[20,30],[60,12],[95,44],[130,20],[170,8],[210,38],[250,16],[285,50],[340,28],[370,10],[40,70],[150,64],[230,80],[320,84],[110,96],[360,60]];
 var LOCK = "/_blob/343a99701c7d166658f77cd445603bfb";
 var FOYER_LVL = 7;
@@ -4234,6 +4234,7 @@ class Component extends DCLogic {
     out.grandes = gl.sort(function (a, b) { return gkey(a) - gkey(b); });
     var hfSeen = function (id) { if (!st.hf[id]) self._hfq = id; };
     if (st.zoom && st.tick - st.zoom.start === 12) hfSeen("zoomies");
+    if (st.zoom && st.tick - st.zoom.start === 22) hfSeen("zoomies_" + st.zoom.cat);   // le haut fait du chat, juste après celui des zoomies
     if (out.eyesOn) hfSeen("cachecache");
     if (out.verandaAll) hfSeen("sieste3");
     // night & noel sky
