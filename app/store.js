@@ -15,7 +15,7 @@ export const SHARED = ["items", "tasks", "missions", "soirActs", "recipes", "gar
 export const ADAPTED = ["soirees", "meals", "wishes"];
 // Données propres à chaque personne (dans Firestore) et à chaque appareil (dans le navigateur).
 // Les hauts faits (et la chasse aux souris) se débloquent compte par compte.
-export const PERSO = ["notifOn", "reserved", "journalSeen", "hf", "mice", "xpDay"];
+export const PERSO = ["notifOn", "reserved", "journalSeen", "hf", "mice", "xpDay", "mig"];
 export const DEVICE = ["sfxOn", "sfxVol", "sfxNight", "zoomAuto"];
 const COUNTERS = ["nextId", "nextTask", "nextMiss", "nextNote", "nextContact", "nextFf", "nextWard", "nextProj", "nextAct",
   "nextRec", "nextGarde", "nextWish", "nextJ", "nextAg"];
@@ -303,6 +303,13 @@ export function createSync({ logic, backend, ctx, onStatus = () => {} }) {
     if (Array.isArray(patch.tasks) && patch.tasks.some((x) => /litière/i.test(x.t || "") && (x.freq || freqOf(x)) === "2sem" && !x.mig3)) {
       patch.tasks = patch.tasks.map((x) => /litière/i.test(x.t || "") && (x.freq || freqOf(x)) === "2sem" && !x.mig3 ? { ...x, freq: "3sem", rec: "", mig3: true } : x); missing.push("tasks");
     }
+    // première envie de Co dans sa wishlist (une seule fois)
+    let migPerso = false;
+    if (ctx.me === "C" && !(patch.mig || {}).switch2) {
+      const L = patch.myWishes || [];
+      if (!L.some((w) => /switch 2/i.test(w.t || ""))) { patch.myWishes = [{ id: "w-switch2", t: "Nintendo Switch 2 Pokémon", cat: "gros" }].concat(L); missing.push("wishes"); }
+      patch.mig = { ...(patch.mig || {}), switch2: true }; migPerso = true;
+    }
     // passage des jours
     const merged = { ...initialState, ...patch };
     const rolled = roll(merged, ctx.today, ctx.now);
@@ -311,6 +318,7 @@ export function createSync({ logic, backend, ctx, onStatus = () => {} }) {
     missing.forEach((k) => dirty.add(k));
     Object.keys(rolled).forEach((lk) => dirty.add(keyOfLocal[lk]));
     if (dirty.size) await flush();
+    if (migPerso) schedulePerso();
     logic.onChange(onLocal);
     backend.listen(onRemote);
   }
