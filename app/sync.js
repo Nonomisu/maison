@@ -1,12 +1,12 @@
 // Connexion Google et enregistrement dans Firestore (projet maison-6b9f4).
-import { firebaseConfig } from "./firebase-config.js?v=200340a8";
+import { firebaseConfig } from "./firebase-config.js?v=a18f84b5";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc, getDocs, setDoc, deleteDoc, addDoc, collection, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
-import { createSync } from "./store.js?v=200340a8";
-import { porte, boot as bootApp } from "./boot.js?v=200340a8";
+import { createSync } from "./store.js?v=a18f84b5";
+import { porte, boot as bootApp } from "./boot.js?v=a18f84b5";
 
 // Empreinte SHA-256 de l'adresse de Co : l'adresse elle-même ne figure pas dans le code public.
 const CO_HASH = "93f3070dff5cd551660e6fa9c55ff25aa21278d964f1c8baeec7dfe9c0da7a2a";
@@ -54,19 +54,24 @@ function firestoreBackend(me) {
 
 // ------------------------------------------------ notifications push
 const pushSupported = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
-const swReg = "serviceWorker" in navigator ? navigator.serviceWorker.register("sw.js").catch((e) => { console.error(e); return null; }) : Promise.resolve(null);
+let swWhy = "";
+const regSw = () => ("serviceWorker" in navigator ? navigator.serviceWorker.register("sw.js").catch((e) => { console.error(e); swWhy = "sw : " + (e.message || e.name || e); return null; }) : Promise.resolve(null));
+let swReg = regSw();
 const b64u = (s) => { const b = atob((s + "=".repeat((4 - s.length % 4) % 4)).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(b, (c) => c.charCodeAt(0)); };
 function pushApi(me) {
   const subRef = async (endpoint) => doc(db, "pushSubs", me, "subs", (await sha256(endpoint)).slice(0, 40));
   return {
     // 'unsupported' | 'denied' | 'off' | 'on'
     async state() {
+      window.MAISON_PUSH_WHY = !("serviceWorker" in navigator) ? "pas de service worker" : !("PushManager" in window) ? "pas de PushManager" : !("Notification" in window) ? "pas de Notification" : !VAPID_PUBLIC ? "clé absente" : "";
       if (!pushSupported() || !VAPID_PUBLIC) return "unsupported";
       if (Notification.permission === "denied") return "denied";
       // sans réponse du navigateur en 4 s, on propose quand même le bouton
       const lent = new Promise((ok) => setTimeout(() => ok("off"), 4000));
       return Promise.race([lent, (async () => {
-        const reg = await swReg; if (!reg) return "unsupported";
+        let reg = await swReg;
+        if (!reg) { swReg = regSw(); reg = await swReg; }   // deuxième essai
+        if (!reg) { window.MAISON_PUSH_WHY = swWhy || "service worker refusé"; return "unsupported"; }
         return Notification.permission === "granted" && (await reg.pushManager.getSubscription()) ? "on" : "off";
       })().catch(() => "off")]);
     },
