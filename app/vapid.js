@@ -1,2 +1,1 @@
-// Clé publique des notifications (VAPID) du service maison-notifs du VPS. La clé privée reste sur le VPS.
-export const VAPID_PUBLIC = "";
+export const VAPID_PUBLIC = "BNSlEGCBHE-iCHTRXz7hWZuxU-2RvZI9itKlK26aqByCxQHzPV39FtG2ixGiZyAW7gvB0-eN-m60_7vkBCZiXE8";
