@@ -67,6 +67,7 @@ export function freqOf(t) {
   const r = String(t.rec || "").toLowerCase();
   if (t.seasonal || /une fois|saison/.test(r)) return "une";
   if (/mois/.test(r)) return "mois";
+  if (/3 fois par semaine/.test(r)) return "3sem";
   if (/2 fois par semaine|mardi et vendredi|tous les 2 jours/.test(r)) return "2sem";
   if (/semaine|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche/.test(r)) return "semaine";
   if (/jour/.test(r)) return "jour";
@@ -111,7 +112,7 @@ export function roll(st, today, now = new Date()) {
   if (Array.isArray(st.tasks)) {
     let ch = false;
     const mon = (() => { const d = parseIso(today), wd = (d.getDay() + 6) % 7; return addDays(today, -wd); })();
-    const start = { jour: today, "2sem": mon, semaine: mon, mois: today.slice(0, 8) + "01" };
+    const start = { jour: today, "2sem": mon, "3sem": mon, semaine: mon, mois: today.slice(0, 8) + "01" };
     const t = st.tasks.map((x) => {
       const f = freqOf(x);
       let y = x.freq ? x : (ch = true, { ...x, freq: f });
@@ -297,6 +298,10 @@ export function createSync({ logic, backend, ctx, onStatus = () => {} }) {
     // poubelles et litières : deux fois par semaine
     if (Array.isArray(patch.tasks) && patch.tasks.some((t) => ((t.id === "d" && t.rec === "mardi et vendredi") || (t.id === "b" && t.rec === "tous les 2 jours")) && !t.mig2)) {
       patch.tasks = patch.tasks.map((t) => ((t.id === "d" && t.rec === "mardi et vendredi") || (t.id === "b" && t.rec === "tous les 2 jours")) && !t.mig2 ? { ...t, freq: "2sem", pts: 4, mig2: true } : t); missing.push("tasks");
+    }
+    // litières : trois fois par semaine
+    if (Array.isArray(patch.tasks) && patch.tasks.some((x) => /litière/i.test(x.t || "") && (x.freq || freqOf(x)) === "2sem" && !x.mig3)) {
+      patch.tasks = patch.tasks.map((x) => /litière/i.test(x.t || "") && (x.freq || freqOf(x)) === "2sem" && !x.mig3 ? { ...x, freq: "3sem", rec: "", mig3: true } : x); missing.push("tasks");
     }
     // passage des jours
     const merged = { ...initialState, ...patch };
