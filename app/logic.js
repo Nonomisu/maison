@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=1ed777a6";
+import { DCLogic, blobUrl } from "./runtime.js?v=dd807b47";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -111,8 +111,8 @@ function fmtQty(q, u) {
   return "1 " + u;
 }
 var FAVS = [
-  {n:"Lait", r:"Frais", q:"1 L"}, {n:"Pain de mie", r:"Épicerie", q:""}, {n:"Bananes", r:"Fruits & légumes", q:""},
-  {n:"Croquettes", r:"Chats", q:""}, {n:"Café", r:"Épicerie", q:""}, {n:"Yaourts", r:"Frais", q:""}, {n:"Litière", r:"Chats", q:""}
+  {n:"Eau", r:"Épicerie", q:""}, {n:"Litière", r:"Chats", q:""}, {n:"Goûters", r:"Épicerie", q:""},
+  {n:"Yaourts", r:"Frais", q:""}, {n:"Riz", r:"Épicerie", q:""}, {n:"Pâtes", r:"Épicerie", q:""}
 ];
 var NOTE_COLORS = [{c:"#F7E27A", label:"Post-it jaune"}, {c:"#F6C1C7", label:"Post-it rose"}, {c:"#BFE0F2", label:"Post-it bleu"}, {c:"#CDE8C1", label:"Post-it vert"}];
 var NOTES0 = [
