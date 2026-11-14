@@ -10,7 +10,7 @@ const clone = (v) => (v === undefined ? undefined : JSON.parse(J(v)));
 // Données partagées telles quelles entre Co et Emie.
 export const SHARED = ["items", "tasks", "missions", "soirActs", "recipes", "garde", "titles", "plaidOn", "logsOn", "ff",
   "ward", "sizes", "sante", "stocks", "bSel", "projets", "radioOn", "roomSel", "furnSel", "tableDecoOn",
-  "contacts", "journal", "litBags", "gmailAddr", "catInfo", "notes", "fireOn", "xp", "lvl", "treeOn", "vacances", "candleOff", "agenda", "stats", "annuels"];
+  "contacts", "journal", "litBags", "gmailAddr", "catInfo", "notes", "fireOn", "xp", "lvl", "treeOn", "vacances", "candleOff", "agenda", "stats", "annuels", "victoires"];
 // Données partagées rangées autrement que dans l'appli (par date, ou par personne).
 export const ADAPTED = ["soirees", "meals", "wishes"];
 // Données propres à chaque personne (dans Firestore) et à chaque appareil (dans le navigateur).

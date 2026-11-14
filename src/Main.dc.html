@@ -400,6 +400,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <button type="button" onClick="{{ openFfE }}" aria-label="PC rose : to-do FFXIV d'Emie" style="position: absolute; left: {{ bz.setupR.x }}; top: {{ bz.setupR.y }}; width: {{ bz.setupR.w }}; height: {{ bz.setupR.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.setupR.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></button>
 <button type="button" onClick="{{ openFfC }}" aria-label="PC bleu : to-do FFXIV de Co" style="position: absolute; left: {{ bz.setupB.x }}; top: {{ bz.setupB.y }}; width: {{ bz.setupB.w }}; height: {{ bz.setupB.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.setupB.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></button>
 <div aria-hidden="true" style="pointer-events: none; position: absolute; left: {{ bz.cubes.x }}; top: {{ bz.cubes.y }}; width: {{ bz.cubes.w }}; height: {{ bz.cubes.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.cubes.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></div>
+<button type="button" onClick="{{ openVict }}" class="hot" aria-label="{{ victAria }}" style="position: absolute; left: 172px; top: 280px; width: 47px; height: 56px; padding: 0; background: none; border: 0; cursor: pointer; display: flex; align-items: flex-end; justify-content: center"><img src="{{ victBocal }}" alt="" style="width: 33px; height: 45px; display: block; image-rendering: pixelated"></button>
 <button type="button" onClick="{{ openAgenda }}" class="hot" aria-label="Boîte de l'étagère : agenda des jeux et du RP" style="position: absolute; left: 164px; top: 434px; width: 62px; height: 62px; padding: 0; background: none; border: 0; cursor: pointer">
 <svg width="20" height="20" viewBox="0 0 10 10" shape-rendering="crispEdges" aria-hidden="true" style="position: absolute; left: 21px; top: 6px"><rect x="0" y="1" width="10" height="9" fill="#2B2A30"></rect><rect x="1" y="2" width="8" height="7" fill="#FFFFFF"></rect><rect x="1" y="2" width="8" height="2" fill="#B23A48"></rect><rect x="2" y="0" width="1" height="2" fill="#2B2A30"></rect><rect x="7" y="0" width="1" height="2" fill="#2B2A30"></rect><rect x="2" y="5" width="1" height="1" fill="#2B2A30"></rect><rect x="4" y="5" width="1" height="1" fill="#2B2A30"></rect><rect x="6" y="5" width="1" height="1" fill="#2B2A30"></rect><rect x="2" y="7" width="1" height="1" fill="#2B2A30"></rect><rect x="4" y="7" width="1" height="1" fill="#B23A48"></rect></svg>
 </button>
@@ -612,13 +613,13 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <span style="font-size: 13px; color: #4A4450">{{ fXpTxt }} Chaque tâche faite par l'un de vous compte pour le foyer.</span>
 
 <div style="display: flex; flex-direction: column; gap: 4px; padding: 10px; background: #2B2A30; color: #F7F3EE; border: 3px solid #D9A441">
-<span style="font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 18px; font-weight: 700; color: #F2C14E">★ Niveau 7 · La véranda</span>
-<span style="font-size: 13px; line-height: 1.4">Un jardin d'hiver vitré, plein de plantes et de soleil. C'est le seul endroit hors du salon où les trois chats peuvent se retrouver ensemble, pour une sieste au soleil à trois.</span>
-<span style="font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 18px; font-weight: 700; color: #F2C14E; margin-top: 6px">★ Niveau 30 · Le Clos des Trois Chats</span>
-<span style="font-size: 13px; line-height: 1.4">Un jardin derrière la maison, un arbre à chat géant dans le salon, le titre « Gardiens du Clos des Trois Chats », les titres de Maître et Maîtresse de maison, et un accessoire pour chaque chat.</span>
+<span style="font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 18px; font-weight: 700; color: #F2C14E">★ Niveau 7 · Grand palier secret</span>
+<span style="font-size: 13px; line-height: 1.4">À débloquer.</span>
+<span style="font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 18px; font-weight: 700; color: #F2C14E; margin-top: 6px">★ Niveau 30 · Grand palier secret</span>
+<span style="font-size: 13px; line-height: 1.4">À débloquer.</span>
 </div>
 <h3 style="margin: 0; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700">Comment gagner de l'XP</h3>
-<span style="font-size: 12px; color: #5E5864">Toutes les pièces arrivent dans les trois premiers mois (bureau, cuisine, chambre, bain, puis la véranda au niveau 7). Ensuite, environ un niveau par mois débloque la personnalisation.</span>
+<span style="font-size: 12px; color: #5E5864">Toutes les pièces arrivent dans les trois premiers mois (bureau, cuisine, chambre, bain, puis une surprise au niveau 7). Ensuite, environ un niveau par mois débloque la personnalisation.</span>
 <div style="display: flex; flex-direction: column; background: #FFFFFF; border: 2px solid #2B2A30">
 <sc-for list="{{ bareme }}" as="ba" hint-placeholder-count="9">
 <div style="display: flex; justify-content: space-between; gap: 10px; padding: 6px 10px; border-bottom: 1px solid #E3DACD; font-size: 13px">
@@ -704,6 +705,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 
 <sc-if value="{{ isFf }}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 12px; color: #5E5864">+2 XP par case cochée pour le chat le moins avancé, jusqu'à 20 XP par jour et par personne.</span>
 <div style="display: flex; gap: 6px">
 <sc-for list="{{ ffTabs }}" as="ft" hint-placeholder-count="2"><button type="button" onClick="{{ ft.pick }}" aria-pressed="{{ ft.pressed }}" style="flex: 1; min-height: 44px; background: {{ ft.bg }}; color: {{ ft.fg }}; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 14px; font-weight: 600">{{ ft.label }}</button></sc-for>
 </div>
@@ -1080,6 +1082,88 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </div>
 </sc-if>
 
+<sc-if value="{{ isVict }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: #FFF8E6; border: 2px solid #2B2A30">
+<img src="{{ victBocal }}" alt="" style="width: 33px; height: 45px; image-rendering: pixelated">
+<span style="flex: 1; font-size: 13px; color: #4A4450">Des objectifs importants, fixés par vous pour vous motiver. Petite victoire 15 XP, moyenne 40 XP, grande 100 XP, répartis entre les trois chats. {{ victStarsTxt }}</span>
+</div>
+<h3 style="margin: 4px 0 0; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700">En cours</h3>
+<sc-if value="{{ victTodoEmpty }}" hint-placeholder-val="{{ false }}"><span style="padding: 10px; background: #FFFFFF; border: 2px dashed #C9C2B5; font-size: 13px; color: #5E5864">Aucune victoire en cours : fixez-en une !</span></sc-if>
+<sc-for list="{{ victTodo }}" as="vt" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 8px; background: #FFFFFF; border: 2px solid #2B2A30">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="align-self: flex-start; padding: 1px 6px; background: {{ vt.sizeBg }}; color: #FFFFFF; font-size: 11px; font-weight: 700">{{ vt.size }}</span>
+<span style="font-size: 14px; font-weight: 600">{{ vt.t }}</span>
+<sc-if value="{{ vt.hasNote }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #5E5864">{{ vt.note }}</span></sc-if>
+</span>
+<button type="button" onClick="{{ vt.win }}" aria-label="{{ vt.winLabel }}" style="min-width: 76px; min-height: 40px; padding: 0 8px; background: #D9A441; color: #2B2A30; border: 2px solid #2B2A30; cursor: pointer; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 14px; font-weight: 700">Gagnée !</button>
+<button type="button" onClick="{{ vt.edStart }}" aria-label="{{ vt.edLabel }}" style="width: 40px; height: 40px; flex-shrink: 0; background: #F7F3EE; border: 2px solid #2B2A30; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; color: #2B2A30"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="M14 6l4 4"></path></svg></button>
+</div>
+<sc-if value="{{ vt.edOpen }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; background: #FFFFFF; border: 2px dashed #2B2A30; transform: none; text-align: left">
+<sc-for list="{{ vt.edFields }}" as="ef">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<label for="{{ ef.id }}" style="font-size: 12px; font-weight: 600; color: #4A4450">{{ ef.l }}</label>
+<sc-if value="{{ ef.notArea }}" hint-placeholder-val="{{ true }}"><input id="{{ ef.id }}" type="{{ ef.type }}" inputmode="{{ ef.mode }}" value="{{ ef.v }}" onChange="{{ ef.on }}" placeholder="{{ ef.ph }}" style="height: 40px; box-sizing: border-box; padding: 0 8px; background: #F7F3EE; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; color: #2B2A30; border-radius: 0; width: 100%"></sc-if>
+<sc-if value="{{ ef.isArea }}" hint-placeholder-val="{{ false }}"><textarea id="{{ ef.id }}" rows="4" value="{{ ef.v }}" onChange="{{ ef.on }}" placeholder="{{ ef.ph }}" style="box-sizing: border-box; width: 100%; padding: 6px 8px; background: #F7F3EE; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; color: #2B2A30; border-radius: 0; resize: vertical"></textarea></sc-if>
+</div>
+</sc-for>
+<sc-for list="{{ vt.edGroups }}" as="eg">
+<span style="font-size: 12px; font-weight: 600; color: #4A4450">{{ eg.l }}</span>
+<div style="display: flex; flex-wrap: wrap; gap: 4px">
+<sc-for list="{{ eg.opts }}" as="eo"><button type="button" onClick="{{ eo.pick }}" aria-pressed="{{ eo.pressed }}" style="min-height: 36px; padding: 0 10px; background: {{ eo.bg }}; color: {{ eo.fg }}; border: {{ eo.bw }} solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 12px; font-weight: 600">{{ eo.label }}</button></sc-for>
+</div>
+</sc-for>
+<div style="display: grid; grid-template-columns: {{ vt.edCols }}; gap: 6px">
+<sc-if value="{{ vt.edHasDel }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ vt.edDel }}" style="min-height: 44px; background: #B23A48; color: #FFFFFF; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">{{ vt.edDelText }}</button></sc-if>
+<button type="button" onClick="{{ vt.edCancel }}" style="min-height: 44px; background: #FFFFFF; color: #2B2A30; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">Annuler</button>
+<button type="button" onClick="{{ vt.edSave }}" style="min-height: 44px; background: #4A7034; color: #FFFFFF; border: 2px solid #2B2A30; cursor: pointer; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700">Enregistrer</button>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-for>
+<sc-if value="{{ victNew.edClosed }}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{ victNew.edStart }}" style="min-height: 44px; background: #FFFFFF; color: #2B2A30; border: 2px dashed #B8862A; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">+ Nouvelle victoire</button></sc-if>
+<sc-if value="{{ victNew.edOpen }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; background: #FFFFFF; border: 2px dashed #2B2A30; transform: none; text-align: left">
+<sc-for list="{{ victNew.edFields }}" as="ef">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<label for="{{ ef.id }}" style="font-size: 12px; font-weight: 600; color: #4A4450">{{ ef.l }}</label>
+<sc-if value="{{ ef.notArea }}" hint-placeholder-val="{{ true }}"><input id="{{ ef.id }}" type="{{ ef.type }}" inputmode="{{ ef.mode }}" value="{{ ef.v }}" onChange="{{ ef.on }}" placeholder="{{ ef.ph }}" style="height: 40px; box-sizing: border-box; padding: 0 8px; background: #F7F3EE; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; color: #2B2A30; border-radius: 0; width: 100%"></sc-if>
+<sc-if value="{{ ef.isArea }}" hint-placeholder-val="{{ false }}"><textarea id="{{ ef.id }}" rows="4" value="{{ ef.v }}" onChange="{{ ef.on }}" placeholder="{{ ef.ph }}" style="box-sizing: border-box; width: 100%; padding: 6px 8px; background: #F7F3EE; border: 2px solid #2B2A30; font-family: Inter, sans-serif; font-size: 14px; color: #2B2A30; border-radius: 0; resize: vertical"></textarea></sc-if>
+</div>
+</sc-for>
+<sc-for list="{{ victNew.edGroups }}" as="eg">
+<span style="font-size: 12px; font-weight: 600; color: #4A4450">{{ eg.l }}</span>
+<div style="display: flex; flex-wrap: wrap; gap: 4px">
+<sc-for list="{{ eg.opts }}" as="eo"><button type="button" onClick="{{ eo.pick }}" aria-pressed="{{ eo.pressed }}" style="min-height: 36px; padding: 0 10px; background: {{ eo.bg }}; color: {{ eo.fg }}; border: {{ eo.bw }} solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 12px; font-weight: 600">{{ eo.label }}</button></sc-for>
+</div>
+</sc-for>
+<div style="display: grid; grid-template-columns: {{ victNew.edCols }}; gap: 6px">
+<sc-if value="{{ victNew.edHasDel }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ victNew.edDel }}" style="min-height: 44px; background: #B23A48; color: #FFFFFF; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">{{ victNew.edDelText }}</button></sc-if>
+<button type="button" onClick="{{ victNew.edCancel }}" style="min-height: 44px; background: #FFFFFF; color: #2B2A30; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 13px; font-weight: 600">Annuler</button>
+<button type="button" onClick="{{ victNew.edSave }}" style="min-height: 44px; background: #4A7034; color: #FFFFFF; border: 2px solid #2B2A30; cursor: pointer; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700">Enregistrer</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ victHasDone }}" hint-placeholder-val="{{ false }}">
+<h3 style="margin: 6px 0 0; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 17px; font-weight: 700">Gagnées</h3>
+<sc-for list="{{ victDone }}" as="vd" hint-placeholder-count="2">
+<div style="display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 8px; background: #F1ECE4; border: 2px solid #2B2A30">
+<span style="font-size: 18px; color: #E08A2E" aria-hidden="true">★</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="align-self: flex-start; padding: 1px 6px; background: {{ vd.sizeBg }}; color: #FFFFFF; font-size: 11px; font-weight: 700">{{ vd.size }}</span>
+<span style="font-size: 14px; font-weight: 600">{{ vd.t }}</span>
+<span style="font-size: 12px; color: #5E5864">{{ vd.meta }}</span>
+</span>
+<button type="button" onClick="{{ vd.undo }}" aria-label="{{ vd.undoLabel }}" style="min-height: 36px; padding: 0 8px; background: #FFFFFF; color: #2B2A30; border: 2px solid #2B2A30; cursor: pointer; font-family: Inter, sans-serif; font-size: 12px; font-weight: 600">Annuler</button>
+</div>
+</sc-for>
+</sc-if>
+</div>
+</sc-if>
 <sc-if value="{{ isAgenda }}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 8px">
 <span style="font-size: 13px; color: #4A4450">Patchs, sorties de jeux, événements RP, soirées en groupe : à remplir vous-mêmes. Les événements de la semaine apparaissent aussi dans le calendrier.</span>
@@ -1491,7 +1575,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </button>
 <sc-if value="{{ acc.veranda.isOpen }}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 10px; padding: 2px 2px 8px">
-<span style="font-size: 12px; color: #5E5864">La véranda se débloque au niveau 7. La vue à travers les vitres suit la saison.</span>
+<span style="font-size: 12px; color: #5E5864">La vue à travers les vitres suit la saison.</span>
 <sc-for list="{{ furnV }}" as="fu" hint-placeholder-count="3">
 <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #FFFFFF; border: 2px solid #2B2A30">
 <button type="button" onClick="{{ fu.prev }}" aria-label="{{ fu.prevLabel }}" style="width: 40px; height: 64px; flex-shrink: 0; background: #F7F3EE; border: 2px solid #2B2A30; cursor: pointer; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 20px; font-weight: 700; color: #2B2A30; padding: 0">‹</button>
@@ -3198,7 +3282,7 @@ function presence(slot, lvl) {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = {annuels: [], stats: {}, xpDay: null, agenda: AGENDA0, nextAg: 5, agDraft: "", agDate: "", agTime: "", agCat: "patch", agPast: false, ed: null, edD: null, recipes: JSON.parse(JSON.stringify(RECIPES)), nextRec: 1, recDraft: "", garde: GARDE0, nextGarde: 7, gardeDraft: "", witchT0: 200, titles: TITLES0, plaidOn: true, logsOn: true, ffEdit: null, ffEditT: "", ffEditL: "", play: null, ff: FF0, ffWho: ME, ffDraft: "", ffSec: "jour", ffLink: "", nextFf: 12, ward: WARD0, wardWho: ME, wardDraft: "", wardCat: "Hauts", wardPrio: "bientot", nextWard: 6, sizes: SIZES0, candleOff: false, candleBlow: -99, personStart: -1, coupleStart: -1, purr: null, meteo: "auto", vacances: false, meals: MEALS0, mealPick: null, sante: SANTE0, santeCat: "nahla", poidsDraft: "", duckEv: null, mouse: null, mice: 0, zoomLock: null, hf: {}, birdEv: null, vHold: 0, night: false, santaT0: 0, bedEv: null, bedHold: null, stocks: STOCKS0, bSel: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, bView: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, projets: PROJ0, projOpen: "p1", projDraft: "", projWho: ME, stepDraft: "", nextProj: 3, editCtx: null, room: "salon", radioOn: true, demoUnlock: false, roomSel: {mur: 0, sol: 0, tapis: 0}, roomView: {mur: 0, sol: 0, tapis: 0}, accOpen: {piece: true, meubles: false, bureau: false, cuisine: false, chambre: false, sdb: false, veranda: false, affiches: false, saison: false, musique: false, notifs: false}, furnSel: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, furnView: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, tableDecoOn: true, contacts: CONTACTS0, contactQuery: "", contactCat: "all", cName: "", cPhone: "", cMail: "", nextContact: 17, bdayCat: "nahla", bdayStart: 15, candleLit: true, confStart: 15, confGen: 0, toastHead: null, zoom: null, zoomAuto: true, zoomedOnce: false, notifOn: {rdv:true, mot:true, coeur:true, magasin:true, soiree:true, taches:false}, toast: null, missions: MISS0, missDraft: "", missType: "rdv", journal: JOURNAL0, journalSeen: Date.UTC(2026, 10, 12, 20, 0), jFilter: "tout", nextJ: 6, sfxOn: true, sfxVol: 1, sfxNight: true, missDet: null, missDetDraft: "", litBags: 6, mealDemo: false, missBig: false, cEdit: null, cDraft: null, gmailAddr: "", missCats: [], catInfo: CATINFO0, catEdit: null, catDraft: null, missDate: (REEL ? addDaysIso(7) : "2026-11-24"), missTime: "09:00", nextMiss: 6, notif: null, musicOn: false, soirActs: ACTS0, soirSel: null, soirDay: 0, soirees: {2: {act:"jeu", name:"Jeu de société", item:"jeu", by:"E", status:"accepte"}}, soirDraft: "", nextAct: 1, taskDraft: "", draftWho: ME, whoFilter: "all", session: null, sessionDone: 0, nextTask: 1, fireOn: true, board: "mots", notes: NOTES0, noteDraft: "", noteColor: "#F7E27A", nextNote: 3, tasks: TASKS0, storeMode: false, screen: "salon", items: ITEMS0, nextId: 9, draft: "", photo: null, portions: 4, ingOff: {muscade: true}, xp: {nahla:60, bao:45, tsunky:10}, lvl: {nahla:5, bao:4, tsunky:2}, finished: false, treeOn: false, saison: "hiver", event: "anniv", eventShown: true, wishTab: "her", reserved: {}, myWishes: MY_WISHES, wishDraft: "", nextWish: 3, tick: 0, sheet: null, anim: {nahla:"repos", bao:"queue", tsunky:"sieste"}};
+    this.state = {victoires: [], annuels: [], stats: {}, xpDay: null, agenda: AGENDA0, nextAg: 5, agDraft: "", agDate: "", agTime: "", agCat: "patch", agPast: false, ed: null, edD: null, recipes: JSON.parse(JSON.stringify(RECIPES)), nextRec: 1, recDraft: "", garde: GARDE0, nextGarde: 7, gardeDraft: "", witchT0: 200, titles: TITLES0, plaidOn: true, logsOn: true, ffEdit: null, ffEditT: "", ffEditL: "", play: null, ff: FF0, ffWho: ME, ffDraft: "", ffSec: "jour", ffLink: "", nextFf: 12, ward: WARD0, wardWho: ME, wardDraft: "", wardCat: "Hauts", wardPrio: "bientot", nextWard: 6, sizes: SIZES0, candleOff: false, candleBlow: -99, personStart: -1, coupleStart: -1, purr: null, meteo: "auto", vacances: false, meals: MEALS0, mealPick: null, sante: SANTE0, santeCat: "nahla", poidsDraft: "", duckEv: null, mouse: null, mice: 0, zoomLock: null, hf: {}, birdEv: null, vHold: 0, night: false, santaT0: 0, bedEv: null, bedHold: null, stocks: STOCKS0, bSel: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, bView: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, projets: PROJ0, projOpen: "p1", projDraft: "", projWho: ME, stepDraft: "", nextProj: 3, editCtx: null, room: "salon", radioOn: true, demoUnlock: false, roomSel: {mur: 0, sol: 0, tapis: 0}, roomView: {mur: 0, sol: 0, tapis: 0}, accOpen: {piece: true, meubles: false, bureau: false, cuisine: false, chambre: false, sdb: false, veranda: false, affiches: false, saison: false, musique: false, notifs: false}, furnSel: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, furnView: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, tableDecoOn: true, contacts: CONTACTS0, contactQuery: "", contactCat: "all", cName: "", cPhone: "", cMail: "", nextContact: 17, bdayCat: "nahla", bdayStart: 15, candleLit: true, confStart: 15, confGen: 0, toastHead: null, zoom: null, zoomAuto: true, zoomedOnce: false, notifOn: {rdv:true, mot:true, coeur:true, magasin:true, soiree:true, taches:false}, toast: null, missions: MISS0, missDraft: "", missType: "rdv", journal: JOURNAL0, journalSeen: Date.UTC(2026, 10, 12, 20, 0), jFilter: "tout", nextJ: 6, sfxOn: true, sfxVol: 1, sfxNight: true, missDet: null, missDetDraft: "", litBags: 6, mealDemo: false, missBig: false, cEdit: null, cDraft: null, gmailAddr: "", missCats: [], catInfo: CATINFO0, catEdit: null, catDraft: null, missDate: (REEL ? addDaysIso(7) : "2026-11-24"), missTime: "09:00", nextMiss: 6, notif: null, musicOn: false, soirActs: ACTS0, soirSel: null, soirDay: 0, soirees: {2: {act:"jeu", name:"Jeu de société", item:"jeu", by:"E", status:"accepte"}}, soirDraft: "", nextAct: 1, taskDraft: "", draftWho: ME, whoFilter: "all", session: null, sessionDone: 0, nextTask: 1, fireOn: true, board: "mots", notes: NOTES0, noteDraft: "", noteColor: "#F7E27A", nextNote: 3, tasks: TASKS0, storeMode: false, screen: "salon", items: ITEMS0, nextId: 9, draft: "", photo: null, portions: 4, ingOff: {muscade: true}, xp: {nahla:60, bao:45, tsunky:10}, lvl: {nahla:5, bao:4, tsunky:2}, finished: false, treeOn: false, saison: "hiver", event: "anniv", eventShown: true, wishTab: "her", reserved: {}, myWishes: MY_WISHES, wishDraft: "", nextWish: 3, tick: 0, sheet: null, anim: {nahla:"repos", bao:"queue", tsunky:"sieste"}};
   }
   componentDidMount() {
     var self = this;
@@ -3519,7 +3603,7 @@ class Component extends DCLogic {
     out.confOn = (bday || personBday || out.nyOn) && ce >= 0 && ce < 45;
     var cc2 = out.nyOn ? ["#F2C14E", "#C9CED6", "#FFFFFF", "#E8B84A", "#8A8F99", "#F7E27A"] : [CAT_COL[bk], "#F2C14E", "#F6C1C7", "#E04848", "#FFFFFF", "#6FBF5A"];
     out.confetti = []; for (var ci = 0; ci < 40; ci++) out.confetti.push({cls: "wconf" + (st.confGen % 2), x: Math.round(rnd(ci + 50) * 380) + "px", w: (rnd(ci + 51) > 0.5 ? 6 : 4) + "px", h: (rnd(ci + 52) > 0.5 ? 8 : 5) + "px", c: cc2[ci % 6], dur: (2.4 + rnd(ci + 53) * 1.6).toFixed(1) + "s", delay: (rnd(ci + 54) * 0.6).toFixed(2) + "s"});
-    out.bareme = [{t:"Tâche quotidienne, par passage (2 par jour)", v:"2 XP"}, {t:"Tâche deux fois par semaine, par passage", v:"4 XP"}, {t:"Tâche hebdomadaire (renouvelée le lundi)", v:"5 XP"}, {t:"Tâche mensuelle (renouvelée le 1er) ou ponctuelle", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"10 XP au chat le moins avancé"}, {t:"Grand projet : étape franchie", v:"10 XP par chat"}, {t:"Haut fait débloqué", v:"20 XP"}, {t:"Défi de la semaine", v:"80 à 150 XP"}];
+    out.bareme = [{t:"Tâche quotidienne, par passage (2 par jour)", v:"2 XP"}, {t:"Tâche deux fois par semaine, par passage", v:"4 XP"}, {t:"Tâche hebdomadaire (renouvelée le lundi)", v:"5 XP"}, {t:"Tâche mensuelle (renouvelée le 1er) ou ponctuelle", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"10 XP au chat le moins avancé"}, {t:"Grand projet : étape franchie", v:"10 XP par chat"}, {t:"Petite / moyenne / grande victoire", v:"15 / 40 / 100 XP"}, {t:"To-do FFXIV : case cochée (20 XP max par jour)", v:"2 XP"}, {t:"Haut fait débloqué", v:"20 XP"}, {t:"Défi de la semaine", v:"80 à 150 XP"}];
     out.gardeFous = ["Une tâche quotidienne rapporte au plus 2 passages par jour", "Tâches quotidiennes plafonnées à 25 XP par jour et par personne", "Une mission rapporte une fois cochée ; un rendez-vous à partir du jour J", "Papiers faits avant l'échéance (date à mettre dans la mission) : +50 %", "Décocher retire l'XP", "Un chat sans XP depuis 3 jours dort : sa prochaine tâche compte ×1,5"];
     out.paliers = []; for (var pn = 2; pn <= 35; pn++) { var pc = FOYER_COST(pn), rm = ROOMS.filter(function (r) { return r.lvl === pn; })[0]; out.paliers.push({t: "Niv. " + pn + " · " + pc + (rm ? " ★" : ""), c: pn <= FOYER_LVL ? "#36532A" : "#2B2A30", w: rm ? "700" : "400"}); }
     out.isAnnivEvent = st.event === "anniv";
@@ -4414,7 +4498,14 @@ class Component extends DCLogic {
       var items = st.ff[st.ffWho].filter(function (x) { return x.sec === sc3.id; });
       return {label: sc3.l, note: sc3.note, empty: !items.length, count: items.filter(function (x) { return x.d; }).length + " / " + items.length,
         items: items.map(function (x) { return {t: x.t, on: x.d ? "true" : "false", box: x.d ? "#2E4A7A" : "#FFFFFF", tick: x.d ? "✓" : "", deco: x.d ? "line-through" : "none", fg: x.d ? "#8A8490" : "#2B2A30", hasLink: !!x.link, link: x.link || "", linkLabel: "Ouvrir le lien pour " + x.t,
-          toggle: function () { if (!x.d) self._textTitles("ff", x.t, self.state.ffWho); setFf(function (L) { L.forEach(function (y) { if (y.id === x.id) y.d = !y.d; }); }); },
+          toggle: function () {
+            var on = !x.d, k = null, g = 0, day = (self.state.xpDay && self.state.xpDay.d === TODAY_ISO) ? JSON.parse(JSON.stringify(self.state.xpDay)) : {d: TODAY_ISO, n: {}, sum: 0};
+            day.ff = day.ff || 0;
+            if (on) { self._textTitles("ff", x.t, self.state.ffWho); if (day.ff < 20) { k = lowestCat(); g = giveXp(k, Math.min(2, 20 - day.ff)); day.ff += g; } }
+            else if (x.xpOn === TODAY_ISO && x.xpG && x.xpBy === ME) { takeXp(x.xpK, x.xpG); day.ff = Math.max(0, day.ff - x.xpG); }
+            setFf(function (L) { L.forEach(function (y) { if (y.id === x.id) { y.d = on; if (on && g) { y.xpOn = TODAY_ISO; y.xpK = k; y.xpG = g; y.xpBy = ME; } else if (!on) { delete y.xpOn; delete y.xpK; delete y.xpG; delete y.xpBy; } } }); });
+            self.setState({xpDay: day});
+          },
           remove: function () { setFf(function (L) { var i2 = L.map(function (y) { return y.id; }).indexOf(x.id); L.splice(i2, 1); }); }, delLabel: "Supprimer " + x.t,
           editing: st.ffEdit === x.id, notEditing: st.ffEdit !== x.id, editLabel: "Modifier " + x.t,
           edit: function () { self.setState({ffEdit: x.id, ffEditT: x.t, ffEditL: x.link || ""}); },
@@ -4468,6 +4559,41 @@ class Component extends DCLogic {
       })};
     });
     // agenda des jeux et du RP (bureau)
+    // ---------- petites victoires
+    var VSZ = {petite: {n: "Petite victoire", xp: 15, bg: "#4A7034"}, moyenne: {n: "Moyenne victoire", xp: 40, bg: "#3E6FB0"}, grande: {n: "Grande victoire", xp: 100, bg: "#B5653A"}};
+    var VL = st.victoires || [], vDone = VL.filter(function (v) { return v.done; }), nStar = vDone.length;
+    var setV = function (fn) { self.setState({victoires: fn(JSON.parse(JSON.stringify(self.state.victoires || [])))}); };
+    var vSpec = {f: [["t", "Victoire", "text", "ex. Finir le dossier de la mutuelle"], ["note", "Détail (facultatif)", "text"]],
+      g: [["size", "Taille", [["petite", "Petite · 15 XP", "#4A7034"], ["moyenne", "Moyenne · 40 XP", "#3E6FB0"], ["grande", "Grande · 100 XP", "#B5653A"]]]]};
+    out.openVict = function () { self.setState({sheet: {type: "victoires"}}); };
+    out.isVict = !!(sh && sh.type === "victoires");
+    if (out.isVict) { out.sheetTitle = "Petites victoires"; out.sheetColor = "#B8862A"; }
+    out.victBocal = "a/deco-bocal-" + (nStar === 0 ? 0 : nStar < 3 ? 1 : nStar < 6 ? 2 : nStar < 10 ? 3 : nStar < 15 ? 4 : 5) + ".svg";
+    out.victAria = "Bocal à étoiles : petites victoires (" + nStar + " étoile" + (nStar > 1 ? "s" : "") + ")";
+    out.victStarsTxt = nStar ? nStar + " étoile" + (nStar > 1 ? "s" : "") + " dans le bocal." : "Chaque victoire gagnée ajoute une étoile dans le bocal.";
+    out.victTodo = VL.filter(function (v) { return !v.done; }).map(function (v) {
+      var z = VSZ[v.size] || VSZ.petite;
+      return Object.assign(ED("vict:" + v.id, v.t, function () { return {t: v.t, note: v.note || "", size: v.size || "petite"}; }, vSpec,
+        function (d) { var t = cap(d.t); if (!t) return false; setV(function (L) { L.forEach(function (x) { if (x.id === v.id) { x.t = t; x.note = String(d.note || "").trim(); x.size = d.size || "petite"; } }); return L; }); },
+        function () { setV(function (L) { return L.filter(function (x) { return x.id !== v.id; }); }); }), {
+        t: v.t, note: v.note || "", hasNote: !!v.note, size: z.n + " · " + z.xp + " XP", sizeBg: z.bg, winLabel: "Victoire gagnée : " + v.t,
+        win: function () {
+          spreadXp(z.xp, 1); SFX.play("mission");
+          setV(function (L) { L.forEach(function (x) { if (x.id === v.id) { x.done = true; x.doneOn = TODAY_ISO; x.doneBy = ME; } }); return L; });
+          self._toast && self._toast("Victoire ! +" + z.xp + " XP pour les trois chats · une étoile de plus dans le bocal");
+          self._notify && self._notify("mot", OTHER, NAME[ME] + " a remporté une victoire : « " + v.t + " » !");
+        }});
+    });
+    out.victTodoEmpty = !out.victTodo.length;
+    out.victHasDone = nStar > 0;
+    out.victDone = vDone.slice().sort(function (a, b) { return (b.doneOn || "").localeCompare(a.doneOn || ""); }).map(function (v) {
+      var z = VSZ[v.size] || VSZ.petite;
+      return {t: v.t, size: z.n + " · " + z.xp + " XP", sizeBg: z.bg, meta: "Gagnée le " + (v.doneOn ? fmtD(parseD(v.doneOn)) : "?") + (v.doneBy ? " · validée par " + NAME[v.doneBy] : ""),
+        undoLabel: "Annuler la victoire " + v.t,
+        undo: function () { spreadXp(z.xp, -1); setV(function (L) { L.forEach(function (x) { if (x.id === v.id) { x.done = false; delete x.doneOn; delete x.doneBy; } }); return L; }); }};
+    });
+    out.victNew = ED("vict:new", "victoire", function () { return {t: "", note: "", size: "petite"}; }, vSpec,
+      function (d) { var t = cap(d.t); if (!t) return false; setV(function (L) { return L.concat([{id: "v" + Date.now().toString(36), t: t, note: String(d.note || "").trim(), size: d.size || "petite", by: ME}]); }); });
     out.openAgenda = function () { self.setState({sheet: {type: "agenda"}}); };
     out.isAgenda = !!(sh && sh.type === "agenda");
     if (out.isAgenda) { out.sheetTitle = "Agenda des jeux & du RP"; out.sheetColor = "#2E4A7A"; }
