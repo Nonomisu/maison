@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=a18f84b5";
+import { DCLogic, blobUrl } from "./runtime.js?v=0f428990";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -228,14 +228,15 @@ var JOURS = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."];
 var MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
 function parseD(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
 function fmtD(d) { return JOURS[d.getDay()] + " " + d.getDate() + " " + MOIS[d.getMonth()]; }
-function maxPass(fq) { return {jour: 2, "2sem": 2, "3sem": 3}[fq] || 0; }
+function maxPass(fq) { return {jour: 2, "2sem": 2, "3sem": 3, libre: 3}[fq] || 0; }
 function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
 var FREQS = [{id: "jour", n: "Quotidienne", g: "Chaque jour", sub: "deux passages possibles par jour · remises à zéro à minuit", pts: 2},
   {id: "2sem", n: "2×/semaine", g: "Deux fois par semaine", sub: "deux passages par semaine · renouvelées le lundi à 0 h", pts: 4},
   {id: "3sem", n: "3×/semaine", g: "Trois fois par semaine", sub: "trois passages par semaine · renouvelées le lundi à 0 h", pts: 4},
   {id: "semaine", n: "Hebdomadaire", g: "Chaque semaine", sub: "renouvelées le lundi à 0 h", pts: 5},
   {id: "mois", n: "Mensuelle", g: "Chaque mois", sub: "renouvelées le 1er à 0 h", pts: 10},
-  {id: "une", n: "Ponctuelle", g: "Ponctuelles", sub: "une seule fois", pts: 10}];
+  {id: "une", n: "Ponctuelle", g: "Ponctuelles", sub: "une seule fois", pts: 10},
+  {id: "libre", n: "Sans fréquence", g: "Sans fréquence", sub: "3 fois par jour max · remises à zéro à minuit", pts: 5}];
 function freqOf(t) { if (t.freq) return t.freq; var r = String(t.rec || "").toLowerCase(); if (t.seasonal || /une fois|saison/.test(r)) return "une"; if (/mois/.test(r)) return "mois"; if (/3 fois par semaine/.test(r)) return "3sem"; if (/2 fois par semaine|mardi et vendredi|tous les 2 jours/.test(r)) return "2sem"; if (/semaine|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche/.test(r)) return "semaine"; if (/jour/.test(r)) return "jour"; return "semaine"; }
 function catSleeping(st, k) { var l = ((st.stats || {}).catLast || {})[k]; return !!l && Math.round((parseD(TODAY_ISO) - parseD(l)) / 864e5) >= 3; }
 var BASKETS = {
@@ -851,7 +852,7 @@ class Component extends DCLogic {
     out.confOn = (bday || personBday || out.nyOn) && ce >= 0 && ce < 45;
     var cc2 = out.nyOn ? ["#F2C14E", "#C9CED6", "#FFFFFF", "#E8B84A", "#8A8F99", "#F7E27A"] : [CAT_COL[bk], "#F2C14E", "#F6C1C7", "#E04848", "#FFFFFF", "#6FBF5A"];
     out.confetti = []; for (var ci = 0; ci < 40; ci++) out.confetti.push({cls: "wconf" + (st.confGen % 2), x: Math.round(rnd(ci + 50) * 380) + "px", w: (rnd(ci + 51) > 0.5 ? 6 : 4) + "px", h: (rnd(ci + 52) > 0.5 ? 8 : 5) + "px", c: cc2[ci % 6], dur: (2.4 + rnd(ci + 53) * 1.6).toFixed(1) + "s", delay: (rnd(ci + 54) * 0.6).toFixed(2) + "s"});
-    out.bareme = [{t:"Tâche quotidienne, par passage (2 par jour)", v:"2 XP"}, {t:"Tâche deux fois par semaine, par passage", v:"4 XP"}, {t:"Tâche hebdomadaire (renouvelée le lundi)", v:"5 XP"}, {t:"Tâche mensuelle (renouvelée le 1er) ou ponctuelle", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"10 XP au chat le moins avancé"}, {t:"Grand projet : étape franchie", v:"10 XP par chat"}, {t:"Petite / moyenne / grande victoire", v:"15 / 40 / 100 XP"}, {t:"To-do FFXIV : case cochée (20 XP max par jour)", v:"2 XP"}, {t:"Haut fait débloqué", v:"20 XP"}, {t:"Défi de la semaine", v:"80 à 150 XP"}];
+    out.bareme = [{t:"Tâche quotidienne, par passage (2 par jour)", v:"2 XP"}, {t:"Tâche sans fréquence, par passage (3 par jour)", v:"5 XP"}, {t:"Tâche deux fois par semaine, par passage", v:"4 XP"}, {t:"Tâche hebdomadaire (renouvelée le lundi)", v:"5 XP"}, {t:"Tâche mensuelle (renouvelée le 1er) ou ponctuelle", v:"10 XP"}, {t:"Courses faites (bouton en bas de la liste)", v:"15 XP"}, {t:"Planning repas de la semaine rempli", v:"5 XP"}, {t:"Soin des chats (vaccin, vermifuge, antipuces)", v:"10 XP"}, {t:"Mission : achat, sortie ou rendez-vous", v:"50 XP"}, {t:"Mission : papiers", v:"80 XP"}, {t:"Grosse mission", v:"100 XP"}, {t:"Soirée proposée et acceptée", v:"10 XP au chat le moins avancé"}, {t:"Grand projet : étape franchie", v:"10 XP par chat"}, {t:"Petite / moyenne / grande victoire", v:"15 / 40 / 100 XP"}, {t:"To-do FFXIV : case cochée (20 XP max par jour)", v:"2 XP"}, {t:"Haut fait débloqué", v:"20 XP"}, {t:"Défi de la semaine", v:"80 à 150 XP"}];
     out.gardeFous = ["Une tâche quotidienne rapporte au plus 2 passages par jour", "Tâches quotidiennes plafonnées à 25 XP par jour et par personne", "Une mission rapporte une fois cochée ; un rendez-vous à partir du jour J", "Papiers faits avant l'échéance (date à mettre dans la mission) : +50 %", "Décocher retire l'XP", "Un chat sans XP depuis 3 jours dort : sa prochaine tâche compte ×1,5"];
     out.paliers = []; for (var pn = 2; pn <= 35; pn++) { var pc = FOYER_COST(pn), rm = ROOMS.filter(function (r) { return r.lvl === pn; })[0]; out.paliers.push({t: "Niv. " + pn + " · " + pc + (rm ? " ★" : ""), c: pn <= FOYER_LVL ? "#36532A" : "#2B2A30", w: rm ? "700" : "400"}); }
     out.isAnnivEvent = st.event === "anniv";
@@ -1039,22 +1040,22 @@ class Component extends DCLogic {
     var byLabel = function (b) { return b.length > 1 ? "C&E" : b.length ? b[0] : ""; };
     var byBg = function (b) { return b.length > 1 ? WHO["2"].bg : b.length ? WHO[b[0]].bg : "transparent"; };
     var tapTask = function (t) {
-      var fqT = freqOf(t), daily = fqT === "jour", MP = maxPass(fqT), twice = MP > 0, by = byOf(t).slice(), xpBy = Object.assign({}, t.xpBy || {}), xpL = (t.xpL || []).slice();
+      var fqT = freqOf(t), daily = fqT === "jour", perDay = daily || fqT === "libre", MP = maxPass(fqT), twice = MP > 0, by = byOf(t).slice(), xpBy = Object.assign({}, t.xpBy || {}), xpL = (t.xpL || []).slice();
       var day = (self.state.xpDay && self.state.xpDay.d === TODAY_ISO) ? JSON.parse(JSON.stringify(self.state.xpDay)) : {d: TODAY_ISO, n: {}, sum: 0};
       var mineIdx = by.indexOf(ME), add, note = "";
       // quotidienne : jusqu'à deux passages ; au-delà, toucher retire ses passages du jour. Sinon : toucher coche ou décoche.
       add = twice ? by.length < MP : mineIdx < 0;
       if (add) {
-        var pts = t.pts || 5;
+        var pts = fqT === "libre" ? 5 : (t.pts || 5);
         if (daily) { if ((day.n[t.id] || 0) >= 2) { pts = 0; note = "déjà comptée 2 fois aujourd'hui"; } else if (day.sum >= 25) { pts = 0; note = "plafond de 25 XP atteint aujourd'hui"; } else pts = Math.min(pts, 25 - day.sum); }
         var got = giveXp("nahla", pts, {boost: true});
         if (daily && got) { day.n[t.id] = (day.n[t.id] || 0) + 1; day.sum += got; }
         by.push(ME); xpL.push({w: ME, x: got}); xpBy[ME] = (xpBy[ME] || 0) + got;
         self._textTitles("task", t.t, ME); SFX.play("ding");
         if (note) self._toast("Tâche cochée, sans XP : " + note);
-        else if (twice && by.length < MP) self._toast(t.t + " : faite " + by.length + " fois sur " + MP + " " + (daily ? "aujourd'hui" : "cette semaine"));
+        else if (twice && by.length < MP) self._toast(t.t + " : faite " + by.length + " fois sur " + MP + " " + (perDay ? "aujourd'hui" : "cette semaine"));
       } else {
-        if (mineIdx < 0) { self._toast(t.t + " : déjà faite " + MP + " fois " + (daily ? "aujourd'hui" : "cette semaine")); return; }
+        if (mineIdx < 0) { self._toast(t.t + " : déjà faite " + MP + " fois " + (perDay ? "aujourd'hui" : "cette semaine")); return; }
         var removed = 0;
         xpL = xpL.filter(function (e) { if (e.w === ME) { takeXp("nahla", e.x || 0); if (daily && e.x) { day.n[t.id] = Math.max(0, (day.n[t.id] || 0) - 1); day.sum = Math.max(0, day.sum - e.x); } removed++; return false; } return true; });
         if (!removed && xpBy[ME]) takeXp("nahla", xpBy[ME]);
@@ -2107,7 +2108,7 @@ class Component extends DCLogic {
           return {t: t.t, done: !!t.done, hasWho: by.length > 0, pressed: t.done ? "true" : "false", seasonal: !!t.seasonal,
             editOn: st.editCtx === "taches", notEdit: st.editCtx !== "taches", delLabel: "Supprimer " + t.t,
             remove: function () { self.setState({tasks: self.state.tasks.filter(function (x) { return x.id !== t.id; })}); },
-            meta: maxPass(fq) ? (by.length ? "Faite " + by.length + " fois sur " + maxPass(fq) + " " + (fq === "jour" ? "aujourd'hui" : "cette semaine") + " · " : "") + "+" + (t.pts || 2) + " XP par passage" : (t.done ? "Faite · revient " + {semaine: "lundi", mois: "le 1er du mois", une: "jamais"}[fq] : "+" + (t.pts || 5) + " XP"),
+            meta: maxPass(fq) ? (by.length ? "Faite " + by.length + " fois sur " + maxPass(fq) + " " + (fq === "jour" || fq === "libre" ? "aujourd'hui" : "cette semaine") + " · " : "") + "+" + (fq === "libre" ? 5 : (t.pts || 2)) + " XP par passage" : (t.done ? "Faite · revient " + {semaine: "lundi", mois: "le 1er du mois", une: "jamais"}[fq] : "+" + (t.pts || 5) + " XP"),
             bg: t.done ? "#F1ECE4" : "#FFFFFF", deco: t.done && !(maxPass(fq) && by.length < maxPass(fq)) ? "line-through" : "none", fg: t.done ? "#6B6470" : "#2B2A30",
             h: inSess ? "66px" : "48px", fs: inSess ? "20px" : "15px", boxSize: inSess ? "30px" : "20px",
             who: byLabel2(by), whoBg: byBg2(by), box: t.done ? (maxPass(fq) && by.length < maxPass(fq) ? "#9DB4D6" : "#3E6FB0") : "#FFFFFF",

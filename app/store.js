@@ -112,7 +112,7 @@ export function roll(st, today, now = new Date()) {
   if (Array.isArray(st.tasks)) {
     let ch = false;
     const mon = (() => { const d = parseIso(today), wd = (d.getDay() + 6) % 7; return addDays(today, -wd); })();
-    const start = { jour: today, "2sem": mon, "3sem": mon, semaine: mon, mois: today.slice(0, 8) + "01" };
+    const start = { jour: today, libre: today, "2sem": mon, "3sem": mon, semaine: mon, mois: today.slice(0, 8) + "01" };
     const t = st.tasks.map((x) => {
       const f = freqOf(x);
       let y = x.freq ? x : (ch = true, { ...x, freq: f });
