@@ -1,12 +1,12 @@
 // Connexion Google et enregistrement dans Firestore (projet maison-6b9f4).
-import { firebaseConfig } from "./firebase-config.js?v=ceef7b6f";
+import { firebaseConfig } from "./firebase-config.js?v=1ed777a6";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
-import { initializeFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, addDoc, collection, onSnapshot, serverTimestamp }
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc, getDocs, setDoc, deleteDoc, addDoc, collection, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
-import { createSync } from "./store.js?v=ceef7b6f";
-import { porte, boot as bootApp } from "./boot.js?v=ceef7b6f";
+import { createSync } from "./store.js?v=1ed777a6";
+import { porte, boot as bootApp } from "./boot.js?v=1ed777a6";
 
 // Empreinte SHA-256 de l'adresse de Co : l'adresse elle-même ne figure pas dans le code public.
 const CO_HASH = "93f3070dff5cd551660e6fa9c55ff25aa21278d964f1c8baeec7dfe9c0da7a2a";
@@ -14,7 +14,12 @@ const sha256 = async (t) => [...new Uint8Array(await crypto.subtle.digest("SHA-2
 
 const fb = initializeApp(firebaseConfig);
 const auth = getAuth(fb);
-const db = initializeFirestore(fb, { ignoreUndefinedProperties: true });
+// Copie locale de la base sur l'appareil : l'appli s'ouvre et se coche hors connexion (en magasin),
+// les changements partent dès que le réseau revient.
+let db;
+try { db = initializeFirestore(fb, { ignoreUndefinedProperties: true, localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) }); }
+catch (e) { console.warn("copie locale indisponible", e); db = initializeFirestore(fb, { ignoreUndefinedProperties: true }); }
+const HORS_LIGNE = "Pas de connexion, et la maison n'est pas encore enregistrée sur cet appareil : ouvre-la une première fois avec du réseau.";
 
 // ?test : tout est enregistré à part (collections test-…), pour essayer sans toucher aux vraies données ni à l'XP.
 const TEST = new URLSearchParams(location.search).has("test");
@@ -25,7 +30,9 @@ function firestoreBackend(me) {
   return {
     async loadAll() {
       const out = {};
-      (await getDocs(etat)).forEach((d) => { try { out[d.id] = JSON.parse(d.data().j); } catch (e) { console.error(d.id, e); } });
+      const snap = await getDocs(etat);
+      if (snap.empty && snap.metadata.fromCache) throw new Error(HORS_LIGNE);
+      snap.forEach((d) => { try { out[d.id] = JSON.parse(d.data().j); } catch (e) { console.error(d.id, e); } });
       return out;
     },
     write: (k, v) => setDoc(doc(db, C_ETAT, k), { j: JSON.stringify(v), by: me, at: serverTimestamp() }),
@@ -35,14 +42,19 @@ function firestoreBackend(me) {
         try { cb(c.doc.id, JSON.parse(c.doc.data().j)); } catch (e) { console.error(e); }
       }));
     },
-    async loadPerso() { const s = await getDoc(doc(db, C_PERSO, me)); return s.exists() ? JSON.parse(s.data().j) : null; },
+    async loadPerso() {
+      let s;
+      try { s = await getDoc(doc(db, C_PERSO, me)); } catch (e) { throw new Error(navigator.onLine ? (e.message || String(e)) : HORS_LIGNE); }
+      if (!s.exists() && s.metadata.fromCache) throw new Error(HORS_LIGNE);
+      return s.exists() ? JSON.parse(s.data().j) : null;
+    },
     writePerso: (o) => setDoc(doc(db, C_PERSO, me), { j: JSON.stringify(o), at: serverTimestamp() }),
   };
 }
 
 // ------------------------------------------------ notifications push
 const pushSupported = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
-const swReg = pushSupported() ? navigator.serviceWorker.register("sw.js").catch((e) => { console.error(e); return null; }) : Promise.resolve(null);
+const swReg = "serviceWorker" in navigator ? navigator.serviceWorker.register("sw.js").catch((e) => { console.error(e); return null; }) : Promise.resolve(null);
 const b64u = (s) => { const b = atob((s + "=".repeat((4 - s.length % 4) % 4)).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(b, (c) => c.charCodeAt(0)); };
 function pushApi(me) {
   const subRef = async (endpoint) => doc(db, "pushSubs", me, "subs", (await sha256(endpoint)).slice(0, 40));

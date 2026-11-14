@@ -1,6 +1,6 @@
 // La scène de 390 × 844 mise à l'échelle de l'écran, et le montage de l'appli dedans.
-import { mount } from "./runtime.js?v=ceef7b6f";
-import { template } from "./template.js?v=ceef7b6f";
+import { mount } from "./runtime.js?v=1ed777a6";
+import { template } from "./template.js?v=1ed777a6";
 
 const W = 390, H = 844;
 const app = document.getElementById("app");
@@ -14,13 +14,17 @@ const ecranAccueil = navigator.standalone === true || matchMedia("(display-mode:
 function fit() {
   const cs = getComputedStyle(probe);
   let top = parseFloat(cs.paddingTop) || 0, bot = parseFloat(cs.paddingBottom) || 0;
-  if (ecranAccueil && /iPhone|iPad|iPod/.test(navigator.userAgent)) top = Math.max(top, 54);
+  if (ecranAccueil && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+    // iPhone récents : la page démarre sous la barre d'état mais innerHeight ne la compte pas → la différence avec l'écran est la barre
+    const sh = Math.max(screen.height, screen.width), gap = sh - window.innerHeight;
+    top = Math.max(top, gap > 20 && gap < 80 ? gap : 54);
+  }
   bot = Math.min(bot, 20);   // la barre d'accueil peut passer sur le parquet
-  const vw = window.innerWidth, vh = window.innerHeight - top - bot;
+  const box = document.getElementById("scene").getBoundingClientRect(), vw = window.innerWidth, vh = Math.max(box.height, window.innerHeight) - top - bot;
   const k = Math.min(vw / W, vh / H);
   app.style.transform = "scale(" + k + ")";
   document.getElementById("scene").style.paddingTop = top + Math.max(0, (vh - H * k) / 2) + "px";
-  if (location.search.includes("diag")) document.title = [cs.paddingTop, cs.paddingBottom, window.innerHeight, ecranAccueil].join(" ");
+  if (location.search.includes("diag")) document.title = [cs.paddingTop, cs.paddingBottom, window.innerHeight, Math.round(box.height), screen.height, ecranAccueil].join(" ");
 }
 window.addEventListener("resize", fit);
 window.addEventListener("orientationchange", () => setTimeout(fit, 300));

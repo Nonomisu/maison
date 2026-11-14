@@ -303,8 +303,10 @@ export function createSync({ logic, backend, ctx, onStatus = () => {} }) {
     if (Array.isArray(patch.tasks) && patch.tasks.some((x) => /litière/i.test(x.t || "") && (x.freq || freqOf(x)) === "2sem" && !x.mig3)) {
       patch.tasks = patch.tasks.map((x) => /litière/i.test(x.t || "") && (x.freq || freqOf(x)) === "2sem" && !x.mig3 ? { ...x, freq: "3sem", rec: "", mig3: true } : x); missing.push("tasks");
     }
-    // première envie de Co dans sa wishlist (une seule fois)
+    // hauts faits : ceux du journal signés par moi comptent toujours (un autre appareil a pu les effacer)
     let migPerso = false;
+    (patch.journal || []).forEach((e) => { if (e.kind === "hf" && e.hfId && e.who === ctx.me && !(patch.hf || {})[e.hfId]) { patch.hf = { ...(patch.hf || {}), [e.hfId]: true }; migPerso = true; } });
+    // première envie de Co dans sa wishlist (une seule fois)
     if (ctx.me === "C" && !(patch.mig || {}).switch2) {
       const L = patch.myWishes || [];
       if (!L.some((w) => /switch 2/i.test(w.t || ""))) { patch.myWishes = [{ id: "w-switch2", t: "Nintendo Switch 2 Pokémon", cat: "gros" }].concat(L); missing.push("wishes"); }
@@ -317,7 +319,7 @@ export function createSync({ logic, backend, ctx, onStatus = () => {} }) {
     applying = true; logic.setState(patch); applying = false;
     missing.forEach((k) => dirty.add(k));
     Object.keys(rolled).forEach((lk) => dirty.add(keyOfLocal[lk]));
-    if (dirty.size) await flush();
+    if (dirty.size) flush();   // sans attendre : hors connexion, l'envoi part au retour du réseau
     if (migPerso) schedulePerso();
     logic.onChange(onLocal);
     backend.listen(onRemote);
@@ -372,9 +374,22 @@ export function createSync({ logic, backend, ctx, onStatus = () => {} }) {
 
   function schedulePerso() {
     clearTimeout(persoTimer);
-    persoTimer = setTimeout(() => {
+    persoTimer = setTimeout(async () => {
       const st = logic.state, o = {};
       PERSO.forEach((k) => (o[k] = clone(st[k])));
+      // plusieurs appareils pour la même personne : on fusionne avec ce qui est déjà enregistré
+      let r = null;
+      try { r = navigator.onLine ? await backend.loadPerso() : null; } catch (e) { r = null; }
+      if (r) {
+        o.hf = { ...(r.hf || {}), ...(o.hf || {}) };
+        o.mig = { ...(r.mig || {}), ...(o.mig || {}) };
+        o.mice = Math.max(r.mice || 0, o.mice || 0);
+        o.journalSeen = Math.max(r.journalSeen || 0, o.journalSeen || 0);
+        const back = {};
+        ["hf", "mig"].forEach((k) => { if (J(o[k]) !== J(st[k])) back[k] = o[k]; });
+        ["mice", "journalSeen"].forEach((k) => { if (o[k] !== st[k]) back[k] = o[k]; });
+        if (Object.keys(back).length) { applying = true; logic.setState(back); applying = false; }
+      }
       backend.writePerso(o).catch((e) => onStatus("error", e));
     }, 600);
   }
