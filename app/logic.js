@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=3e4a2ae8";
+import { DCLogic, blobUrl } from "./runtime.js?v=a3b3222a";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -1952,7 +1952,7 @@ class Component extends DCLogic {
     out.pushTxt = {chargement: "Vérification…", unsupported: "Ce navigateur ne peut pas recevoir les notifications ici (en navigation privée, elles sont bloquées). Sur iPhone : ouvre l'appli depuis l'écran d'accueil (Safari › Partager › Sur l'écran d'accueil).", denied: "Les notifications sont bloquées pour ce site : autorise-les dans les réglages du navigateur ou du téléphone.", off: "Les notifications ne sont pas activées sur cet appareil.", on: "Notifications activées sur cet appareil.", erreur: "L'activation n'a pas marché. Réessaie, ou envoie une capture à Claude."}[PS] || "";
     if (PS === "unsupported" && typeof window !== "undefined" && window.MAISON_PUSH_WHY) out.pushTxt += " [" + window.MAISON_PUSH_WHY + "]";
     if (PS === "erreur" && typeof window !== "undefined" && window.MAISON_PUSH_ERR) out.pushTxt += " [" + window.MAISON_PUSH_ERR + "]";
-    out.pushCan = PS === "off" || PS === "on" || PS === "erreur" || PS === "unsupported";   // « unsupported » : on laisse quand même essayer out.pushLabel = PS === "on" ? "Désactiver sur cet appareil" : PS === "unsupported" ? "Essayer quand même" : "Activer les notifications";
+    out.pushCan = PS === "off" || PS === "on" || PS === "erreur" || PS === "unsupported"; out.pushLabel = PS === "on" ? "Désactiver sur cet appareil" : PS === "unsupported" ? "Essayer quand même" : "Activer les notifications";
     out.pushBg = PS === "on" ? "#FFFFFF" : "#4A7034"; out.pushFg = PS === "on" ? "#2B2A30" : "#FFFFFF";
     out.pushBtn = function () { var P = typeof window !== "undefined" && window.MAISON_PUSH; if (!P) return; (PS === "on" ? P.disable() : P.enable()).then(function () { return P.state(); }).then(function (x) { self.setState({pushState: x}); if (x === "on") self._toast("Notifications activées : une notification de bienvenue arrive."); }, function (e) { window.MAISON_PUSH_ERR = (e && (e.message || e.name)) || String(e); self.setState({pushState: "erreur"}); }); };
     out.notifPrefs = NOTIF_PREFS.map(function (p) {
