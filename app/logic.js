@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=be3dca20";
+import { DCLogic, blobUrl } from "./runtime.js?v=a44a15f5";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -214,7 +214,7 @@ var MUSIC = {
   label: function () { return this.key ? "morceau " + (this.idx + 1) + "/" + this.list().length : ""; }
 };
 var PLAYLISTS = {printemps:"Printemps (en attendant : automne et hiver)", ete:"Été (en attendant : automne et hiver)", automne:"Automne", hiver:"Hiver", noel:"Noël", classique:"Automne et hiver", base:"Automne et hiver"};
-var MTYPES = [{id:"rdv", l:"Rendez-vous", bg:"#F6C1C7", pts:50}, {id:"achat", l:"Achat", bg:"#F7E27A", pts:50}, {id:"sortie", l:"Sortie", bg:"#BFE0F2", pts:50}, {id:"papiers", l:"Papiers", bg:"#CDE8C1", pts:80}];
+var MTYPES = [{id:"rdv", l:"Rendez-vous", bg:"#F6C1C7", pts:50}, {id:"achat", l:"Achat", bg:"#F7E27A", pts:50}, {id:"sortie", l:"Sortie", bg:"#BFE0F2", pts:50}, {id:"papiers", l:"Papiers", bg:"#CDE8C1", pts:80}, {id:"autre", l:"Autres", bg:"#E3DACD", pts:50}];
 function recPts(rec) { rec = String(rec || ""); if (/mois|saison|trimestre|an\b/.test(rec)) return 10; if (/semaine|mardi|lundi|mercredi|jeudi|vendredi|samedi|dimanche/.test(rec)) return 5; return 2; }
 var MISS0 = [
   {id:"m1", t:"Acheter la nouvelle clim", type:"achat", who:"2", note:"Comparer 3 modèles · avant l'été", pts:100, big:true},
@@ -529,7 +529,7 @@ function presence(slot, lvl) {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = {soinsPerso: [], subDraft: null, mig: {}, wishCat: "moyen", victoires: [], annuels: [], stats: {}, xpDay: null, agenda: AGENDA0, nextAg: 5, agDraft: "", agDate: "", agTime: "", agCat: "patch", agPast: false, ed: null, edD: null, recipes: JSON.parse(JSON.stringify(RECIPES)), nextRec: 1, recDraft: "", garde: GARDE0, nextGarde: 7, gardeDraft: "", witchT0: 200, titles: TITLES0, plaidOn: true, logsOn: true, ffEdit: null, ffEditT: "", ffEditL: "", play: null, ff: FF0, ffWho: ME, ffDraft: "", ffSec: "jour", ffLink: "", nextFf: 12, ward: WARD0, wardWho: ME, wardDraft: "", wardCat: "Hauts", wardPrio: "bientot", nextWard: 6, sizes: SIZES0, candleOff: false, candleBlow: -99, personStart: -1, coupleStart: -1, purr: null, meteo: "auto", vacances: false, meals: MEALS0, mealPick: null, sante: SANTE0, santeCat: "nahla", poidsDraft: "", duckEv: null, mouse: null, mice: 0, zoomLock: null, hf: {}, birdEv: null, vHold: 0, night: false, santaT0: 0, bedEv: null, bedHold: null, stocks: STOCKS0, bSel: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, bView: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, projets: PROJ0, projOpen: "p1", projDraft: "", projWho: ME, stepDraft: "", nextProj: 3, editCtx: null, room: "salon", radioOn: true, demoUnlock: false, roomSel: {mur: 0, sol: 0, tapis: 0}, roomView: {mur: 0, sol: 0, tapis: 0}, accOpen: {piece: true, meubles: false, bureau: false, cuisine: false, chambre: false, sdb: false, veranda: false, affiches: false, saison: false, musique: false, notifs: false}, furnSel: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, furnView: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, tableDecoOn: true, contacts: CONTACTS0, contactQuery: "", contactCat: "all", cName: "", cPhone: "", cMail: "", nextContact: 17, bdayCat: "nahla", bdayStart: 15, candleLit: true, confStart: 15, confGen: 0, toastHead: null, zoom: null, zoomAuto: true, zoomedOnce: false, notifOn: {rdv:true, mot:true, coeur:true, magasin:true, soiree:true, victoire:true, taches:false}, toast: null, missions: MISS0, missDraft: "", missType: "rdv", journal: JOURNAL0, journalSeen: Date.UTC(2026, 10, 12, 20, 0), jFilter: "tout", nextJ: 6, sfxOn: true, sfxVol: 1, sfxNight: true, missDet: null, missDetDraft: "", litBags: 6, mealDemo: false, missBig: false, cEdit: null, cDraft: null, gmailAddr: "", missCats: [], catInfo: CATINFO0, catEdit: null, catDraft: null, missDate: (REEL ? addDaysIso(7) : "2026-11-24"), missTime: "09:00", nextMiss: 6, notif: null, musicOn: false, soirActs: ACTS0, soirSel: null, soirDay: 0, soirees: {2: {act:"jeu", name:"Jeu de société", item:"jeu", by:"E", status:"accepte"}}, soirDraft: "", nextAct: 1, taskDraft: "", draftWho: ME, whoFilter: "all", session: null, sessionDone: 0, nextTask: 1, fireOn: true, board: "mots", notes: NOTES0, noteDraft: "", noteColor: "#F7E27A", nextNote: 3, tasks: TASKS0, storeMode: false, screen: "salon", items: ITEMS0, nextId: 9, draft: "", photo: null, portions: 4, ingOff: {muscade: true}, xp: {nahla:60, bao:45, tsunky:10}, lvl: {nahla:5, bao:4, tsunky:2}, finished: false, treeOn: false, saison: "hiver", event: "anniv", eventShown: true, wishTab: "her", reserved: {}, myWishes: MY_WISHES, wishDraft: "", nextWish: 3, tick: 0, sheet: null, anim: {nahla:"repos", bao:"queue", tsunky:"sieste"}};
+    this.state = {shopMag: "", shopFilter: "tout", soinsPerso: [], subDraft: null, mig: {}, wishCat: "moyen", victoires: [], annuels: [], stats: {}, xpDay: null, agenda: AGENDA0, nextAg: 5, agDraft: "", agDate: "", agTime: "", agCat: "patch", agPast: false, ed: null, edD: null, recipes: JSON.parse(JSON.stringify(RECIPES)), nextRec: 1, recDraft: "", garde: GARDE0, nextGarde: 7, gardeDraft: "", witchT0: 200, titles: TITLES0, plaidOn: true, logsOn: true, ffEdit: null, ffEditT: "", ffEditL: "", play: null, ff: FF0, ffWho: ME, ffDraft: "", ffSec: "jour", ffLink: "", nextFf: 12, ward: WARD0, wardWho: ME, wardDraft: "", wardCat: "Hauts", wardPrio: "bientot", nextWard: 6, sizes: SIZES0, candleOff: false, candleBlow: -99, personStart: -1, coupleStart: -1, purr: null, meteo: "auto", vacances: false, meals: MEALS0, mealPick: null, sante: SANTE0, santeCat: "nahla", poidsDraft: "", duckEv: null, mouse: null, mice: 0, zoomLock: null, hf: {}, birdEv: null, vHold: 0, night: false, santaT0: 0, bedEv: null, bedHold: null, stocks: STOCKS0, bSel: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, bView: {schem:0, setag:0, sradio:0, sbuches:0, swin:0, ccadre:0, kwin:0, cwin:0, sfen:0, scanard:0, sbain:0, srideau:0, slavabo:0, smiroir:0, sbougie:0, stapis:0, clit:0, crideaux:0, cpenderie:0, carbre:0, vplantes:0, vfauteuil:0, vbanquette:0, kplan:0, kplaques:0, kfrigo:0, ketagere:0, kilot:0, kgamelles:0, kepices:0, kparcours:0, setupR:0, chaiseR:0, setupB:0, chaiseB:0, cubes:0, dodo:0, murales:0, projets:0, tapis:0}, projets: PROJ0, projOpen: "p1", projDraft: "", projWho: ME, stepDraft: "", nextProj: 3, editCtx: null, room: "salon", radioOn: true, demoUnlock: false, roomSel: {mur: 0, sol: 0, tapis: 0}, roomView: {mur: 0, sol: 0, tapis: 0}, accOpen: {piece: true, meubles: false, bureau: false, cuisine: false, chambre: false, sdb: false, veranda: false, affiches: false, saison: false, musique: false, notifs: false}, furnSel: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, furnView: {plaid: 0, bureau: 0, canape: 0, table: 0, frigo: 0, panier: 0, pensebete: 0}, tableDecoOn: true, contacts: CONTACTS0, contactQuery: "", contactCat: "all", cName: "", cPhone: "", cMail: "", nextContact: 17, bdayCat: "nahla", bdayStart: 15, candleLit: true, confStart: 15, confGen: 0, toastHead: null, zoom: null, zoomAuto: true, zoomedOnce: false, notifOn: {rdv:true, mot:true, coeur:true, magasin:true, soiree:true, victoire:true, taches:false}, toast: null, missions: MISS0, missDraft: "", missType: "rdv", journal: JOURNAL0, journalSeen: Date.UTC(2026, 10, 12, 20, 0), jFilter: "tout", nextJ: 6, sfxOn: true, sfxVol: 1, sfxNight: true, missDet: null, missDetDraft: "", litBags: 6, mealDemo: false, missBig: false, cEdit: null, cDraft: null, gmailAddr: "", missCats: [], catInfo: CATINFO0, catEdit: null, catDraft: null, missDate: (REEL ? addDaysIso(7) : "2026-11-24"), missTime: "09:00", nextMiss: 6, notif: null, musicOn: false, soirActs: ACTS0, soirSel: null, soirDay: 0, soirees: {2: {act:"jeu", name:"Jeu de société", item:"jeu", by:"E", status:"accepte"}}, soirDraft: "", nextAct: 1, taskDraft: "", draftWho: ME, whoFilter: "all", session: null, sessionDone: 0, nextTask: 1, fireOn: true, board: "mots", notes: NOTES0, noteDraft: "", noteColor: "#F7E27A", nextNote: 3, tasks: TASKS0, storeMode: false, screen: "salon", items: ITEMS0, nextId: 9, draft: "", photo: null, portions: 4, ingOff: {muscade: true}, xp: {nahla:60, bao:45, tsunky:10}, lvl: {nahla:5, bao:4, tsunky:2}, finished: false, treeOn: false, saison: "hiver", event: "anniv", eventShown: true, wishTab: "her", reserved: {}, myWishes: MY_WISHES, wishDraft: "", nextWish: 3, tick: 0, sheet: null, anim: {nahla:"repos", bao:"queue", tsunky:"sieste"}};
   }
   componentDidMount() {
     var self = this;
@@ -574,7 +574,7 @@ class Component extends DCLogic {
     return st.items.filter(function (i) { return i.done; }).slice(0, 4).map(function (i) { return {t: i.n + " (coché aux courses)", xp: ""}; });
   }
   _realWeek(st) {
-    var col = {rdv: "#B23A48", achat: "#9A5B12", sortie: "#3E6FB0", papiers: "#4A7034"};
+    var col = {rdv: "#B23A48", achat: "#9A5B12", sortie: "#3E6FB0", papiers: "#4A7034", autre: "#6B6470"};
     return [0, 1, 2, 3, 4, 5, 6].map(function (n) {
       var d = new Date(TODAY_Y, TODAY_M, TODAY_D + n), iso = isoD(d), jl = JOURS_L[d.getDay()], its = [];
       st.missions.forEach(function (m) { if (!m.done && m.date === iso) its.push({t: m.t + (m.time ? " · " + m.time.replace(":", "h") : ""), c: col[m.type] || "#4A7034"}); });
@@ -1099,7 +1099,7 @@ class Component extends DCLogic {
         bg: on ? "#E4EEDC" : "#FFFFFF", fg: on ? "#36532A" : "#2B2A30",
         add: function () {
           if (self.state.items.some(function (i) { return i.n === f.n && !i.done; })) return;
-          self.setState({items: self.state.items.concat([{id: self.state.nextId, n: f.n, q: f.q, r: f.r, by: ME}]), nextId: self.state.nextId + 1});
+          var fi = {id: self.state.nextId, n: f.n, q: f.q, r: f.r, by: ME}; if (self.state.shopMag) fi.mag = self.state.shopMag; self.setState({items: self.state.items.concat([fi]), nextId: self.state.nextId + 1});
         }};
     });
     out.openMissions = function () { self.setState({screen: "missions", sheet: null}); };
@@ -2178,12 +2178,21 @@ class Component extends DCLogic {
       var n = (self.state.draft || "").trim();
       if (!n) return;
       var it = {id: self.state.nextId, n: n.charAt(0).toUpperCase() + n.slice(1), q: "", r: guessRayon(n), by: ME};
+      if (self.state.shopMag) it.mag = self.state.shopMag;
       self.setState({items: self.state.items.concat([it]), nextId: self.state.nextId + 1, draft: ""});
     };
     out.addDraft = addDraft;
     out.onDraftKey = function (e) { if (e.key === "Enter") addDraft(); };
+    var MAGS = [["", "Partout"], ["drive", "Drive"], ["gf", "Grand Frais"]], magN = {drive: "Drive", gf: "Grand Frais"};
+    var chip = function (on) { return {pressed: on ? "true" : "false", bg: on ? "#9A5B12" : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30"}; };
+    out.shopMags = MAGS.map(function (m) { return Object.assign(chip((st.shopMag || "") === m[0]), {label: m[1], pick: function () { self.setState({shopMag: m[0]}); }}); });
+    var SF = st.shopFilter || "tout";
+    out.shopFilters = [["tout", "Tout"], ["drive", "Drive"], ["gf", "Grand Frais"], ["sans", "Sans magasin"]].map(function (f) { return Object.assign(chip(SF === f[0]), {label: f[1], pick: function () { self.setState({shopFilter: f[0]}); }}); });
+    var magOk = function (i) { return SF === "tout" || (SF === "sans" ? !i.mag : i.mag === SF); };
+    out.shopFilterEmpty = SF !== "tout" && items.length > 0 && !items.some(magOk);
+    out.shopFilterEmptyTxt = "Aucun article " + (SF === "sans" ? "sans magasin" : "pour " + magN[SF]) + " dans la liste.";
     out.rayons = RAYONS.map(function (r) {
-      var list = items.filter(function (i) { return i.r === r && !(st.storeMode && i.done); });
+      var list = items.filter(function (i) { return i.r === r && !(st.storeMode && i.done) && magOk(i); });
       list = list.filter(function (i) { return !i.done; }).concat(list.filter(function (i) { return i.done; }));
       var left = list.filter(function (i) { return !i.done; }).length;
       return {
@@ -2194,13 +2203,13 @@ class Component extends DCLogic {
             h: st.storeMode ? "66px" : "48px", fs: st.storeMode ? "20px" : "15px", boxSize: st.storeMode ? "30px" : "20px",
             editOn: st.editCtx === "courses", notEdit: st.editCtx !== "courses", delLabel: "Supprimer " + i.n,
             remove: function () { self.setState({items: self.state.items.filter(function (x) { return x.id !== i.id; })}); },
-            name: i.n, meta: (i.q ? i.q + " · " : "") + w.label, done: !!i.done, pressed: i.done ? "true" : "false",
+            name: i.n, meta: (i.mag ? magN[i.mag] + " · " : "") + (i.q ? i.q + " · " : "") + w.label, done: !!i.done, pressed: i.done ? "true" : "false",
             bg: i.done ? "#F1ECE4" : "#FFFFFF", box: i.done ? "#4A7034" : "#FFFFFF",
             deco: i.done ? "line-through" : "none", fg: i.done ? "#6B6470" : "#2B2A30",
             hasTag: !!i.tag, tag: i.tag || "", who: i.by, whoBg: w.bg,
-            ed: ED("item:" + i.id, i.n, function () { return {n: i.n, q: i.q || "", r: i.r, by: i.by === "E" ? "E" : "C"}; },
-              {f: [["n", "Article", "text"], ["q", "Quantité", "text", "facultatif"]], g: [["r", "Rayon", RAYONS.map(function (r) { return [r, r]; })], ["by", "Ajouté par", WHO_OPTS]]},
-              function (d) { if (!String(d.n || "").trim()) return false; self.setState({items: self.state.items.map(function (x) { return x.id === i.id ? Object.assign({}, x, {n: cap(d.n), q: String(d.q || "").trim(), r: d.r, by: d.by}) : x; })}); }),
+            ed: ED("item:" + i.id, i.n, function () { return {n: i.n, q: i.q || "", r: i.r, by: i.by === "E" ? "E" : "C", mag: i.mag || ""}; },
+              {f: [["n", "Article", "text"], ["q", "Quantité", "text", "facultatif"]], g: [["mag", "Où ?", MAGS.map(function (m) { return [m[0], m[1], "#9A5B12"]; })], ["r", "Rayon", RAYONS.map(function (r) { return [r, r]; })], ["by", "Ajouté par", WHO_OPTS]]},
+              function (d) { if (!String(d.n || "").trim()) return false; self.setState({items: self.state.items.map(function (x) { if (x.id !== i.id) return x; var y = Object.assign({}, x, {n: cap(d.n), q: String(d.q || "").trim(), r: d.r, by: d.by}); if (d.mag) y.mag = d.mag; else delete y.mag; return y; })}); }),
             toggle: function () {
               if (!i.done) SFX.play("bloup");
               self.setState({items: self.state.items.map(function (x) { return x.id === i.id ? Object.assign({}, x, {done: !x.done}) : x; })});
