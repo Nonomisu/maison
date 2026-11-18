@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=6ac04c8c";
+import { DCLogic, blobUrl } from "./runtime.js?v=b54c1b96";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -2029,16 +2029,17 @@ class Component extends DCLogic {
     out.playlistName = (st.saison === "classique" && trackKey(st) !== "noel" ? PLAYLISTS.base : PLAYLISTS[trackKey(st) === "base" ? st.saison : trackKey(st)]) + (st.musicOn ? " · " + MUSIC.label() + " (en lecture)" : "");
     out.musicTrack = st.musicOn ? "#7A4E9E" : "#C9C2B5"; out.musicKnob = st.musicOn ? "24px" : "2px";
     out.openSoiree = function () { self.setState({screen: "soiree", sheet: null, soirDay: 0}); };
+    var soirLab = function (ev) { return ev && ev.alts && ev.alts.length > 1 ? ev.alts.map(function (a) { return a.name; }).join(" ou ") : (ev ? ev.name : ""); };
     var tonight = st.soirees[0];
     out.hasTableItem = !!(tonight && tonight.status === "accepte" && tonight.item);
     out.tableItemSrc = out.hasTableItem ? ITEMS_IMG[tonight.item] : "";
     out.tableOther = out.hasTableItem && tonight.item !== "jeu" && tonight.item !== "manette";
     out.tableDeco = !out.tableOther && st.tableDecoOn;
-    out.soireeAria = "Table basse : nos soirées" + (tonight ? ", ce soir : " + tonight.name : "");
-    out.soirSummary = tonight ? "Ce soir : " + tonight.name + " · " + SOIR_STATUS[tonight.status].l : "Rien de prévu ce soir";
+    out.soireeAria = "Table basse : nos soirées" + (tonight ? ", ce soir : " + soirLab(tonight) : "");
+    out.soirSummary = tonight ? "Ce soir : " + soirLab(tonight) + " · " + SOIR_STATUS[tonight.status].l : "Rien de prévu ce soir";
     out.soirDays = SOIR_DAYS.map(function (d, i) {
       var on = st.soirDay === i, ev = st.soirees[i];
-      return {short: d.s, num: d.n, aria: d.l + (ev ? " : " + ev.name : ""), pressed: on ? "true" : "false",
+      return {short: d.s, num: d.n, aria: d.l + (ev ? " : " + soirLab(ev) : ""), pressed: on ? "true" : "false",
         bg: on ? "#7A4E9E" : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30",
         dot: ev ? (ev.status === "accepte" ? "#4A7034" : (ev.status === "refuse" ? "transparent" : "#D9A441")) : "transparent",
         pick: function () { self.setState({soirDay: i}); }};
@@ -2046,7 +2047,13 @@ class Component extends DCLogic {
     var cur = st.soirees[st.soirDay];
     out.soirDayLong = SOIR_DAYS[st.soirDay].l;
     out.hasSoir = !!cur; out.noSoir = !cur;
-    out.soirName = cur ? cur.name : ""; out.soirBy = cur ? (cur.by === ME ? "Proposé par toi" : "Proposé par " + NAME[cur.by]) : "";
+    var multi = !!(cur && cur.alts && cur.alts.length > 1 && cur.status === "attente");
+    out.soirName = soirLab(cur); out.soirBy = cur ? (cur.by === ME ? (multi ? "Tes propositions : " + NAME[OTHER] + " choisira" : "Proposé par toi") : (multi ? NAME[cur.by] + " propose plusieurs choix" : "Proposé par " + NAME[cur.by])) : "";
+    out.soirSingle = !multi; out.soirAnsCols = multi ? "repeat(2, minmax(0, 1fr))" : "repeat(3, minmax(0, 1fr))";
+    out.soirAskTxt = multi ? "Choisis une des propositions :" : "Ta réponse";
+    out.soirChoices = multi ? cur.alts.map(function (a) { return {label: "Choisir « " + a.name + " »", pick: function () {
+      var o = Object.assign({}, self.state.soirees), c = Object.assign({}, o[self.state.soirDay], {act: a.act, name: a.name, item: a.item}); delete c.alts; o[self.state.soirDay] = c;
+      self.setState({soirees: o}); answer("accepte"); }}; }) : [];
     var stt = cur ? SOIR_STATUS[cur.status] : SOIR_STATUS.attente;
     out.soirStatus = stt.l; out.soirStatusBg = stt.bg; out.soirStatusFg = stt.fg;
     out.soirPending = !!(cur && cur.status === "attente" && (!REEL || cur.by !== ME));
@@ -2083,19 +2090,29 @@ class Component extends DCLogic {
     };
     out.addSoirAct = addAct; out.onSoirKey = function (e) { if (e.key === "Enter") addAct(); };
     var selAct = st.soirActs.filter(function (a) { return a.id === st.soirSel; })[0];
-    out.proposeLabel = selAct ? "Proposer « " + selAct.n + " » · " + SOIR_DAYS[st.soirDay].s + " " + SOIR_DAYS[st.soirDay].n : "Choisis une activité";
+    var addMode = REEL && cur && cur.status === "attente" && cur.by === ME;
+    out.proposeLabel = selAct ? (addMode ? "Ajouter « " + selAct.n + " » aux choix" : "Proposer « " + selAct.n + " » · " + SOIR_DAYS[st.soirDay].s + " " + SOIR_DAYS[st.soirDay].n) : (addMode ? "Choisis une autre activité à proposer" : "Choisis une activité");
     out.proposeBg = selAct ? "#D9A441" : "#E3DACD";
     out.proposeSoir = function () {
       var a = self.state.soirActs.filter(function (x) { return x.id === self.state.soirSel; })[0]; if (!a) return;
-      var o = Object.assign({}, self.state.soirees); o[self.state.soirDay] = {act: a.id, name: a.n, item: a.item, by: ME, status: "attente"};
+      var o = Object.assign({}, self.state.soirees), prev = o[self.state.soirDay], quand = SOIR_DAYS[self.state.soirDay].l.toLowerCase();
+      // déjà une proposition en attente de ma part ce soir-là : on ajoute un choix au lieu de la remplacer
+      if (REEL && prev && prev.status === "attente" && prev.by === ME && prev.act !== a.id) {
+        var alts = (prev.alts && prev.alts.length ? prev.alts : [{act: prev.act, name: prev.name, item: prev.item}]).filter(function (x) { return x.act !== a.id; }).concat([{act: a.id, name: a.n, item: a.item}]);
+        o[self.state.soirDay] = Object.assign({}, prev, {alts: alts});
+        self.setState({soirees: o, soirSel: null});
+        if (self._notify("soiree", OTHER, NAME[ME] + " propose " + alts.map(function (x) { return "« " + x.name + " »"; }).join(" ou ") + " pour " + quand + ". Tu choisis dans Nos soirées ?")) self._toast("Choix ajouté : " + NAME[OTHER] + " choisira entre " + alts.length);
+        else self._toast("Choix ajouté (" + alts.length + " propositions)");
+        return;
+      }
+      o[self.state.soirDay] = {act: a.id, name: a.n, item: a.item, by: ME, status: "attente"};
       self.setState({soirees: o, soirSel: null});
-      var quand = SOIR_DAYS[self.state.soirDay].l.toLowerCase();
       if (self._notify("soiree", OTHER, NAME[ME] + " propose « " + a.n + " » pour " + quand + ". Tu réponds dans Nos soirées ?")) self._toast("Proposition envoyée à " + NAME[OTHER]);
       else if (self.state.notifOn.soiree && self._toast) self._toast(NAME[ME] + " propose « " + a.n + " » pour " + quand);
     };
     out.soirWeek = SOIR_DAYS.map(function (d, i) {
       var ev = st.soirees[i];
-      return {label: d.s + " " + d.n, text: ev ? ev.name + " · " + SOIR_STATUS[ev.status].l : "Libre", fg: ev ? "#2B2A30" : "#6B6470",
+      return {label: d.s + " " + d.n, text: ev ? soirLab(ev) + " · " + SOIR_STATUS[ev.status].l : "Libre", fg: ev ? "#2B2A30" : "#6B6470",
         dot: ev ? (ev.status === "accepte" ? "#4A7034" : (ev.status === "refuse" ? "#B23A48" : "#D9A441")) : "#E3DACD"};
     });
     var inSess = st.session !== null;
