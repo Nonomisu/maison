@@ -1,15 +1,16 @@
 // Connexion Google et enregistrement dans Firestore (projet maison-6b9f4).
-import { firebaseConfig } from "./firebase-config.js?v=b54c1b96";
+import { firebaseConfig } from "./firebase-config.js?v=475f3684";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc, getDocs, setDoc, deleteDoc, addDoc, collection, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
-import { createSync } from "./store.js?v=b54c1b96";
-import { porte, boot as bootApp } from "./boot.js?v=b54c1b96";
-import { VAPID_PUBLIC } from "./vapid.js?v=b54c1b96";
+import { createSync } from "./store.js?v=475f3684";
+import { porte, boot as bootApp } from "./boot.js?v=475f3684";
+import { VAPID_PUBLIC } from "./vapid.js?v=475f3684";
 
 // Empreinte SHA-256 de l'adresse de Co : l'adresse elle-même ne figure pas dans le code public.
+const EMIE_HASH = "09d7af3034f29f60a1f4769b5b738a3423c0cec802e6be5296fc62531c45763d";
 const CO_HASH = "93f3070dff5cd551660e6fa9c55ff25aa21278d964f1c8baeec7dfe9c0da7a2a";
 const sha256 = async (t) => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)))].map((b) => b.toString(16).padStart(2, "0")).join("");
 
@@ -101,6 +102,7 @@ export function boot() {
   const btn = document.getElementById("porteBtn");
   btn.onclick = async () => {
     const p = new GoogleAuthProvider();
+    p.setCustomParameters({ prompt: "select_account" });   // toujours proposer le choix du compte Google
     try { await signInWithPopup(auth, p); }
     catch (e) {
       if (["auth/popup-blocked", "auth/operation-not-supported-in-this-environment", "auth/cancelled-popup-request"].includes(e.code)) return signInWithRedirect(auth, p);
@@ -113,7 +115,10 @@ export function boot() {
     if (!user) { if (started) location.reload(); else porte("L'appli du foyer de Co et Emie. Connecte-toi avec ton compte Google."); return; }
     if (started) return;
     started = true;
-    const me = (await sha256((user.email || "").trim().toLowerCase())) === CO_HASH ? "C" : "E";
+    const h = await sha256((user.email || "").trim().toLowerCase());
+    const changer = async () => { await signOut(auth); location.reload(); };
+    if (h !== CO_HASH && h !== EMIE_HASH) { porte("Le compte " + user.email + " n'est pas celui de la maison. Touche « Changer de compte » et choisis le bon compte Google.", { button: false, err: true, logout: changer }); return; }
+    const me = h === CO_HASH ? "C" : "E";
     porte("Ouverture de la maison…", { button: false });
     try {
       const backend = firestoreBackend(me);
@@ -122,7 +127,7 @@ export function boot() {
       await bootApp({ me, backend, createSync });
     } catch (e) {
       console.error(e);
-      porte(e.code === "permission-denied" ? "Le compte " + user.email + " n'a pas accès à cette maison." : "Erreur de chargement : " + (e.message || e), { button: false, err: true, logout: () => signOut(auth) });
+      porte(e.code === "permission-denied" ? "Le compte " + user.email + " n'a pas accès à cette maison." : "Erreur de chargement : " + (e.message || e), { button: false, err: true, logout: changer });
     }
   });
 }
