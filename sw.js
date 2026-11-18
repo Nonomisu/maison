@@ -21,14 +21,16 @@ self.addEventListener('fetch', (e) => {
   const local = url.origin === self.location.origin;
   const externe = /^(www\.gstatic\.com|fonts\.googleapis\.com|fonts\.gstatic\.com)$/.test(url.hostname);
   if (!local && !externe) return;                                  // base de données, connexion, météo : jamais en copie
+  // musique et vidéos : lues par morceaux (« Range »), le navigateur s'en charge sans copie
+  if (req.headers.has('range') || req.destination === 'audio' || req.destination === 'video' || /\.(mp4|mp3|m4a|ogg|wav|webm)$/.test(url.pathname)) return;
   // code versionné (?v=…) et images : la copie d'abord ; le reste : réseau d'abord
-  const fige = externe || url.searchParams.has('v') || url.pathname.includes('/a/') || /\.(png|svg|webp|jpg|mp3|ogg)$/.test(url.pathname);
+  const fige = externe || url.searchParams.has('v') || url.pathname.includes('/a/') || /\.(png|svg|webp|jpg)$/.test(url.pathname);
   e.respondWith((async () => {
     const cache = await caches.open(url.searchParams.has('v') ? CODE : FICHIERS);
     if (fige) { const hit = await cache.match(req); if (hit) return hit; }
     try {
       const r = await fetch(req);
-      if (r.ok || r.type === 'opaque') {
+      if ((r.ok && r.status === 200) || r.type === 'opaque') {
         await cache.put(req, r.clone());
         // une seule version de chaque fichier de code
         if (url.searchParams.has('v')) for (const k of await cache.keys()) { const u = new URL(k.url); if (u.pathname === url.pathname && u.search !== url.search) cache.delete(k); }
