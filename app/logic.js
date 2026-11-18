@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=d7b8e208";
+import { DCLogic, blobUrl } from "./runtime.js?v=6ac04c8c";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -537,12 +537,16 @@ class Component extends DCLogic {
       var st = self.state, upd = {tick: st.tick + 1};
       if (st.zoom && st.tick - st.zoom.start >= ZOOM_LEN) { upd.zoom = null; upd.zoomLock = {cat: st.zoom.cat, until: (Math.floor(st.tick / SLOT) + 2) * SLOT}; }
       if (st.event === "anniv" && st.eventShown && st.tick === st.bdayStart) { upd.toast = "C'est l'anniversaire de " + CATS[st.bdayCat].name + " aujourd'hui !"; upd.toastHead = "Notification du matin"; clearTimeout(self._tt); self._tt = setTimeout(function () { self.setState({toast: null}); }, 3500); }
+      // zoomies : tirage parmi les trois chats, présents ou non dans la pièce (un absent traverse la pièce en courant)
       var startZ = function () {
-        if (st.room !== "salon") { var rc = (self._roomCats || {})[st.room] || []; if (!rc.length) return; var zc = rc[Math.floor(Math.random() * rc.length)]; upd.zoom = {cat: zc.k, start: st.tick + 1, room: st.room, x: zc.x, y: zc.y}; upd.zoomedOnce = true; return; }
-        var sc = self._salonCats || ORDER; if (!sc.length) return; upd.zoom = {cat: sc[Math.floor(Math.random() * sc.length)], start: st.tick + 1, room: "salon"}; upd.zoomedOnce = true; };
+        if (self._roomLocked) return;
+        var k = ORDER[Math.floor(Math.random() * ORDER.length)], z = {cat: k, start: st.tick + 1, room: st.room};
+        if (st.room === "salon") { if ((self._salonCats || ORDER).indexOf(k) < 0) z.away = true; }
+        else { var zc = ((self._roomCats || {})[st.room] || []).filter(function (c) { return c.k === k; })[0]; if (zc) { z.x = zc.x; z.y = zc.y; } else z.away = true; }
+        upd.zoom = z; upd.zoomedOnce = true;
+      };
       if (!st.zoom && st.zoomAuto && st.screen === "salon" && !st.sheet && !st.night && !self.busy(st, true) && !((st.event === "annivE" || st.event === "annivC") && st.eventShown && st.tick - st.personStart < 70)) {
-        if (!st.zoomedOnce) { if (st.tick >= 40) startZ(); }
-        else if (Math.random() < 1 / (300 * RARE)) startZ();
+        if (Math.random() < 1 / (REEL ? 6000 : 300)) startZ();   // une crise toutes les 10 minutes en moyenne (tic de 0,1 s)
       }
       var lvSum = ORDER.reduce(function (a, k) { return a + st.lvl[k]; }, 0);
       if (self._lvSum != null && lvSum > self._lvSum) SFX.play("niveau");
@@ -706,7 +710,12 @@ class Component extends DCLogic {
       var zr = ROOMS.filter(function (r) { return r.id !== zRoom && r.lvl <= lvlNow0; }).map(function (r) { return ROOM_DE[r.id]; }); if (!zr.length) zr = ["le couloir"];
       var room1 = zr[(st.zoom.start) % zr.length], room2 = zr[(st.zoom.start + 1) % zr.length];
       var hop = 0, run = false, seg = 0, t = 0;
-      if (e < 5) { zex = true; zbx = (px + 36) + "px"; zby = (py - 24) + "px"; }
+      if (st.zoom.away) {   // chat venu d'une autre pièce : il traverse en courant et repart
+        if (e >= 5 && e < 20) { run = true; seg = 1; t = (e - 5) / 15; zx = lerp(-120, 420, t); zy = 700; zf = 1; }
+        else if (e >= 20 && e < 30) { zb = true; zbx = "236px"; zby = "666px"; zbt = "→ " + room1; }
+        else if (e >= 30 && e < 46) { run = true; seg = 2; t = (e - 30) / 16; zx = lerp(420, -120, t); zy = 776; zf = -1; }
+      }
+      else if (e < 5) { zex = true; zbx = (px + 36) + "px"; zby = (py - 24) + "px"; }
       else if (e < 16) { run = true; seg = 1; t = (e - 5) / 11; zx = lerp(x0, 420, t); zy = y0; zf = 1; }
       else if (e < 26) { zb = true; zbx = "236px"; zby = (y0 - 34) + "px"; zbt = "→ " + room1; }
       else if (e < 40) { run = true; seg = 2; t = (e - 26) / 14; zx = lerp(-120, 420, t); zy = 776; zf = 1; }
@@ -1821,7 +1830,7 @@ class Component extends DCLogic {
     out.bureauCats = interact(out.bureauCats); out.kitchenCats = interact(out.kitchenCats); out.chambreCats = interact(out.chambreCats); out.sdbCats = interact(out.sdbCats); out.verandaCats = interact(out.verandaCats);
     // zoomies hors du salon : chats présents dans la pièce affichée, et le chat parti en courant disparaît de sa place
     var RCL = {bureau: "bureauCats", cuisine: "kitchenCats", chambre: "chambreCats", sdb: "sdbCats", veranda: "verandaCats"};
-    self._roomCats = {};
+    self._roomCats = {}; self._roomLocked = !!out.roomLocked;
     Object.keys(RCL).forEach(function (r) { self._roomCats[r] = (out[RCL[r]] || []).filter(function (c) { return c.show !== false && c.k; }).map(function (c) { return {k: c.k, x: parseInt(c.x, 10), y: parseInt(c.y, 10)}; }); });
     if (st.zoom && RCL[st.zoom.room] && st.tick - st.zoom.start >= 5) out[RCL[st.zoom.room]] = out[RCL[st.zoom.room]].filter(function (c) { return c.k !== st.zoom.cat; });
     if (st.zoom && (st.zoom.room || "salon") !== st.room) { out.zoomVisible = false; out.zoomExcl = false; out.zoomDust = false; out.zoomBubbleOn = false; }
