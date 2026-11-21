@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=475f3684";
+import { DCLogic, blobUrl } from "./runtime.js?v=81672e36";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -968,9 +968,15 @@ class Component extends DCLogic {
     out.showMyList = function () { self.setState({wishTab: "mine"}); };
     var WCAT = [["gros", "Gros cadeau"], ["moyen", "Moyen cadeau"], ["petit", "Petit cadeau"]], wcOf = function (w) { return WCAT.some(function (c) { return c[0] === w.cat; }) ? w.cat : "moyen"; };
     var wSort = function (L) { return L.slice().sort(function (a, b) { return WCAT.map(function (c) { return c[0]; }).indexOf(wcOf(a)) - WCAT.map(function (c) { return c[0]; }).indexOf(wcOf(b)); }); };
+    var WF = st.wishFilter || "tout", WFOLD = st.wishFold || {};
+    out.wishFilters = [["tout", "Tout"]].concat([["gros", "Gros"], ["moyen", "Moyens"], ["petit", "Petits"]]).map(function (f) { var on = WF === f[0]; return {label: f[1], pressed: on ? "true" : "false", bg: on ? "#9E2F2F" : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pick: function () { self.setState({wishFilter: f[0]}); }}; });
+    var wFilt = function (L) { return WF === "tout" ? L : L.filter(function (w) { return wcOf(w) === WF; }); };
+    var wFold = function (L, w, wi) { var c = wcOf(w), n = L.filter(function (x) { return wcOf(x) === c; }).length, f = !!WFOLD[c];
+      return {show: !f, headArrow: f ? "▶" : "▼", headExp: f ? "false" : "true", headCount: n + (n > 1 ? " envies" : " envie"),
+        headToggle: function () { var o = Object.assign({}, self.state.wishFold || {}); o[c] = !o[c]; self.setState({wishFold: o}); }}; };
     var wHead = function (L, i) { var c = wcOf(L[i]); return i === 0 || wcOf(L[i - 1]) !== c ? WCAT.filter(function (x) { return x[0] === c; })[0][1] : ""; };
     out.wishCats = WCAT.map(function (c) { var on = (st.wishCat || "moyen") === c[0]; return {label: c[1], pressed: on ? "true" : "false", bg: on ? "#9E2F2F" : "#FFFFFF", fg: on ? "#FFFFFF" : "#2B2A30", pick: function () { self.setState({wishCat: c[0]}); }}; });
-    var HW = wSort(REEL ? (st.wishOther || []) : HER_WISHES);
+    var HW = wFilt(wSort(REEL ? (st.wishOther || []) : HER_WISHES));
     out.herEmpty = !HW.length;
     out.herWishes = HW.map(function (w, wi) {
       var r = !!st.reserved[w.id];
@@ -979,9 +985,9 @@ class Component extends DCLogic {
         return {t: x.t, pressed: rr ? "true" : "false", bg: rr ? "#F4E6E6" : "#FFFFFF", label: rr ? "Réservé ✓" : "Je le prends", btnBg: rr ? "#E4EEDC" : "#F7F3EE", btnFg: rr ? "#36532A" : "#2B2A30", aria: (rr ? "Annuler la réservation de " : "Réserver ") + x.t,
           reserve: function () { var o = Object.assign({}, self.state.reserved); o[rk] = !o[rk]; self.setState({reserved: o}); }};
       });
-      return {subs: subs, head: wHead(HW, wi), hasHead: !!wHead(HW, wi), t: w.t, note: w.note, pressed: r ? "true" : "false", bg: r ? "#F4E6E6" : "#FFFFFF",
+      return Object.assign(wFold(HW, w, wi), {subs: subs, head: wHead(HW, wi), hasHead: !!wHead(HW, wi), t: w.t, note: w.note, pressed: r ? "true" : "false", bg: r ? "#F4E6E6" : "#FFFFFF",
         label: r ? "Réservé ✓" : "Je m'en occupe", btnBg: r ? "#E4EEDC" : "#D9A441", btnFg: r ? "#36532A" : "#2B2A30",
-        reserve: function () { var o = Object.assign({}, self.state.reserved); o[w.id] = !o[w.id]; self.setState({reserved: o}); }};
+        reserve: function () { var o = Object.assign({}, self.state.reserved); o[w.id] = !o[w.id]; self.setState({reserved: o}); }});
     });
     out.wishDraft = st.wishDraft;
     out.onWishDraft = function (e) { self.setState({wishDraft: e.target.value}); };
@@ -991,12 +997,12 @@ class Component extends DCLogic {
     };
     out.addWish = addWish;
     out.onWishKey = function (e) { if (e.key === "Enter") addWish(); };
-    var MW = wSort(st.myWishes);
+    var MW = wFilt(wSort(st.myWishes));
     out.myWishes = MW.map(function (w, wi) {
       var setSub = function (fn) { self.setState({myWishes: self.state.myWishes.map(function (x) { return x.id === w.id ? Object.assign({}, x, {sub: fn((x.sub || []).slice())}) : x; })}); };
       var subOn = st.subDraft && st.subDraft.id === w.id;
       var subAdd = function () { var t = cap((self.state.subDraft || {}).t); if (!t) return; setSub(function (S) { return S.concat([{id: "s" + Date.now().toString(36), t: t}]); }); self.setState({subDraft: {id: w.id, t: ""}}); };
-      return Object.assign({subs: (w.sub || []).map(function (x) { return {t: x.t, aria: "Retirer " + x.t, remove: function () { setSub(function (S) { return S.filter(function (y) { return y.id !== x.id; }); }); }}; }),
+      return Object.assign(wFold(MW, w, wi), {subs: (w.sub || []).map(function (x) { return {t: x.t, aria: "Retirer " + x.t, remove: function () { setSub(function (S) { return S.filter(function (y) { return y.id !== x.id; }); }); }}; }),
         subOpen: subOn, subClosed: !subOn, subDraft: subOn ? st.subDraft.t : "", subAria: "Détail pour " + w.t,
         subStart: function () { self.setState({subDraft: {id: w.id, t: ""}}); }, subClose: function () { self.setState({subDraft: null}); },
         onSub: function (e) { self.setState({subDraft: {id: w.id, t: e.target.value}}); }, onSubKey: function (e) { if (e.key === "Enter") subAdd(); }, subAdd: subAdd,
