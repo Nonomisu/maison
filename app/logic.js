@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=6a0a7bc9";
+import { DCLogic, blobUrl } from "./runtime.js?v=f532e3b1";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -71,7 +71,7 @@ var DECOS = [
   {name:"Plante", lvl:8, ok:false}, {name:"Tapis", lvl:9, ok:false}, {name:"Lampe", lvl:10, ok:false},
   {name:"Arbre à chat", lvl:11, ok:false}, {name:"Coussins", lvl:12, ok:false}
 ];
-var RAYONS = ["Fruits & légumes","Frais","Épicerie","Chats","Maison"];
+var RAYONS = ["Fruits & légumes","Frais","Épicerie","Chats","Maison","Autres"];
 var ITEMS0 = [
   {id:1, n:"Miel", q:"", r:"Épicerie", by:"C"},
   {id:2, n:"Parmesan", q:"", r:"Frais", by:"C"},

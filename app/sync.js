@@ -1,13 +1,13 @@
 // Connexion Google et enregistrement dans Firestore (projet maison-6b9f4).
-import { firebaseConfig } from "./firebase-config.js?v=6a0a7bc9";
+import { firebaseConfig } from "./firebase-config.js?v=f532e3b1";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc, getDocs, setDoc, deleteDoc, addDoc, collection, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
-import { createSync } from "./store.js?v=6a0a7bc9";
-import { porte, boot as bootApp } from "./boot.js?v=6a0a7bc9";
-import { VAPID_PUBLIC } from "./vapid.js?v=6a0a7bc9";
+import { createSync } from "./store.js?v=f532e3b1";
+import { porte, boot as bootApp } from "./boot.js?v=f532e3b1";
+import { VAPID_PUBLIC } from "./vapid.js?v=f532e3b1";
 
 // Empreinte SHA-256 de l'adresse de Co : l'adresse elle-même ne figure pas dans le code public.
 const EMIE_HASH = "09d7af3034f29f60a1f4769b5b738a3423c0cec802e6be5296fc62531c45763d";
