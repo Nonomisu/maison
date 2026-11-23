@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=f532e3b1";
+import { DCLogic, blobUrl } from "./runtime.js?v=aa381a31";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -1841,10 +1841,27 @@ class Component extends DCLogic {
     out.addFf = function () { var t = (self.state.ffDraft || "").trim(); if (!t) return; var l = (self.state.ffLink || "").trim(); if (l && !/^https?:\/\//.test(l)) l = "https://" + l; var id = "f" + self.state.nextFf; setFf(function (L) { L.push({id: id, sec: self.state.ffSec, t: t.charAt(0).toUpperCase() + t.slice(1), d: false, link: l}); }); self.setState({ffDraft: "", ffLink: "", nextFf: self.state.nextFf + 1}); };
     out.ffReset = function () { setFf(function (L) { L.forEach(function (y) { if (y.sec === "jour") y.d = false; }); }); };
     out.ffLinks = (st.ffWho === "C" ? FF_LINKS.slice(0, 1).concat([["Fiches persos de Nono", "https://nonomisu.github.io/fiches-rp/"]], FF_LINKS.slice(1)) : FF_LINKS).map(function (l) { return {label: l[0], href: l[1]}; });
+    var IDLE_OFF = {nahla: 0, bao: 67, tsunky: 133};
     var interact = function (list) { return (list || []).map(function (c) {
       var k = c.k, o = Object.assign({css: c.css || "calm"}, c);
+      if (!k) return o;
+      // caresse : appui long sur le chat (comme au salon) ; un simple toucher ouvre toujours sa fiche
+      o.pressStart = function () { clearTimeout(self._lpT); if (self.busy()) return; self._lpT = setTimeout(function () { if (self.busy()) return; self._lp = k; self.setState({purr: {cat: k, until: self.state.tick + 45}}); }, 550); };
+      o.pressEnd = function () { clearTimeout(self._lpT); };
+      var op = c.open; o.open = function () { if (self._lp === k) { self._lp = null; return; } if (op) op(); };
+      var awake = c.src === "/_blob/" + IMG[k].sit || c.src === "/_blob/" + IMG[k].blink;
       if (st.purr && st.purr.cat === k && st.tick < st.purr.until) { o.src = "/_blob/" + IMG[k][st.tick % 8 < 4 ? "happy" : "happyT"]; o.css = "calm"; }
       else if (st.play && st.play.cat === k && st.tick < st.play.until) { o.src = "/_blob/" + IMG[k][["chaseA", "chaseB", "chaseC"][Math.floor(st.tick / 3) % 3]]; o.css = st.tick % 8 < 4 ? "hop" : "calm"; }
+      else if (awake) {
+        // petite vie quand le chat est éveillé : queue, toilette, étirement (décalés d'un chat à l'autre)
+        var ph = (st.tick + IDLE_OFF[k]) % 200, fr = "sit";
+        if (ph < 3) fr = "blink";
+        else if (ph >= 40 && ph < 64) fr = Math.floor(ph / 6) % 2 ? "tailup" : "sit";
+        else if (ph >= 100 && ph < 136) fr = Math.floor(ph / 4) % 2 ? "groomA" : "groomB";
+        else if (ph >= 170 && ph < 178) fr = "stretch";
+        else if (ph === 150 || ph === 151) fr = "blink";
+        o.src = "/_blob/" + IMG[k][fr];
+      }
       return o; }); };
     out.bureauCats = interact(out.bureauCats); out.kitchenCats = interact(out.kitchenCats); out.chambreCats = interact(out.chambreCats); out.sdbCats = interact(out.sdbCats); out.verandaCats = interact(out.verandaCats);
     // zoomies hors du salon : chats présents dans la pièce affichée, et le chat parti en courant disparaît de sa place

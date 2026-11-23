@@ -266,7 +266,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <img src="{{ kSeas }}" alt="" style="position: absolute; left: 0; top: 0; width: 390px; height: 846px; display: block; image-rendering: pixelated; pointer-events: none">
 </sc-if>
 <sc-for list="{{ kitchenCats }}" as="kc" hint-placeholder-count="1">
-<button type="button" onClick="{{ kc.open }}" aria-label="{{ kc.aria }}" style="position: absolute; left: {{ kc.x }}; top: {{ kc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<button type="button" onClick="{{ kc.open }}" onTouchStart="{{ kc.pressStart }}" onTouchEnd="{{ kc.pressEnd }}" onMouseDown="{{ kc.pressStart }}" onMouseUp="{{ kc.pressEnd }}" onMouseLeave="{{ kc.pressEnd }}" aria-label="{{ kc.aria }}" style="position: absolute; left: {{ kc.x }}; top: {{ kc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
 <img class="{{ kc.css }}" src="{{ kc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -313,7 +313,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <div aria-hidden="true" style="pointer-events: none; position: absolute; left: {{ bz.vfauteuil.x }}; top: {{ bz.vfauteuil.y }}; width: {{ bz.vfauteuil.w }}; height: {{ bz.vfauteuil.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.vfauteuil.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></div>
 <div aria-hidden="true" style="pointer-events: none; position: absolute; left: {{ bz.vbanquette.x }}; top: {{ bz.vbanquette.y }}; width: {{ bz.vbanquette.w }}; height: {{ bz.vbanquette.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.vbanquette.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></div>
 <sc-for list="{{ verandaCats }}" as="vc" hint-placeholder-count="3">
-<button type="button" onClick="{{ vc.open }}" aria-label="{{ vc.aria }}" style="position: absolute; left: {{ vc.x }}; top: {{ vc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<button type="button" onClick="{{ vc.open }}" onTouchStart="{{ vc.pressStart }}" onTouchEnd="{{ vc.pressEnd }}" onMouseDown="{{ vc.pressStart }}" onMouseUp="{{ vc.pressEnd }}" onMouseLeave="{{ vc.pressEnd }}" aria-label="{{ vc.aria }}" style="position: absolute; left: {{ vc.x }}; top: {{ vc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
 <img class="{{ vc.css }}" src="{{ vc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -337,7 +337,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <div aria-hidden="true" style="position: absolute; left: {{ eyeR }}; top: {{ eyeY }}; width: 6px; height: {{ eyeH }}; background: {{ eyeC }}; box-shadow: 0 0 6px {{ eyeC }}; pointer-events: none"></div>
 </sc-if>
 <sc-for list="{{ chambreCats }}" as="cc" hint-placeholder-count="2">
-<button type="button" onClick="{{ cc.open }}" aria-label="{{ cc.aria }}" style="position: absolute; left: {{ cc.x }}; top: {{ cc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<button type="button" onClick="{{ cc.open }}" onTouchStart="{{ cc.pressStart }}" onTouchEnd="{{ cc.pressEnd }}" onMouseDown="{{ cc.pressStart }}" onMouseUp="{{ cc.pressEnd }}" onMouseLeave="{{ cc.pressEnd }}" aria-label="{{ cc.aria }}" style="position: absolute; left: {{ cc.x }}; top: {{ cc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
 <img class="{{ cc.css }}" src="{{ cc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -371,7 +371,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <img src="{{ sSeas }}" alt="" style="position: absolute; left: 0; top: 0; width: 390px; height: 846px; display: block; image-rendering: pixelated; pointer-events: none">
 </sc-if>
 <sc-for list="{{ sdbCats }}" as="sd" hint-placeholder-count="1">
-<button type="button" onClick="{{ sd.open }}" aria-label="{{ sd.aria }}" style="position: absolute; left: {{ sd.x }}; top: {{ sd.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<button type="button" onClick="{{ sd.open }}" onTouchStart="{{ sd.pressStart }}" onTouchEnd="{{ sd.pressEnd }}" onMouseDown="{{ sd.pressStart }}" onMouseUp="{{ sd.pressEnd }}" onMouseLeave="{{ sd.pressEnd }}" aria-label="{{ sd.aria }}" style="position: absolute; left: {{ sd.x }}; top: {{ sd.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
 <img class="{{ sd.css }}" src="{{ sd.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -399,7 +399,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </sc-if>
 <sc-if value="{{ deco.tsu }}" hint-placeholder-val="{{ false }}"><img src="a/deco-coussin-tsunky.svg" alt="" style="position: absolute; left: 34px; top: 664px; width: 78px; height: 27px; display: block; image-rendering: pixelated; pointer-events: none"></sc-if>
 <sc-for list="{{ bureauCats }}" as="bc" hint-placeholder-count="2">
-<button type="button" onClick="{{ bc.open }}" aria-label="{{ bc.aria }}" style="position: absolute; left: {{ bc.x }}; top: {{ bc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<button type="button" onClick="{{ bc.open }}" onTouchStart="{{ bc.pressStart }}" onTouchEnd="{{ bc.pressEnd }}" onMouseDown="{{ bc.pressStart }}" onMouseUp="{{ bc.pressEnd }}" onMouseLeave="{{ bc.pressEnd }}" aria-label="{{ bc.aria }}" style="position: absolute; left: {{ bc.x }}; top: {{ bc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
 <img class="{{ bc.css }}" src="{{ bc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -4714,10 +4714,27 @@ class Component extends DCLogic {
     out.addFf = function () { var t = (self.state.ffDraft || "").trim(); if (!t) return; var l = (self.state.ffLink || "").trim(); if (l && !/^https?:\/\//.test(l)) l = "https://" + l; var id = "f" + self.state.nextFf; setFf(function (L) { L.push({id: id, sec: self.state.ffSec, t: t.charAt(0).toUpperCase() + t.slice(1), d: false, link: l}); }); self.setState({ffDraft: "", ffLink: "", nextFf: self.state.nextFf + 1}); };
     out.ffReset = function () { setFf(function (L) { L.forEach(function (y) { if (y.sec === "jour") y.d = false; }); }); };
     out.ffLinks = (st.ffWho === "C" ? FF_LINKS.slice(0, 1).concat([["Fiches persos de Nono", "https://nonomisu.github.io/fiches-rp/"]], FF_LINKS.slice(1)) : FF_LINKS).map(function (l) { return {label: l[0], href: l[1]}; });
+    var IDLE_OFF = {nahla: 0, bao: 67, tsunky: 133};
     var interact = function (list) { return (list || []).map(function (c) {
       var k = c.k, o = Object.assign({css: c.css || "calm"}, c);
+      if (!k) return o;
+      // caresse : appui long sur le chat (comme au salon) ; un simple toucher ouvre toujours sa fiche
+      o.pressStart = function () { clearTimeout(self._lpT); if (self.busy()) return; self._lpT = setTimeout(function () { if (self.busy()) return; self._lp = k; self.setState({purr: {cat: k, until: self.state.tick + 45}}); }, 550); };
+      o.pressEnd = function () { clearTimeout(self._lpT); };
+      var op = c.open; o.open = function () { if (self._lp === k) { self._lp = null; return; } if (op) op(); };
+      var awake = c.src === "/_blob/" + IMG[k].sit || c.src === "/_blob/" + IMG[k].blink;
       if (st.purr && st.purr.cat === k && st.tick < st.purr.until) { o.src = "/_blob/" + IMG[k][st.tick % 8 < 4 ? "happy" : "happyT"]; o.css = "calm"; }
       else if (st.play && st.play.cat === k && st.tick < st.play.until) { o.src = "/_blob/" + IMG[k][["chaseA", "chaseB", "chaseC"][Math.floor(st.tick / 3) % 3]]; o.css = st.tick % 8 < 4 ? "hop" : "calm"; }
+      else if (awake) {
+        // petite vie quand le chat est éveillé : queue, toilette, étirement (décalés d'un chat à l'autre)
+        var ph = (st.tick + IDLE_OFF[k]) % 200, fr = "sit";
+        if (ph < 3) fr = "blink";
+        else if (ph >= 40 && ph < 64) fr = Math.floor(ph / 6) % 2 ? "tailup" : "sit";
+        else if (ph >= 100 && ph < 136) fr = Math.floor(ph / 4) % 2 ? "groomA" : "groomB";
+        else if (ph >= 170 && ph < 178) fr = "stretch";
+        else if (ph === 150 || ph === 151) fr = "blink";
+        o.src = "/_blob/" + IMG[k][fr];
+      }
       return o; }); };
     out.bureauCats = interact(out.bureauCats); out.kitchenCats = interact(out.kitchenCats); out.chambreCats = interact(out.chambreCats); out.sdbCats = interact(out.sdbCats); out.verandaCats = interact(out.verandaCats);
     // zoomies hors du salon : chats présents dans la pièce affichée, et le chat parti en courant disparaît de sa place
