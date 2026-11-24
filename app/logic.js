@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=aae6a3cd";
+import { DCLogic, blobUrl } from "./runtime.js?v=5c0b5281";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -516,7 +516,7 @@ function presence(slot, lvl) {
     var prev = "salon";
     for (var sl = Math.max(0, slot - 20); sl <= slot; sl++) {
       var r = rnd(sl * 7 + ki * 131 + 3), room = r < 0.5 ? "salon" : (r < 0.625 ? "chambre" : (r < 0.75 ? "bureau" : PREF[k]));
-      if (!ok(room)) room = "salon";
+      if (!ok(room)) room = room === PREF[k] && ok("chambre") ? "chambre" : "salon";   // pièce préférée pas encore ouverte : la chambre
       if (room === prev && room !== "salon") room = "salon";
       prev = room;
     }
@@ -636,7 +636,7 @@ class Component extends DCLogic {
     var home = function (k) { if (k === "nahla" && perched) return {x: 15, y: 249}; var c = CATS[slotK(k)]; return {x: parseInt(st.treeOn ? TREE_POS[slotK(k)].x : c.x, 10), y: parseInt(st.treeOn ? TREE_POS[slotK(k)].y : c.y, 10)}; };
     var givers = ORDER.filter(function (k) { return k !== bk; });
     var lvlNow0 = st.demoUnlock ? 99 : FOYER_LVL;
-    var mv = st.demoUnlock && !st.night, slot = mv ? Math.floor(st.tick / SLOT) : 5, ph = mv ? st.tick % SLOT : 999;
+    var mv = st.demoUnlock && !st.night && !REEL, slot = mv ? Math.floor(st.tick / SLOT) : (REEL ? Math.floor(Date.now() / (30 * 60e3)) : 5), ph = mv ? st.tick % SLOT : 999;
     var nightPres = function () { var r = {}; ORDER.forEach(function (k, i) { r[k] = (lvlNow0 >= 4 && rnd(i * 13 + 5) < 0.5) ? "chambre" : "salon"; }); return r; };
     var holds = function (P, t, now) {
       if (st.bedHold && t < st.bedHold.until) P[st.bedHold.cat] = "chambre";
