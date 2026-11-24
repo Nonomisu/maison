@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=aa381a31";
+import { DCLogic, blobUrl } from "./runtime.js?v=aae6a3cd";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -1850,7 +1850,9 @@ class Component extends DCLogic {
       o.pressEnd = function () { clearTimeout(self._lpT); };
       var op = c.open; o.open = function () { if (self._lp === k) { self._lp = null; return; } if (op) op(); };
       var awake = c.src === "/_blob/" + IMG[k].sit || c.src === "/_blob/" + IMG[k].blink;
-      if (st.purr && st.purr.cat === k && st.tick < st.purr.until) { o.src = "/_blob/" + IMG[k][st.tick % 8 < 4 ? "happy" : "happyT"]; o.css = "calm"; }
+      var asleep = c.src === "/_blob/" + IMG[k].sleepA || c.src === "/_blob/" + IMG[k].sleepB;
+      o.color = CATS[k].color; o.bubble = asleep ? "Zzz" : ""; o.bubbleCss = asleep ? "zzz" : "calm";
+      if (st.purr && st.purr.cat === k && st.tick < st.purr.until) { o.src = "/_blob/" + IMG[k][st.tick % 8 < 4 ? "happy" : "happyT"]; o.css = "calm"; o.bubble = "♥ rrr"; o.bubbleCss = "note1"; }
       else if (st.play && st.play.cat === k && st.tick < st.play.until) { o.src = "/_blob/" + IMG[k][["chaseA", "chaseB", "chaseC"][Math.floor(st.tick / 3) % 3]]; o.css = st.tick % 8 < 4 ? "hop" : "calm"; }
       else if (awake) {
         // petite vie quand le chat est éveillé : queue, toilette, étirement (décalés d'un chat à l'autre)

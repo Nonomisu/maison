@@ -267,6 +267,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </sc-if>
 <sc-for list="{{ kitchenCats }}" as="kc" hint-placeholder-count="1">
 <button type="button" onClick="{{ kc.open }}" onTouchStart="{{ kc.pressStart }}" onTouchEnd="{{ kc.pressEnd }}" onMouseDown="{{ kc.pressStart }}" onMouseUp="{{ kc.pressEnd }}" onMouseLeave="{{ kc.pressEnd }}" aria-label="{{ kc.aria }}" style="position: absolute; left: {{ kc.x }}; top: {{ kc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<span class="{{ kc.bubbleCss }}" aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -16px; height: 20px; text-align: center; pointer-events: none; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700; text-shadow: 1px 0 #F7F3EE, -1px 0 #F7F3EE, 0 1px #F7F3EE, 0 -1px #F7F3EE; color: {{ kc.color }}">{{ kc.bubble }}</span>
 <img class="{{ kc.css }}" src="{{ kc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -314,6 +315,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <div aria-hidden="true" style="pointer-events: none; position: absolute; left: {{ bz.vbanquette.x }}; top: {{ bz.vbanquette.y }}; width: {{ bz.vbanquette.w }}; height: {{ bz.vbanquette.h }}; padding: 0; background: none; border: 0; cursor: pointer"><img src="{{ bz.vbanquette.src }}" alt="" style="width: 100%; height: 100%; display: block; image-rendering: pixelated"></div>
 <sc-for list="{{ verandaCats }}" as="vc" hint-placeholder-count="3">
 <button type="button" onClick="{{ vc.open }}" onTouchStart="{{ vc.pressStart }}" onTouchEnd="{{ vc.pressEnd }}" onMouseDown="{{ vc.pressStart }}" onMouseUp="{{ vc.pressEnd }}" onMouseLeave="{{ vc.pressEnd }}" aria-label="{{ vc.aria }}" style="position: absolute; left: {{ vc.x }}; top: {{ vc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<span class="{{ vc.bubbleCss }}" aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -16px; height: 20px; text-align: center; pointer-events: none; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700; text-shadow: 1px 0 #F7F3EE, -1px 0 #F7F3EE, 0 1px #F7F3EE, 0 -1px #F7F3EE; color: {{ vc.color }}">{{ vc.bubble }}</span>
 <img class="{{ vc.css }}" src="{{ vc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -338,6 +340,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </sc-if>
 <sc-for list="{{ chambreCats }}" as="cc" hint-placeholder-count="2">
 <button type="button" onClick="{{ cc.open }}" onTouchStart="{{ cc.pressStart }}" onTouchEnd="{{ cc.pressEnd }}" onMouseDown="{{ cc.pressStart }}" onMouseUp="{{ cc.pressEnd }}" onMouseLeave="{{ cc.pressEnd }}" aria-label="{{ cc.aria }}" style="position: absolute; left: {{ cc.x }}; top: {{ cc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<span class="{{ cc.bubbleCss }}" aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -16px; height: 20px; text-align: center; pointer-events: none; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700; text-shadow: 1px 0 #F7F3EE, -1px 0 #F7F3EE, 0 1px #F7F3EE, 0 -1px #F7F3EE; color: {{ cc.color }}">{{ cc.bubble }}</span>
 <img class="{{ cc.css }}" src="{{ cc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -372,6 +375,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 </sc-if>
 <sc-for list="{{ sdbCats }}" as="sd" hint-placeholder-count="1">
 <button type="button" onClick="{{ sd.open }}" onTouchStart="{{ sd.pressStart }}" onTouchEnd="{{ sd.pressEnd }}" onMouseDown="{{ sd.pressStart }}" onMouseUp="{{ sd.pressEnd }}" onMouseLeave="{{ sd.pressEnd }}" aria-label="{{ sd.aria }}" style="position: absolute; left: {{ sd.x }}; top: {{ sd.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<span class="{{ sd.bubbleCss }}" aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -16px; height: 20px; text-align: center; pointer-events: none; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700; text-shadow: 1px 0 #F7F3EE, -1px 0 #F7F3EE, 0 1px #F7F3EE, 0 -1px #F7F3EE; color: {{ sd.color }}">{{ sd.bubble }}</span>
 <img class="{{ sd.css }}" src="{{ sd.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -400,6 +404,7 @@ a{color:#3E6FB0}a:hover{color:#2B4F80}
 <sc-if value="{{ deco.tsu }}" hint-placeholder-val="{{ false }}"><img src="a/deco-coussin-tsunky.svg" alt="" style="position: absolute; left: 34px; top: 664px; width: 78px; height: 27px; display: block; image-rendering: pixelated; pointer-events: none"></sc-if>
 <sc-for list="{{ bureauCats }}" as="bc" hint-placeholder-count="2">
 <button type="button" onClick="{{ bc.open }}" onTouchStart="{{ bc.pressStart }}" onTouchEnd="{{ bc.pressEnd }}" onMouseDown="{{ bc.pressStart }}" onMouseUp="{{ bc.pressEnd }}" onMouseLeave="{{ bc.pressEnd }}" aria-label="{{ bc.aria }}" style="position: absolute; left: {{ bc.x }}; top: {{ bc.y }}; transition: left 1.8s ease-in-out, top 1.8s ease-in-out; width: 90px; height: 85px; padding: 0; background: none; border: 0; cursor: pointer">
+<span class="{{ bc.bubbleCss }}" aria-hidden="true" style="position: absolute; left: 0; right: 0; top: -16px; height: 20px; text-align: center; pointer-events: none; font-family: 'Pixelify Sans', Inter, sans-serif; font-size: 15px; font-weight: 700; text-shadow: 1px 0 #F7F3EE, -1px 0 #F7F3EE, 0 1px #F7F3EE, 0 -1px #F7F3EE; color: {{ bc.color }}">{{ bc.bubble }}</span>
 <img class="{{ bc.css }}" src="{{ bc.src }}" alt="" style="width: 90px; height: 85px; display: block; image-rendering: pixelated">
 </button>
 </sc-for>
@@ -4723,7 +4728,9 @@ class Component extends DCLogic {
       o.pressEnd = function () { clearTimeout(self._lpT); };
       var op = c.open; o.open = function () { if (self._lp === k) { self._lp = null; return; } if (op) op(); };
       var awake = c.src === "/_blob/" + IMG[k].sit || c.src === "/_blob/" + IMG[k].blink;
-      if (st.purr && st.purr.cat === k && st.tick < st.purr.until) { o.src = "/_blob/" + IMG[k][st.tick % 8 < 4 ? "happy" : "happyT"]; o.css = "calm"; }
+      var asleep = c.src === "/_blob/" + IMG[k].sleepA || c.src === "/_blob/" + IMG[k].sleepB;
+      o.color = CATS[k].color; o.bubble = asleep ? "Zzz" : ""; o.bubbleCss = asleep ? "zzz" : "calm";
+      if (st.purr && st.purr.cat === k && st.tick < st.purr.until) { o.src = "/_blob/" + IMG[k][st.tick % 8 < 4 ? "happy" : "happyT"]; o.css = "calm"; o.bubble = "♥ rrr"; o.bubbleCss = "note1"; }
       else if (st.play && st.play.cat === k && st.tick < st.play.until) { o.src = "/_blob/" + IMG[k][["chaseA", "chaseB", "chaseC"][Math.floor(st.tick / 3) % 3]]; o.css = st.tick % 8 < 4 ? "hop" : "calm"; }
       else if (awake) {
         // petite vie quand le chat est éveillé : queue, toilette, étirement (décalés d'un chat à l'autre)
