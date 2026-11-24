@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=5c0b5281";
+import { DCLogic, blobUrl } from "./runtime.js?v=552cfd9f";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -600,8 +600,14 @@ class Component extends DCLogic {
     if (st.play && t < st.play.until) return true;
     return false;
   }
+  baseAnim(key) {
+    // vraie appli : chaque chat change d'occupation toutes les 5 minutes (décalé d'un chat à l'autre)
+    if (!REEL) return this.state.anim[key];
+    var L = ["repos", "repos", "queue", "toilette", "chasse", "sieste", "repos", "queue"], ki = ORDER.indexOf(key);
+    return L[Math.floor(rnd(Math.floor(Date.now() / 300000) * 13 + ki * 71) * L.length)];
+  }
   effAnim(key) {
-    var st = this.state, a = st.anim[key];
+    var st = this.state, a = this.baseAnim(key);
     if (st.event === "anniv" && st.eventShown && st.tick - st.bdayStart >= -5 && st.tick - st.bdayStart < 70) return a === "pompon" ? "repos" : a;
     if ((st.event === "annivE" || st.event === "annivC") && st.eventShown && st.tick - st.personStart >= -5 && st.tick - st.personStart < 70) return a === "sieste" ? "repos" : a;
     if (st.purr && st.purr.cat === key && st.tick < st.purr.until) return "ronron";
@@ -655,7 +661,7 @@ class Component extends DCLogic {
       var c = CATS[k]; var a = ANIMS[self.effAnim(k)];
       var h = home(k), x = h.x, y = h.y, carry = false, css = a.css, src = self.frameSrc(k), bubble = a.bubble;
       if (bday && k === bk) {
-        if (st.anim[k] === "sieste" || st.anim[k] === "etire" || (be >= -5 && be < 60) || self.effAnim(k) !== st.anim[k]) { src = "/_blob/" + IMG[k][(be >= 15 && be < 40) ? "happy" : ((st.tick % 40 < 3) ? "blink" : "sit")]; css = "calm"; bubble = ""; }
+        if (self.baseAnim(k) === "sieste" || self.baseAnim(k) === "etire" || (be >= -5 && be < 60) || self.effAnim(k) !== self.baseAnim(k)) { src = "/_blob/" + IMG[k][(be >= 15 && be < 40) ? "happy" : ((st.tick % 40 < 3) ? "blink" : "sit")]; css = "calm"; bubble = ""; }
       }
       if (bday && k !== bk && be >= 0 && be < 40) {
         var hb = home(bk), side = givers.indexOf(k) === 0 ? -1 : 1;
@@ -1855,14 +1861,10 @@ class Component extends DCLogic {
       if (st.purr && st.purr.cat === k && st.tick < st.purr.until) { o.src = "/_blob/" + IMG[k][st.tick % 8 < 4 ? "happy" : "happyT"]; o.css = "calm"; o.bubble = "♥ rrr"; o.bubbleCss = "note1"; }
       else if (st.play && st.play.cat === k && st.tick < st.play.until) { o.src = "/_blob/" + IMG[k][["chaseA", "chaseB", "chaseC"][Math.floor(st.tick / 3) % 3]]; o.css = st.tick % 8 < 4 ? "hop" : "calm"; }
       else if (awake) {
-        // petite vie quand le chat est éveillé : queue, toilette, étirement (décalés d'un chat à l'autre)
-        var ph = (st.tick + IDLE_OFF[k]) % 200, fr = "sit";
-        if (ph < 3) fr = "blink";
-        else if (ph >= 40 && ph < 64) fr = Math.floor(ph / 6) % 2 ? "tailup" : "sit";
-        else if (ph >= 100 && ph < 136) fr = Math.floor(ph / 4) % 2 ? "groomA" : "groomB";
-        else if (ph >= 170 && ph < 178) fr = "stretch";
-        else if (ph === 150 || ph === 151) fr = "blink";
-        o.src = "/_blob/" + IMG[k][fr];
+        // mêmes occupations qu'au salon : queue, toilette, papillon, sieste, chansonnette, pain, pompon
+        var an = ANIMS[self.effAnim(k)];
+        o.src = self.frameSrc(k); o.css = an.css; o.pompom = self.effAnim(k) === "pompon";
+        if (an.bubble) { o.bubble = an.bubble; o.bubbleCss = an.bubble === "♪ ♫" ? "note1" : "zzz"; }
       }
       return o; }); };
     out.bureauCats = interact(out.bureauCats); out.kitchenCats = interact(out.kitchenCats); out.chambreCats = interact(out.chambreCats); out.sdbCats = interact(out.sdbCats); out.verandaCats = interact(out.verandaCats);
