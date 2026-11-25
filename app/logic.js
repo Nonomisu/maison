@@ -1,5 +1,5 @@
 // Fichier généré par outils/build.py à partir de src/Main.dc.html : ne pas modifier à la main.
-import { DCLogic, blobUrl } from "./runtime.js?v=bed742d0";
+import { DCLogic, blobUrl } from "./runtime.js?v=31334a05";
 
 // Mode réel : défini par l'appli (window.MAISON_REEL). Sans lui, la maquette reste en démo au 13 novembre 2026.
 var REEL = typeof window !== "undefined" && !!window.MAISON_REEL;
@@ -2069,7 +2069,13 @@ class Component extends DCLogic {
     out.playlistName = (st.saison === "classique" && trackKey(st) !== "noel" ? PLAYLISTS.base : PLAYLISTS[trackKey(st) === "base" ? st.saison : trackKey(st)]) + (st.musicOn ? " · " + MUSIC.label() + " (en lecture)" : "");
     out.musicTrack = st.musicOn ? "#7A4E9E" : "#C9C2B5"; out.musicKnob = st.musicOn ? "24px" : "2px";
     out.openSoiree = function () { self.setState({screen: "soiree", sheet: null, soirDay: 0}); };
-    var soirLab = function (ev) { return ev && ev.alts && ev.alts.length > 1 ? ev.alts.map(function (a) { return a.name; }).join(" ou ") : (ev ? ev.name : ""); };
+    var soirLab = function (ev) {
+      if (!(ev && ev.alts && ev.alts.length > 1)) return ev ? ev.name : "";
+      var N = ev.alts.map(function (a) { return a.name; }), pre = N[0].split(" · ")[0] + " · ";
+      // « Soirée RP · Eoor & Tamachag ou Unegen & Taiga » plutôt que de répéter « Soirée RP »
+      if (N.every(function (n) { return n.indexOf(pre) === 0; })) return pre + N.map(function (n) { return n.slice(pre.length); }).join(" ou ");
+      return N.join(" ou ");
+    };
     var tonight = st.soirees[0];
     out.hasTableItem = !!(tonight && tonight.status === "accepte" && tonight.item);
     out.tableItemSrc = out.hasTableItem ? ITEMS_IMG[tonight.item] : "";
@@ -2143,26 +2149,29 @@ class Component extends DCLogic {
     out.addBin = addBin; out.onBinKey = function (e) { if (e.key === "Enter") addBin(); };
     var binNames = BIN.filter(function (b) { return binSel.indexOf(b.id) >= 0; }).map(function (b) { return b.t; });
     var addMode = REEL && cur && cur.status === "attente" && cur.by === ME;
-    var selN = selAct ? selAct.n + (out.binOn && binNames.length ? " · " + binNames.join(", ") : "") : "";
+    var selN = selAct ? selAct.n + (out.binOn && binNames.length ? " · " + binNames.join(" ou ") : "") : "";
     out.proposeLabel = selAct ? (addMode ? "Ajouter « " + selN + " » aux choix" : "Proposer « " + selN + " » · " + SOIR_DAYS[st.soirDay].s + " " + SOIR_DAYS[st.soirDay].n) : (addMode ? "Choisis une autre activité à proposer" : "Choisis une activité");
     out.proposeBg = selAct ? "#D9A441" : "#E3DACD";
     out.proposeSoir = function () {
       var a = self.state.soirActs.filter(function (x) { return x.id === self.state.soirSel; })[0]; if (!a) return;
-      if (a.id === "rp" && binNames.length) { a = Object.assign({}, a, {n: a.n + " · " + binNames.join(", ")}); self.setState({binSel: []}); }
-      var o = Object.assign({}, self.state.soirees), prev = o[self.state.soirDay], quand = SOIR_DAYS[self.state.soirDay].l.toLowerCase();
-      // déjà une proposition en attente de ma part ce soir-là : on ajoute un choix au lieu de la remplacer
-      if (REEL && prev && prev.status === "attente" && prev.by === ME && (prev.act !== a.id || prev.name !== a.n)) {
-        var alts = (prev.alts && prev.alts.length ? prev.alts : [{act: prev.act, name: prev.name, item: prev.item}]).filter(function (x) { return x.name !== a.n; }).concat([{act: a.id, name: a.n, item: a.item}]);
+      // soirée RP avec plusieurs binômes : un choix par binôme, l'autre choisit en acceptant
+      var opts = a.id === "rp" && binNames.length ? binNames.map(function (n) { return {act: a.id, name: a.n + " · " + n, item: a.item}; }) : [{act: a.id, name: a.n, item: a.item}];
+      if (a.id === "rp") self.setState({binSel: []});
+      var o = Object.assign({}, self.state.soirees), prev = o[self.state.soirDay], quand = SOIR_DAYS[self.state.soirDay].l.toLowerCase(), alts;
+      var mine = REEL && prev && prev.status === "attente" && prev.by === ME;
+      if (mine) {
+        var base = prev.alts && prev.alts.length ? prev.alts : [{act: prev.act, name: prev.name, item: prev.item}];
+        alts = base.filter(function (x) { return !opts.some(function (y) { return y.name === x.name; }); }).concat(opts);
+        if (alts.length === base.length && opts.every(function (y) { return base.some(function (x) { return x.name === y.name; }); })) { self.setState({soirSel: null}); self._toast("Déjà proposé"); return; }
         o[self.state.soirDay] = Object.assign({}, prev, {alts: alts});
-        self.setState({soirees: o, soirSel: null});
-        if (self._notify("soiree", OTHER, NAME[ME] + " propose " + alts.map(function (x) { return "« " + x.name + " »"; }).join(" ou ") + " pour " + quand + ". Tu choisis dans Nos soirées ?")) self._toast("Choix ajouté : " + NAME[OTHER] + " choisira entre " + alts.length);
-        else self._toast("Choix ajouté (" + alts.length + " propositions)");
-        return;
+      } else {
+        alts = opts;
+        o[self.state.soirDay] = Object.assign({act: opts[0].act, name: opts[0].name, item: opts[0].item, by: ME, status: "attente"}, opts.length > 1 ? {alts: opts} : {});
       }
-      o[self.state.soirDay] = {act: a.id, name: a.n, item: a.item, by: ME, status: "attente"};
       self.setState({soirees: o, soirSel: null});
-      if (self._notify("soiree", OTHER, NAME[ME] + " propose « " + a.n + " » pour " + quand + ". Tu réponds dans Nos soirées ?")) self._toast("Proposition envoyée à " + NAME[OTHER]);
-      else if (self.state.notifOn.soiree && self._toast) self._toast(NAME[ME] + " propose « " + a.n + " » pour " + quand);
+      var txt = alts.length > 1 ? NAME[ME] + " propose " + alts.map(function (x) { return "« " + x.name + " »"; }).join(" ou ") + " pour " + quand + ". Tu choisis dans Nos soirées ?" : NAME[ME] + " propose « " + alts[0].name + " » pour " + quand + ". Tu réponds dans Nos soirées ?";
+      if (self._notify("soiree", OTHER, txt)) self._toast(alts.length > 1 ? NAME[OTHER] + " choisira entre " + alts.length + " propositions" : "Proposition envoyée à " + NAME[OTHER]);
+      else self._toast(alts.length > 1 ? alts.length + " propositions pour " + quand : "Proposition pour " + quand);
     };
     out.soirWeek = SOIR_DAYS.map(function (d, i) {
       var ev = st.soirees[i];
